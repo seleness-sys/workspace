@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Owner Booking Compose Mockup",
+  "schemaVersion": 1,
+  "description": "사장님(운영자) 뷰 목업: 비즈니스센터 채팅방에서 '예약하기' 카드가 고객에게 나가기 전 단계. STEP1 ⊕도구 트레이의 '예약 보내기' → STEP2 예약 작성 폼+미리보기 → STEP3 카드 전송 후 고객 예약 확정 및 알림톡 발송 예약. 네일샵(라라네일) 기준. 실제 카카오 비즈니스센터 채팅 UI 기반."
+}
+</script>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사장님 뷰 · 예약 카드 보내기 (나가기 전 단계)</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    background: #eef1f5; color: #1a1a1a; padding: 34px 20px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1260px; margin: 0 auto; }
+  h1 { font-size: 25px; font-weight: 800; margin-bottom: 5px; }
+  h1 .bar { display:inline-block; width:44px; height:4px; background:#2fa8e8; border-radius:2px; vertical-align: middle; margin-right:10px;}
+  .sub { color:#666; font-size:13.5px; margin-bottom: 30px; }
+  .grid { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .panel { flex:1; min-width:300px; max-width:360px;}
+  .panel-tag { display:inline-block; font-size:11.5px; font-weight:800; color:#fff; padding:4px 11px; border-radius:20px; margin-bottom:9px;}
+  .t1{ background:#2b6cf0;} .t2{ background:#8b5cf6;} .t3{ background:#16a34a;}
+  .panel-title { font-size:14.5px; font-weight:800; margin-bottom:11px; color:#222;}
+
+  /* phone */
+  .ph{ background:#fff; border-radius:26px; overflow:hidden; box-shadow:0 8px 26px rgba(20,40,80,.12); border:1px solid #dde3ea; position:relative;}
+  .status{ display:flex; justify-content:space-between; align-items:center; padding:9px 18px 5px; font-size:12px; font-weight:700; color:#111;}
+  .status .rgt{ letter-spacing:1px; font-size:11px;}
+  /* chat header (iOS-like) */
+  .chead{ display:flex; align-items:center; gap:9px; padding:7px 13px 11px;}
+  .cbtn{ width:34px;height:34px;border-radius:50%; background:#f1f3f6; display:flex;align-items:center;justify-content:center; font-size:16px; color:#444; flex:none;}
+  .cname{ flex:1; text-align:center; font-size:15px; font-weight:700; color:#1a1a1a; display:flex; align-items:center; justify-content:center; gap:4px;}
+  .cname small{ font-size:11px; color:#9aa3b2;}
+  /* chat body */
+  .cbody{ background:#dde3ea; padding:14px 12px; min-height:430px; position:relative;}
+  .day{ text-align:center; margin:2px 0 13px;}
+  .day span{ background:rgba(120,135,150,.45); color:#fff; font-size:10.5px; padding:3px 12px; border-radius:12px;}
+  .msg{ display:flex; gap:7px; margin-bottom:11px; align-items:flex-end;}
+  .msg.them .av{ width:32px;height:32px;border-radius:50%; background:#c3ccd6; flex:none; display:flex;align-items:center;justify-content:center; font-size:14px; color:#fff;}
+  .msg .c2{ max-width:78%;}
+  .msg .who{ font-size:11px; color:#5a6573; margin-bottom:3px;}
+  .msg .who .nf{ color:#9aa3b2; font-size:10px;}
+  .bub{ display:inline-block; font-size:13px; line-height:1.55; padding:9px 12px; border-radius:15px; text-align:left;}
+  .them .bub{ background:#fff; color:#1a1a1a; border-top-left-radius:4px;}
+  .me{ justify-content:flex-end;}
+  .me .c2{ display:flex; flex-direction:column; align-items:flex-end;}
+  .me .who{ text-align:right; color:#6b7686;}
+  .me .bub{ background:#fae930; color:#1a1a1a; border-top-right-radius:4px;}
+  .tline{ display:flex; align-items:flex-end; gap:5px;}
+  .tm{ font-size:9.5px; color:#7c8896;}
+
+  /* bottom input */
+  .cinput{ display:flex; align-items:center; gap:9px; padding:10px 13px 14px; background:#fff; border-top:1px solid #eef1f4;}
+  .plus{ width:34px;height:34px;border-radius:10px; border:1.6px solid #c7cfd9; display:flex;align-items:center;justify-content:center; font-size:19px; color:#7a8694; flex:none;}
+  .plus.on{ background:#2b6cf0; border-color:#2b6cf0; color:#fff; transform:rotate(45deg);}
+  .ibox{ flex:1; background:#f1f3f6; border-radius:18px; padding:9px 14px; font-size:12.5px; color:#9aa3b2;}
+
+  /* tool tray */
+  .tray{ background:#f7f8fa; border-top:1px solid #e8ebef; padding:15px 12px 18px; display:grid; grid-template-columns:repeat(4,1fr); gap:13px 6px;}
+  .tool{ display:flex; flex-direction:column; align-items:center; gap:6px; font-size:10.5px; color:#5a6573;}
+  .tool .ic{ width:48px;height:48px;border-radius:15px; background:#fff; border:1px solid #eceef1; display:flex;align-items:center;justify-content:center; font-size:21px;}
+  .tool.hot .ic{ background:#fff7d6; border-color:#f4e08f;}
+  .tool.hot{ color:#7a5c00; font-weight:800;}
+
+  /* compose sheet */
+  .sheet{ background:#fff; border-top:1px solid #eef1f4; padding:16px 16px 20px;}
+  .sheet-h{ font-size:15px; font-weight:800; margin-bottom:3px;}
+  .sheet-sub{ font-size:11px; color:#9aa3b2; margin-bottom:15px;}
+  .f{ margin-bottom:12px;}
+  .f .lb{ font-size:11.5px; color:#8a93a2; font-weight:700; margin-bottom:5px;}
+  .f .inp{ border:1px solid #dde2ea; border-radius:10px; padding:11px 12px; font-size:13px; color:#1a1a1a; display:flex; align-items:center; justify-content:space-between; background:#fff;}
+  .f .inp.filled{ font-weight:700;}
+  .f .inp .cal{ color:#b3bccb; font-size:14px;}
+  .infobar{ background:#eef4ff; border-radius:10px; padding:10px 12px; font-size:10.5px; line-height:1.6; color:#3a5276; margin:4px 0 14px;}
+  .infobar b{ color:#2b6cf0;}
+  /* alimtalk toggle row */
+  .toggle-row{ border-top:1px solid #eef1f4; border-bottom:1px solid #eef1f4; padding:13px 2px; margin:4px 0 6px;}
+  .tr-main{ display:flex; align-items:center; gap:9px;}
+  .chk{ width:19px;height:19px;border-radius:6px; background:#fae930; display:inline-flex;align-items:center;justify-content:center; font-size:12px; color:#3a2f00; font-weight:900; flex:none;}
+  .tr-label{ font-size:12.5px; font-weight:700; color:#1a1a1a; flex:1;}
+  .tr-when{ font-size:11px; color:#2b6cf0; font-weight:700; background:#eef4ff; padding:3px 9px; border-radius:7px;}
+  .tr-change{ font-size:10.5px; color:#8a93a2; text-decoration:underline; margin-left:7px;}
+  .tr-sub{ font-size:10px; color:#9aa3b2; margin:7px 0 0 28px; line-height:1.5;}
+  .send{ background:#fae930; color:#3a2f00; font-weight:800; text-align:center; padding:13px; border-radius:12px; font-size:14px;}
+  .preview-lb{ font-size:10.5px; color:#9aa3b2; font-weight:700; margin:14px 0 7px;}
+
+  /* booking card (preview & sent) */
+  .booking{ background:#fff; border-radius:14px; overflow:hidden; border:1px solid #e3e8ef; box-shadow:0 2px 8px rgba(0,0,0,.07); max-width:240px;}
+  .booking.inchat{ max-width:88%;}
+  .booking-h{ background:#fff0f5; padding:9px 12px; font-size:11.5px; font-weight:800; color:#5a2a3a; border-bottom:1px solid #f7dde6;}
+  .booking-b{ padding:12px;}
+  .brow{ display:flex; justify-content:space-between; padding:4px 0; font-size:11.5px; border-bottom:1px dashed #eef1f5;}
+  .brow:last-of-type{ border-bottom:none;}
+  .brow .k{ color:#8a93a2; font-weight:600;}
+  .brow .v{ color:#1a1a1a; font-weight:700;}
+  .bk-btn{ background:#fae930; color:#3a2f00; text-align:center; padding:9px; border-radius:9px; font-size:12px; font-weight:800; margin-top:10px;}
+  .bk-foot{ font-size:9px; color:#9aa3b2; margin-top:8px; line-height:1.5;}
+
+  .sys{ text-align:center; margin:8px 0 11px;}
+  .sys span{ background:rgba(255,255,255,.8); color:#54616e; font-size:10px; padding:4px 12px; border-radius:11px; display:inline-block; max-width:90%; line-height:1.5;}
+
+  .note{ background:#eef3ff; border-radius:11px; padding:13px 15px; margin-top:14px; font-size:12px; line-height:1.6; color:#33425e;}
+  .note b{ color:#2b6cf0;}
+  .arrow{ display:flex; align-items:center; justify-content:center; font-size:24px; color:#b9c4d4; min-width:18px; align-self:stretch; padding-top:150px;}
+  @media (max-width:1120px){ .arrow{ display:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><span class="bar"></span>사장님 뷰 · "예약하기" 카드가 나가기 전 단계</h1>
+  <div class="sub">라라네일 운영자가 비즈니스센터 채팅방에서 예약 카드를 직접 만들어 보내는 흐름. ⊕ 도구 → 예약 작성 → 전송.</div>
+
+  <div class="grid">
+
+    <!-- ===== STEP 1 : ⊕ 도구 트레이 ===== -->
+    <div class="panel">
+      <span class="panel-tag t1">STEP 1 · 진입</span>
+      <div class="panel-title">⊕ 버튼 → 도구에서 '예약 보내기'</div>
+      <div class="ph">
+        <div class="status"><span>10:26</span><span class="rgt">●●●● 📶 🔋</span></div>
+        <div class="chead">
+          <div class="cbtn">‹</div>
+          <div class="cname">라이언 <small>▾</small></div>
+          <div class="cbtn">🔍</div>
+          <div class="cbtn">☰</div>
+        </div>
+        <div class="cbody" style="min-height:300px;">
+          <div class="day"><span>2026년 6월 19일</span></div>
+          <div class="msg them">
+            <div class="av">👤</div>
+            <div class="c2"><div class="who">라이언 <span class="nf">(친구아님)</span></div>
+              <span class="bub">다음 주 화요일 오후 괜찮습니다</span></div>
+          </div>
+          <div class="msg me"><div class="c2">
+            <div class="tline"><span class="tm">10:25</span><span class="bub">그럼 젤네일 시술 예약 잡아드릴게요 👍</span></div></div></div>
+        </div>
+        <div class="cinput">
+          <div class="plus on">+</div>
+          <div class="ibox">메시지를 입력해 주세요.</div>
+        </div>
+        <div class="tray">
+          <div class="tool"><div class="ic">🖼️</div>앨범</div>
+          <div class="tool"><div class="ic">📷</div>카메라</div>
+          <div class="tool"><div class="ic">📄</div>파일</div>
+          <div class="tool hot"><div class="ic">📅</div>예약 보내기</div>
+          <div class="tool"><div class="ic">🧾</div>견적서</div>
+          <div class="tool"><div class="ic">💬</div>자주쓰는글</div>
+          <div class="tool"><div class="ic">🔗</div>링크</div>
+          <div class="tool"><div class="ic">📋</div>템플릿</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- ===== STEP 2 : 예약 작성 폼 ===== -->
+    <div class="panel">
+      <span class="panel-tag t2">STEP 2 · 작성</span>
+      <div class="panel-title">예약 내용 입력 + 미리보기</div>
+      <div class="ph">
+        <div class="status"><span>10:26</span><span class="rgt">●●●● 📶 🔋</span></div>
+        <div class="chead">
+          <div class="cbtn">‹</div>
+          <div class="cname">예약 카드 보내기</div>
+          <div class="cbtn" style="visibility:hidden;">☰</div>
+        </div>
+        <div class="sheet">
+          <div class="sheet-h">시술 예약</div>
+          <div class="sheet-sub">라이언 고객님에게 보낼 예약 카드를 작성하세요</div>
+
+          <div class="f"><div class="lb">방문 일시</div>
+            <div class="inp filled">6/24 (화) 오후 2:00 <span class="cal">📅</span></div></div>
+          <div class="f"><div class="lb">시술 내용</div>
+            <div class="inp filled">기본 젤네일</div></div>
+          <div class="f"><div class="lb">소요 시간</div>
+            <div class="inp filled">약 90분</div></div>
+
+          <div class="toggle-row">
+            <div class="tr-main">
+              <span class="chk">✓</span>
+              <span class="tr-label">방문 안내 알림톡 보내기</span>
+              <span class="tr-when">당일 오전 9시</span>
+              <span class="tr-change">시점 변경</span>
+            </div>
+            <div class="tr-sub">예약 확정 시 발송이 자동 예약됩니다 · 발송 시점은 채널 기본 규칙을 따릅니다</div>
+          </div>
+
+          <div class="preview-lb">고객에게 보이는 미리보기 ↓</div>
+          <div class="booking">
+            <div class="booking-h">💅 시술 예약</div>
+            <div class="booking-b">
+              <div class="brow"><span class="k">방문 일시</span><span class="v">6/24(화) 14:00</span></div>
+              <div class="brow"><span class="k">시술 내용</span><span class="v">기본 젤네일</span></div>
+              <div class="brow"><span class="k">소요 시간</span><span class="v">약 90분</span></div>
+              <div class="bk-btn">예약하기</div>
+              <div class="bk-foot">예약 시 일정 안내가 알림톡으로 발송됩니다.</div>
+            </div>
+          </div>
+
+          <div class="send" style="margin-top:16px;">예약 카드 보내기</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- ===== STEP 3 : 전송 완료 ===== -->
+    <div class="panel">
+      <span class="panel-tag t3">STEP 3 · 전송 완료</span>
+      <div class="panel-title">카드 발송 → 고객 예약 → 자동 안내 예약됨</div>
+      <div class="ph">
+        <div class="status"><span>10:26</span><span class="rgt">●●●● 📶 🔋</span></div>
+        <div class="chead">
+          <div class="cbtn">‹</div>
+          <div class="cname">라이언 <small>▾</small></div>
+          <div class="cbtn">🔍</div>
+          <div class="cbtn">☰</div>
+        </div>
+        <div class="cbody" style="min-height:430px;">
+          <div class="day"><span>2026년 6월 19일</span></div>
+
+          <!-- operator sent the card -->
+          <div class="msg me"><div class="c2">
+            <div class="tline"><span class="tm">10:26</span>
+              <div class="booking inchat" style="background:#fff;">
+                <div class="booking-h">💅 시술 예약</div>
+                <div class="booking-b">
+                  <div class="brow"><span class="k">방문 일시</span><span class="v">6/24(화) 14:00</span></div>
+                  <div class="brow"><span class="k">시술 내용</span><span class="v">기본 젤네일</span></div>
+                  <div class="brow"><span class="k">소요 시간</span><span class="v">약 90분</span></div>
+                  <div class="bk-btn">예약하기</div>
+                </div>
+              </div>
+            </div></div></div>
+
+          <div class="sys"><span>고객이 예약 카드를 확인 중입니다…</span></div>
+
+          <!-- customer confirmed -->
+          <div class="sys"><span>✅ 라이언님이 예약을 확정했습니다 · 6/24(화) 14:00</span></div>
+
+          <div class="msg them">
+            <div class="av">👤</div>
+            <div class="c2"><div class="who">라이언 <span class="nf">(친구아님)</span></div>
+              <span class="bub">네 예약했어요! 그날 뵐게요 :)</span></div>
+          </div>
+
+          <div class="msg me"><div class="c2">
+            <div class="tline"><span class="tm">10:27</span><span class="bub">감사합니다! 당일 오전에 안내 한 번 더 드릴게요 😊</span></div></div></div>
+
+          <div class="sys"><span>📨 6/24(화) 09:00 [시술 예약 안내] 알림톡 발송 예약됨</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <b>핵심:</b> 사장님은 별도 발송 페이지(뿌리오식 5단계)로 나가지 않고, <b>대화 중인 그 채팅방에서 ⊕ → 예약 보내기</b>로 바로 카드를 만듭니다.
+    "누구에게 보낼지"를 고를 필요가 없습니다 — <b>대화 상대 = 예약 주인 = 발송 대상</b>이 이미 한 몸이기 때문입니다.<br><br>
+    알림톡은 사장님이 카드 작성 시 <b>체크 한 번(ON/OFF)</b>만 합니다. <b>"언제 보낼지"는 매번 고르지 않고</b> 채널에 한 번 정해둔 기본 규칙(예: 당일 오전 9시)을 따릅니다 — 매 예약마다 시점을 고르면 뿌리오식 마찰이 되살아나기 때문입니다.
+    이번 건만 다르게 보내고 싶을 때만 <b>[시점 변경]</b>으로 일회성 조정합니다.
+  </div>
+</div>
+</body>
+</html>
