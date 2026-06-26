@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "User Chat Alimtalk Mockup",
+  "schemaVersion": 1,
+  "description": "유저(고객) 뷰 목업: 카카오톡 1:1 채팅에서 네일샵 시술 예약 → 예약 확정 → 당일 받는 알림톡. 실제 카카오톡 UI 재현."
+}
+</script>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유저 뷰 · 네일샵 시술 예약 → 당일 알림톡</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    background: #eef1f5; color: #1a1a1a; padding: 34px 20px 60px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 24px; font-weight: 800; margin-bottom: 26px; }
+  h1 .bar { display:inline-block; width:42px; height:4px; background:#2fa8e8; border-radius:2px; vertical-align: middle; margin-right:10px;}
+
+  .grid { display:flex; gap:20px; align-items:flex-start; justify-content:center; flex-wrap:nowrap; }
+  .panel { flex:1 1 0; min-width:0; max-width:360px; }
+  .panel-tag {
+    display:inline-block; font-size:11.5px; font-weight:800; color:#fff;
+    padding:4px 11px; border-radius:20px; margin-bottom:11px;
+  }
+  .t-blue{ background:#2b6cf0;} .t-green{ background:#16a34a;} .t-yellow{ background:#e8a200;}
+
+  /* ===== phone frame (clean, borderless) ===== */
+  .phone{ width:100%; background:#fff; border-radius:22px; overflow:hidden; box-shadow:0 8px 26px rgba(40,55,90,.13); border:1px solid #e4e8ee; }
+  .stat{ display:flex; justify-content:space-between; align-items:center; padding:10px 20px 5px; font-size:14px; font-weight:700; color:#111; background:#fff;}
+  .stat .r{ letter-spacing:2px; font-size:12px;}
+
+  /* header */
+  .hd{ display:flex; align-items:center; padding:6px 14px 11px; background:#fff; gap:6px;}
+  .hd .back{ font-size:20px; color:#222; display:flex; align-items:center; gap:4px; white-space:nowrap;}
+  .hd .back small{ font-size:13px; font-weight:700; color:#222;}
+  .hd .ttl{ flex:1; text-align:center; }
+  .hd .ttl .nm{ font-size:16px; font-weight:700; color:#111; display:inline-flex; align-items:center; gap:5px; justify-content:center;}
+  .hd .ttl .badge{ width:17px; height:17px; border-radius:50%; background:#3b6ef0; color:#fff; font-size:10px; display:inline-flex; align-items:center; justify-content:center;}
+  .hd .ttl .sub2{ font-size:12px; color:#555; margin-top:1px;}
+  .hd .ic{ font-size:19px; color:#222; display:flex; gap:15px; white-space:nowrap;}
+
+  /* ====== 1:1 chat (blue-gray) ====== */
+  .chat{ background:#b3c4d5; padding:14px 12px 12px; min-height:430px; display:flex; flex-direction:column; gap:11px;}
+  .date{ align-self:center; background:rgba(0,0,0,.13); color:#fff; font-size:11px; padding:3px 13px; border-radius:13px; margin:2px 0;}
+
+  /* IMPORTANT: avatar aligns to TOP of bubble group */
+  .ln{ display:flex; gap:7px; align-items:flex-start; max-width:88%; }
+  .ln.them{ align-self:flex-start; }
+  .ln.me{ align-self:flex-end; flex-direction:row-reverse; }
+  .av{ width:38px; height:38px; border-radius:14px; flex:none; background:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 1px 2px rgba(0,0,0,.06); overflow:hidden;}
+  .av img{ width:100%; height:100%; object-fit:cover;}
+  .stack{ display:flex; flex-direction:column; }
+  .nick{ font-size:11.5px; color:#2c3a47; margin:1px 2px 4px; }
+  .bl{ display:flex; align-items:flex-end; gap:5px; }
+  .ln.me .bl{ flex-direction:row-reverse; }
+  .bub{ font-size:13.5px; line-height:1.5; padding:9px 12px; border-radius:16px; word-break:keep-all; max-width:210px;}
+  .them .bub{ background:#fff; color:#111; border-top-left-radius:4px;}
+  .me .bub{ background:#fae100; color:#111; border-top-right-radius:4px;}
+  .tt{ font-size:10px; color:#41505d; white-space:nowrap; margin-bottom:1px;}
+
+  /* booking card */
+  .bcard{ background:#fff; border-radius:13px; overflow:hidden; width:208px; box-shadow:0 1px 3px rgba(0,0,0,.1);}
+  .bcard .bh{ padding:11px 13px 9px; font-weight:700; font-size:13px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; gap:6px;}
+  .bcard .br{ display:flex; justify-content:space-between; padding:7px 13px; font-size:12.5px;}
+  .bcard .br .k{ color:#999;} .bcard .br .v{ font-weight:700;}
+  .bcard .bbtn{ margin:9px 13px 13px; background:#fae100; text-align:center; font-weight:800; font-size:13px; padding:11px; border-radius:9px;}
+
+  /* input bar */
+  .inp{ background:#fff; display:flex; align-items:center; gap:11px; padding:11px 15px; }
+  .inp .pl{ font-size:23px; color:#888;}
+  .inp .fld{ flex:1; font-size:13.5px; color:#aaa;}
+  .inp .ic2{ font-size:17px; color:#999; display:flex; gap:13px;}
+
+  /* ====== alimtalk (cream/blue-gray) ====== */
+  .topbar{ background:#fff; }
+  .addbar{ margin:8px 12px; background:#fff; border-radius:15px; display:flex; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  .addbar .seg{ flex:1; text-align:center; padding:13px 6px; font-size:14px; font-weight:600; color:#222; display:flex; align-items:center; justify-content:center; gap:7px;}
+  .addbar .divline{ width:1px; align-self:stretch; margin:11px 0; background:#e6e6e6;}
+  .addbar .chplus{ background:#3b3b3b; color:#fff; font-size:9.5px; font-weight:800; border-radius:6px; padding:3px 5px; line-height:1;}
+  .addbar .blockic{ font-size:17px; color:#444;}
+
+  .achat{ background:#dfe7ef; min-height:470px; padding:6px 0 0; display:flex; flex-direction:column;}
+  .achat-body{ padding:8px 12px 14px; display:flex; flex-direction:column; flex:1; position:relative;}
+
+  /* profile row: avatar TOP-aligned with the card, name beside, kakao badge far right */
+  .arow{ display:flex; align-items:flex-start; gap:8px; }
+  .arow .av{ width:38px; height:38px; }
+  .arow .acol{ display:flex; flex-direction:column; flex:1; min-width:0; }
+  .arow .nmline{ display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .arow .pname{ font-size:13.5px; color:#2c3a47; font-weight:500;}
+  .arow .kakao{ margin-left:auto; width:36px; height:36px; border-radius:50%; background:#2b2b2b; color:#fff; font-size:10.5px; font-weight:600; display:flex; align-items:center; justify-content:center; flex:none;}
+
+  .acard{ background:#fff; border-radius:6px 16px 16px 16px; overflow:hidden; width:100%; max-width:258px; box-shadow:0 1px 5px rgba(0,0,0,.12);}
+  .ahd{ background:#fae100; padding:12px 16px; font-weight:800; font-size:15.5px; color:#111;}
+  .abody{ padding:15px 16px 8px; font-size:13px; line-height:1.7; color:#111;}
+  .abody .at{ font-weight:700; margin-bottom:11px; }
+  .abody .seg2{ margin:12px 0;}
+  .abtn{ margin:10px 14px 14px; background:#f1f2f4; text-align:center; font-size:13.5px; color:#333; padding:13px; border-radius:9px; font-weight:600;}
+  .atime{ font-size:10.5px; color:#5a6675; margin:5px 0 0 46px;}
+
+  .homebtn{ position:absolute; top:6px; right:8px; width:44px; height:44px; border-radius:50%; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.13); display:flex; align-items:center; justify-content:center; font-size:19px;}
+
+  .menubar{ background:#fff; border-radius:20px; margin:0 12px 10px; text-align:center; padding:15px; font-size:14.5px; font-weight:600; color:#222; box-shadow:0 1px 4px rgba(0,0,0,.08); display:flex; align-items:center; justify-content:center; gap:8px;}
+
+  @media (max-width:980px){ .grid{ flex-wrap:wrap; } .panel{ max-width:360px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><span class="bar"></span>유저 뷰 · 네일샵 시술 예약 → 당일 알림톡</h1>
+
+  <div class="grid">
+
+    <!-- ===== (1) 1:1 채팅 + 예약 카드 ===== -->
+    <div class="panel">
+      <span class="panel-tag t-blue">① 시술 상담 → 예약하기</span>
+      <div class="phone">
+        <div class="stat"><span>9:34</span><span class="r">📶 🔋</span></div>
+        <div class="hd">
+          <span class="back">‹ <small>999+</small></span>
+          <span class="ttl"><span class="nm">라라네일</span></span>
+          <span class="ic">🔍 ☰</span>
+        </div>
+        <div class="chat">
+          <div class="date">2026년 6월 19일 금요일</div>
+
+          <div class="ln me">
+            <div class="bl"><span class="tt">오전 10:31</span><span class="bub">안녕하세요, 다음 주에 젤네일 받고 싶은데 예약 될까요?</span></div>
+          </div>
+
+          <div class="ln them">
+            <div class="av">💅</div>
+            <div class="stack">
+              <div class="nick">라라네일</div>
+              <div class="bl"><span class="bub">안녕하세요 고객님! 원하시는 컬러 있으실까요? 가능한 날짜·시간도 알려주세요 😊</span><span class="tt">10:32</span></div>
+            </div>
+          </div>
+
+          <div class="ln me">
+            <div class="bl"><span class="tt">10:33</span><span class="bub">기본 젤네일이요, 다음 주 화요일 오후 괜찮아요</span></div>
+          </div>
+
+          <div class="ln them">
+            <div class="av">💅</div>
+            <div class="stack">
+              <div class="bl"><span class="bub">그럼 아래 일정으로 예약 잡아드릴게요. 확인하고 예약하기 눌러주세요 👇</span><span class="tt">10:34</span></div>
+            </div>
+          </div>
+
+          <div class="ln them">
+            <div class="av" style="background:transparent; box-shadow:none;"></div>
+            <div class="stack">
+              <div class="bcard">
+                <div class="bh">💅 시술 예약</div>
+                <div class="br"><span class="k">방문 일시</span><span class="v">6/24(화) 오후 2:00</span></div>
+                <div class="br"><span class="k">시술 내용</span><span class="v">기본 젤네일</span></div>
+                <div class="br"><span class="k">소요 시간</span><span class="v">약 90분</span></div>
+                <div class="bbtn">예약하기</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="inp">
+          <span class="pl">＋</span>
+          <span class="fld">메시지 입력</span>
+          <span class="ic2">☺ # 🎙</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== (2) 예약 확정 ===== -->
+    <div class="panel">
+      <span class="panel-tag t-green">② 예약 확정</span>
+      <div class="phone">
+        <div class="stat"><span>9:34</span><span class="r">📶 🔋</span></div>
+        <div class="hd">
+          <span class="back">‹ <small>999+</small></span>
+          <span class="ttl"><span class="nm">라라네일</span></span>
+          <span class="ic">🔍 ☰</span>
+        </div>
+        <div class="chat" style="min-height:300px;">
+          <div class="ln me">
+            <div class="bl"><span class="tt">10:35</span><span class="bub" style="background:#eceef1; color:#7a828f; font-size:12.5px;">예약하기 ✓</span></div>
+          </div>
+
+          <div class="ln them">
+            <div class="av">💅</div>
+            <div class="stack">
+              <div class="nick">라라네일</div>
+              <div class="bl"><span class="bub">예약이 확정되었습니다! 😊<br>당일 오전에 다시 안내드릴게요.</span><span class="tt">10:35</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="inp">
+          <span class="pl">＋</span>
+          <span class="fld">메시지 입력</span>
+          <span class="ic2">☺ # 🎙</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== (3) 당일 알림톡 ===== -->
+    <div class="panel">
+      <span class="panel-tag t-yellow">③ 당일 받는 알림톡</span>
+      <div class="phone">
+        <div class="stat"><span>9:49</span><span class="r">📶 🔋</span></div>
+        <div class="hd">
+          <span class="back">‹ <small>999+</small></span>
+          <span class="ttl">
+            <span class="nm">라라네일</span>
+          </span>
+          <span class="ic">🔍 ☰</span>
+        </div>
+
+        <!-- 채널 추가 / 알림톡 차단 바 -->
+        <div class="topbar">
+          <div class="addbar">
+            <div class="seg"><span class="chplus">Ch+</span> 채널 추가</div>
+            <div class="divline"></div>
+            <div class="seg"><span class="blockic">⊘</span> 알림톡 차단</div>
+          </div>
+        </div>
+
+        <div class="achat">
+          <div class="achat-body">
+            <div class="homebtn">⌂</div>
+
+            <!-- 프로필 행: 아바타·채널명·노란카드가 한 행에서 top 정렬, kakao 배지는 우측 -->
+            <div class="arow">
+              <div class="av">💅</div>
+              <div class="acol">
+                <div class="nmline">
+                  <span class="pname">라라네일</span>
+                  <span class="kakao">kakao</span>
+                </div>
+                <div class="acard">
+                  <div class="ahd">알림톡 도착</div>
+                  <div class="abody">
+                    <div class="at">[라라네일] 시술 예약 안내</div>
+                    안녕하세요. 고객님!<br>오늘 예약하신 젤네일 시술 일정을 안내드립니다.
+                    <div class="seg2">
+                      ■ 방문 일시 : 2026.06.24(화) 14:00<br>
+                      ■ 시술 내용 : 기본 젤네일<br>
+                      ■ 소요 시간 : 약 90분
+                    </div>
+                    방문 전 기존 네일은 미리 제거해 주시면 시술이 원활합니다.<br>
+                    일정 변경이 필요하시면 채널로 회신해 주세요.<br><br>
+                    라라네일 올림
+                  </div>
+                  <div class="abtn">예약 내역 확인하기</div>
+                </div>
+                <div class="atime">오전 9:00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="menubar">⌂ 채널 홈 바로가기</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
