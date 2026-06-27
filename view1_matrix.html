@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>세그먼트 × 그룹 매트릭스</title><style>
+:root{color-scheme:light;}*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f4f5f7;color:#1a1a1a;padding:26px 20px;}
+.wrap{max-width:1480px;margin:0 auto;}
+h1{font-size:21px;font-weight:800;}
+.sub{font-size:13px;color:#6b7280;margin:4px 0 16px;}
+table.m{border-collapse:separate;border-spacing:8px;width:100%;}
+.suph{text-align:center;padding:7px;color:#fff;border-radius:9px;font-size:13px;font-weight:800;letter-spacing:.5px;}
+.sup-on{background:#1d4ed8;} .sup-off{background:#334155;}
+.colh{text-align:center;padding:11px 8px;color:#fff;border-radius:10px;font-size:12.5px;font-weight:700;vertical-align:top;}
+.colh small{display:block;font-weight:500;font-size:10px;opacity:.88;margin-top:4px;}
+.colh.tot{background:#0f172a;}
+.rowh{width:66px;text-align:center;color:#fff;background:#1e293b;border-radius:10px;font-weight:800;font-size:14px;vertical-align:middle;padding:8px 4px;}
+.rowh small{display:block;font-size:9px;font-weight:500;opacity:.85;margin-top:4px;}
+.rowh.tot{background:#0f172a;}
+.c{position:relative;background:#fff;border-radius:11px;padding:11px 12px;box-shadow:0 1px 3px rgba(0,0,0,.07);vertical-align:top;min-width:158px;border:1px solid #eceef1;}
+.cid{position:absolute;top:7px;right:9px;font-size:10px;font-weight:800;color:#cbd2db;letter-spacing:.5px;z-index:2;}
+.chwrap{position:relative;border-radius:7px;overflow:hidden;margin:-2px -4px 6px;padding:4px 6px;}
+.barbg{position:absolute;left:0;top:0;bottom:0;z-index:0;}
+.ch{position:relative;z-index:1;font-size:21px;font-weight:800;color:#1e293b;letter-spacing:-.3px;}
+.ch small{font-size:9px;color:#94a3b8;font-weight:600;margin-left:2px;}
+.mini{width:100%;font-size:11px;border-collapse:collapse;}
+.mini td{padding:2.5px 0;border-top:1px solid #eef1f4;vertical-align:top;}
+.mini td:last-child{text-align:right;font-weight:700;color:#475569;font-variant-numeric:tabular-nums;}
+.mini td:first-child{color:#9ca3af;white-space:nowrap;padding-right:6px;}
+.sub2{font-weight:500;color:#94a3b8;}
+.rev{color:#1e293b !important;}
+.sumcell{background:#eef2ff !important;border-color:#dbe3f7;}
+.sumcol{border-left:2px solid #cfd8e8;}
+.sumrowtop{border-top:2px solid #cfd8e8;}
+.sumcell .ch{color:#1e3a8a;}
+.sumtag{font-size:11px;font-weight:800;color:#3b4a66;margin-bottom:6px;}
+.grandcell{background:#1e293b !important;border-color:#0f172a;}
+.grandcell .ch{color:#fff;}.grandcell .sumtag{color:#94a3b8;}
+.grandcell .mini td{border-color:#334155;}
+.grandcell .mini td:first-child{color:#94a3b8;}.grandcell .mini td:last-child{color:#e2e8f0;}
+.grandcell .sub2{color:#94a3b8;}.grandcell .rev{color:#fff !important;}
+.legend{margin-top:16px;font-size:11.5px;color:#6b7280;display:flex;gap:18px;flex-wrap:wrap;align-items:center;}
+.legend .dot{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle;}
+</style></head><body><div class="wrap">
+<h1>세그먼트 × 그룹 매트릭스 <span style="font-weight:500;color:#6b7280;font-size:14px;">(2026년 5월)</span></h1>
+<div class="sub">알림톡 O(①②) · 알림톡 X(③④) · 오른쪽=세그먼트 합계, 아래=그룹 합계 (평균친구·채널메시지%는 채널수 가중평균) · 총 172만 채널 / 172.1억</div>
+<table class="m"><tr><td style="width:66px"></td><td class="suph sup-on" colspan="2">알림톡 O</td><td class="suph sup-off" colspan="2">알림톡 X</td><td class="suph" style="background:#0f172a">행 합계</td></tr><tr><td style="width:66px"></td><td class="colh" style="background:#2563eb">① 월렛 O</td><td class="colh" style="background:#60a5fa">② 월렛 X</td><td class="colh" style="background:#475569">③ 월렛 O</td><td class="colh" style="background:#94a3b8">④ 월렛 X</td><td class="colh tot">세그먼트<br>합계</td></tr><tr><td class="rowh">A<small>비즈O<br>채팅활성</small></td><td class="c" style="background:#f3f7fe"><span class="cid">A1</span>
+      <div class="chwrap"><div class="barbg" style="width:18.6%;background:#c7dbf7"></div>
+      <div class="ch">19,926<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">3.4억<br><span class="sub2">10,320만건</span></td></tr><tr><td>채널당 발송</td><td>5,179건</td></tr>
+      <tr><td>평균친구</td><td>5,887</td></tr>
+      <tr><td>중앙값</td><td>1,159</td></tr>
+      <tr><td>채널메시지</td><td>30.7%</td></tr></table></td><td class="c" style="background:#f6f9fe"><span class="cid">A2</span>
+      <div class="chwrap"><div class="barbg" style="width:17.4%;background:#d8e7fb"></div>
+      <div class="ch">17,526<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">2.3억<br><span class="sub2">6,979만건</span></td></tr><tr><td>채널당 발송</td><td>3,982건</td></tr>
+      <tr><td>평균친구</td><td>2,248</td></tr>
+      <tr><td>중앙값</td><td>221</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c" style="background:#f7f8fa"><span class="cid">A3</span>
+      <div class="chwrap"><div class="barbg" style="width:26.3%;background:#d3d9e0"></div>
+      <div class="ch">39,690<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>1,673</td></tr>
+      <tr><td>중앙값</td><td>377</td></tr>
+      <tr><td>채널메시지</td><td>24.9%</td></tr></table></td><td class="c" style="background:#f9fafb"><span class="cid">A4</span>
+      <div class="chwrap"><div class="barbg" style="width:39.6%;background:#e2e6eb"></div>
+      <div class="ch">90,226<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>528</td></tr>
+      <tr><td>중앙값</td><td>91</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumcol">
+      <div class="sumtag">A 합계</div>
+      <div class="ch" style="font-size:19px;">167,368<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">5.7억<br><span class="sub2">17,299만건</span></td></tr><tr><td>채널당 발송</td><td>1,034건</td></tr>
+      <tr><td>평균친구</td><td>1,618</td></tr>
+      <tr><td>중앙값</td><td>185</td></tr>
+      <tr><td>채널메시지</td><td>9.6%</td></tr></table></td></tr><tr><td class="rowh">B<small>비즈X<br>채팅활성</small></td><td class="c" style="background:#f3f7fe"><span class="cid">B1</span>
+      <div class="chwrap"><div class="barbg" style="width:4.0%;background:#c7dbf7"></div>
+      <div class="ch">552<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">0.1억<br><span class="sub2">304만건</span></td></tr><tr><td>채널당 발송</td><td>5,507건</td></tr>
+      <tr><td>평균친구</td><td>4,788</td></tr>
+      <tr><td>중앙값</td><td>1,222</td></tr>
+      <tr><td>채널메시지</td><td>23.0%</td></tr></table></td><td class="c" style="background:#f6f9fe"><span class="cid">B2</span>
+      <div class="chwrap"><div class="barbg" style="width:4.0%;background:#d8e7fb"></div>
+      <div class="ch">506<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>1,815</td></tr>
+      <tr><td>중앙값</td><td>474</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c" style="background:#f7f8fa"><span class="cid">B3</span>
+      <div class="chwrap"><div class="barbg" style="width:15.5%;background:#d3d9e0"></div>
+      <div class="ch">13,891<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>1,354</td></tr>
+      <tr><td>중앙값</td><td>441</td></tr>
+      <tr><td>채널메시지</td><td>27.9%</td></tr></table></td><td class="c" style="background:#f9fafb"><span class="cid">B4</span>
+      <div class="chwrap"><div class="barbg" style="width:32.5%;background:#e2e6eb"></div>
+      <div class="ch">60,687<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>469</td></tr>
+      <tr><td>중앙값</td><td>107</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumcol">
+      <div class="sumtag">B 합계</div>
+      <div class="ch" style="font-size:19px;">75,636<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">0.1억<br><span class="sub2">399만건</span></td></tr><tr><td>채널당 발송</td><td>53건</td></tr>
+      <tr><td>평균친구</td><td>672</td></tr>
+      <tr><td>중앙값</td><td>142</td></tr>
+      <tr><td>채널메시지</td><td>5.3%</td></tr></table></td></tr><tr><td class="rowh">C<small>비즈O<br>채팅ON비활성</small></td><td class="c" style="background:#f3f7fe"><span class="cid">C1</span>
+      <div class="chwrap"><div class="barbg" style="width:12.3%;background:#c7dbf7"></div>
+      <div class="ch">8,719<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">12.5억<br><span class="sub2">37,753만건</span></td></tr><tr><td>채널당 발송</td><td>43,300건</td></tr>
+      <tr><td>평균친구</td><td>16,957</td></tr>
+      <tr><td>중앙값</td><td>717</td></tr>
+      <tr><td>채널메시지</td><td>18.5%</td></tr></table></td><td class="c" style="background:#f6f9fe"><span class="cid">C2</span>
+      <div class="chwrap"><div class="barbg" style="width:15.2%;background:#d8e7fb"></div>
+      <div class="ch">13,267<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">3.4억<br><span class="sub2">10,310만건</span></td></tr><tr><td>채널당 발송</td><td>7,771건</td></tr>
+      <tr><td>평균친구</td><td>4,686</td></tr>
+      <tr><td>중앙값</td><td>51</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c" style="background:#f7f8fa"><span class="cid">C3</span>
+      <div class="chwrap"><div class="barbg" style="width:28.6%;background:#d3d9e0"></div>
+      <div class="ch">46,963<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>873</td></tr>
+      <tr><td>중앙값</td><td>62</td></tr>
+      <tr><td>채널메시지</td><td>5.2%</td></tr></table></td><td class="c" style="background:#f9fafb"><span class="cid">C4</span>
+      <div class="chwrap"><div class="barbg" style="width:54.8%;background:#e2e6eb"></div>
+      <div class="ch">172,961<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>239</td></tr>
+      <tr><td>중앙값</td><td>8</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumcol">
+      <div class="sumtag">C 합계</div>
+      <div class="ch" style="font-size:19px;">241,910<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">15.9억<br><span class="sub2">48,063만건</span></td></tr><tr><td>채널당 발송</td><td>1,987건</td></tr>
+      <tr><td>평균친구</td><td>1,209</td></tr>
+      <tr><td>중앙값</td><td>13</td></tr>
+      <tr><td>채널메시지</td><td>1.7%</td></tr></table></td></tr><tr><td class="rowh">D<small>비즈X<br>채팅ON비활성</small></td><td class="c" style="background:#f3f7fe"><span class="cid">D1</span>
+      <div class="chwrap"><div class="barbg" style="width:4.0%;background:#c7dbf7"></div>
+      <div class="ch">378<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>3,799</td></tr>
+      <tr><td>중앙값</td><td>733</td></tr>
+      <tr><td>채널메시지</td><td>7.1%</td></tr></table></td><td class="c" style="background:#f6f9fe"><span class="cid">D2</span>
+      <div class="chwrap"><div class="barbg" style="width:4.0%;background:#d8e7fb"></div>
+      <div class="ch">848<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>1,083</td></tr>
+      <tr><td>중앙값</td><td>180</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c" style="background:#f7f8fa"><span class="cid">D3</span>
+      <div class="chwrap"><div class="barbg" style="width:28.0%;background:#d3d9e0"></div>
+      <div class="ch">45,007<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>456</td></tr>
+      <tr><td>중앙값</td><td>74</td></tr>
+      <tr><td>채널메시지</td><td>3.7%</td></tr></table></td><td class="c" style="background:#f9fafb"><span class="cid">D4</span>
+      <div class="chwrap"><div class="barbg" style="width:63.4%;background:#e2e6eb"></div>
+      <div class="ch">231,160<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>103</td></tr>
+      <tr><td>중앙값</td><td>7</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumcol">
+      <div class="sumtag">D 합계</div>
+      <div class="ch" style="font-size:19px;">277,393<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>7건</td></tr>
+      <tr><td>평균친구</td><td>168</td></tr>
+      <tr><td>중앙값</td><td>11</td></tr>
+      <tr><td>채널메시지</td><td>0.6%</td></tr></table></td></tr><tr><td class="rowh">E<small>비즈O<br>채팅OFF</small></td><td class="c" style="background:#f3f7fe"><span class="cid">E1</span>
+      <div class="chwrap"><div class="barbg" style="width:11.5%;background:#c7dbf7"></div>
+      <div class="ch">7,612<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">61.6억<br><span class="sub2">185,589만건</span></td></tr><tr><td>채널당 발송</td><td>243,811건</td></tr>
+      <tr><td>평균친구</td><td>69,378</td></tr>
+      <tr><td>중앙값</td><td>3,112</td></tr>
+      <tr><td>채널메시지</td><td>28.7%</td></tr></table></td><td class="c" style="background:#f6f9fe"><span class="cid">E2</span>
+      <div class="chwrap"><div class="barbg" style="width:19.8%;background:#d8e7fb"></div>
+      <div class="ch">22,619<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">86.9억<br><span class="sub2">261,848만건</span></td></tr><tr><td>채널당 발송</td><td>115,765건</td></tr>
+      <tr><td>평균친구</td><td>21,604</td></tr>
+      <tr><td>중앙값</td><td>165</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c" style="background:#f7f8fa"><span class="cid">E3</span>
+      <div class="chwrap"><div class="barbg" style="width:19.1%;background:#d3d9e0"></div>
+      <div class="ch">21,004<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>10,119</td></tr>
+      <tr><td>중앙값</td><td>202</td></tr>
+      <tr><td>채널메시지</td><td>17.9%</td></tr></table></td><td class="c" style="background:#f9fafb"><span class="cid">E4</span>
+      <div class="chwrap"><div class="barbg" style="width:71.8%;background:#e2e6eb"></div>
+      <div class="ch">297,182<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>927</td></tr>
+      <tr><td>중앙값</td><td>0</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumcol">
+      <div class="sumtag">E 합계</div>
+      <div class="ch" style="font-size:19px;">348,417<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">148.5억<br><span class="sub2">447,437만건</span></td></tr><tr><td>채널당 발송</td><td>12,842건</td></tr>
+      <tr><td>평균친구</td><td>4,319</td></tr>
+      <tr><td>중앙값</td><td>0</td></tr>
+      <tr><td>채널메시지</td><td>1.7%</td></tr></table></td></tr><tr><td class="rowh">F<small>비즈X<br>채팅OFF</small></td><td class="c" style="background:#f3f7fe"><span class="cid">F1</span>
+      <div class="chwrap"><div class="barbg" style="width:4.0%;background:#c7dbf7"></div>
+      <div class="ch">378<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">0.3억<br><span class="sub2">1,028만건</span></td></tr><tr><td>채널당 발송</td><td>27,196건</td></tr>
+      <tr><td>평균친구</td><td>14,568</td></tr>
+      <tr><td>중앙값</td><td>1,836</td></tr>
+      <tr><td>채널메시지</td><td>16.1%</td></tr></table></td><td class="c" style="background:#f6f9fe"><span class="cid">F2</span>
+      <div class="chwrap"><div class="barbg" style="width:5.3%;background:#d8e7fb"></div>
+      <div class="ch">1,609<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">1.3억<br><span class="sub2">3,861만건</span></td></tr><tr><td>채널당 발송</td><td>23,996건</td></tr>
+      <tr><td>평균친구</td><td>6,505</td></tr>
+      <tr><td>중앙값</td><td>357</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c" style="background:#f7f8fa"><span class="cid">F3</span>
+      <div class="chwrap"><div class="barbg" style="width:23.5%;background:#d3d9e0"></div>
+      <div class="ch">31,800<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>601</td></tr>
+      <tr><td>중앙값</td><td>1</td></tr>
+      <tr><td>채널메시지</td><td>4.3%</td></tr></table></td><td class="c" style="background:#f9fafb"><span class="cid">F4</span>
+      <div class="chwrap"><div class="barbg" style="width:100.0%;background:#e2e6eb"></div>
+      <div class="ch">575,679<small>채널</small></div></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>52</td></tr>
+      <tr><td>중앙값</td><td>0</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumcol">
+      <div class="sumtag">F 합계</div>
+      <div class="ch" style="font-size:19px;">609,466<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">1.6억<br><span class="sub2">4,889만건</span></td></tr><tr><td>채널당 발송</td><td>80건</td></tr>
+      <tr><td>평균친구</td><td>107</td></tr>
+      <tr><td>중앙값</td><td>0</td></tr>
+      <tr><td>채널메시지</td><td>0.2%</td></tr></table></td></tr><tr><td class="rowh tot">그룹<br>합계</td><td class="c sumcell sumrowtop">
+      <div class="sumtag">① 합계</div>
+      <div class="ch" style="font-size:19px;">37,565<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">77.9억<br><span class="sub2">235,084만건</span></td></tr><tr><td>채널당 발송</td><td>62,581건</td></tr>
+      <tr><td>평균친구</td><td>21,372</td></tr>
+      <tr><td>중앙값</td><td>1,233</td></tr>
+      <tr><td>채널메시지</td><td>27.0%</td></tr></table></td><td class="c sumcell sumrowtop">
+      <div class="sumtag">② 합계</div>
+      <div class="ch" style="font-size:19px;">56,375<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">93.9억<br><span class="sub2">283,188만건</span></td></tr><tr><td>채널당 발송</td><td>50,233건</td></tr>
+      <tr><td>평균친구</td><td>10,688</td></tr>
+      <tr><td>중앙값</td><td>146</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c sumcell sumrowtop">
+      <div class="sumtag">③ 합계</div>
+      <div class="ch" style="font-size:19px;">198,355<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>1,908</td></tr>
+      <tr><td>중앙값</td><td>112</td></tr>
+      <tr><td>채널메시지</td><td>11.6%</td></tr></table></td><td class="c sumcell sumrowtop">
+      <div class="sumtag">④ 합계</div>
+      <div class="ch" style="font-size:19px;">1,427,895<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td>–<br><span class="sub2">&nbsp;</span></td></tr><tr><td>채널당 발송</td><td>–</td></tr>
+      <tr><td>평균친구</td><td>313</td></tr>
+      <tr><td>중앙값</td><td>1</td></tr>
+      <tr><td>채널메시지</td><td>0.0%</td></tr></table></td><td class="c grandcell sumcol sumrowtop">
+      <div class="sumtag">총 합계</div>
+      <div class="ch" style="font-size:19px;">1,720,190<small>채널</small></div>
+      <table class="mini"><tr><td>매출 (발송량)</td><td class="rev">171.8억<br><span class="sub2">518,272만건</span></td></tr><tr><td>채널당 발송</td><td>3,013건</td></tr>
+      <tr><td>평균친구</td><td>1,297</td></tr>
+      <tr><td>중앙값</td><td>2</td></tr>
+      <tr><td>채널메시지</td><td>1.9%</td></tr></table></td></tr></table><div class="legend"><span><i class="dot" style="background:#1d4ed8"></i>알림톡 O (①②)</span><span><i class="dot" style="background:#334155"></i>알림톡 X (③④)</span></div></div></body></html>
