@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파트너센터 고객 관리 (목업)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; background: #f0f2f5; color: #1a1a1a; }
+
+/* 상단 네비 */
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  gap: 32px;
+}
+.topbar .logo { font-weight: 800; font-size: 16px; color: #1a1a1a; }
+.topbar .logo span { color: #ffcd00; }
+.topbar nav { display: flex; gap: 24px; }
+.topbar nav a { font-size: 14px; color: #6b7280; text-decoration: none; padding: 4px 0; }
+.topbar nav a.active { color: #1a1a1a; font-weight: 700; border-bottom: 2px solid #1a1a1a; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+/* 페이지 타이틀 */
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 800; }
+.page-header p { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+/* KPI 카드 */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.kpi-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.kpi-card .label { font-size: 12px; color: #9ca3af; margin-bottom: 8px; }
+.kpi-card .value { font-size: 26px; font-weight: 800; color: #1a1a1a; }
+.kpi-card .sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+.kpi-card .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-top: 6px; font-weight: 600; }
+.badge-green { background: #dcfce7; color: #16a34a; }
+.badge-yellow { background: #fef9c3; color: #ca8a04; }
+.badge-blue { background: #dbeafe; color: #2563eb; }
+
+/* 필터 바 */
+.filter-bar {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.filter-bar input {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  outline: none;
+}
+.filter-bar select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+}
+.btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary { background: #1a1a1a; color: #fff; }
+.btn-yellow { background: #ffcd00; color: #1a1a1a; }
+.btn-outline { background: #fff; color: #374151; border: 1px solid #d1d5db; }
+
+/* 테이블 */
+.table-wrap {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+.table-top {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f3f4f6;
+}
+.table-top h2 { font-size: 15px; font-weight: 700; }
+.table-top .count { font-size: 13px; color: #6b7280; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: #f9fafb; }
+thead th { padding: 12px 16px; font-size: 12px; color: #6b7280; font-weight: 600; text-align: left; border-bottom: 1px solid #f3f4f6; }
+tbody tr { border-bottom: 1px solid #f9fafb; transition: background .1s; }
+tbody tr:hover { background: #f9fafb; }
+tbody td { padding: 14px 16px; font-size: 13px; }
+
+/* 유입경로 뱃지 */
+.source-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.source-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.s-lite { background: #dbeafe; color: #1d4ed8; }
+.s-chat { background: #f0fdf4; color: #15803d; }
+.s-coupon { background: #fef3c7; color: #b45309; }
+.s-kacsam { background: #fae8ff; color: #7e22ce; }
+
+/* 고객명 */
+.customer-name { font-weight: 600; font-size: 13px; }
+.customer-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+/* 마지막 접점 */
+.last-touch { font-size: 12px; color: #374151; }
+.last-touch .ago { color: #9ca3af; font-size: 11px; }
+
+/* 액션 버튼 */
+.action-btns { display: flex; gap: 6px; }
+.action-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  border: none; cursor: pointer;
+}
+.action-btn-msg { background: #ffcd00; color: #1a1a1a; }
+.action-btn-detail { background: #f3f4f6; color: #374151; }
+
+/* 하단 안내 */
+.coming-soon {
+  margin-top: 16px;
+  background: #fff7ed;
+  border: 1px dashed #fed7aa;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.coming-soon .icon { font-size: 24px; }
+.coming-soon .text h3 { font-size: 14px; font-weight: 700; color: #c2410c; }
+.coming-soon .text p { font-size: 12px; color: #9a3412; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">카카오<span>비즈니스</span> 파트너센터</div>
+  <nav>
+    <a href="#">채널 홈</a>
+    <a href="#">채널메시지</a>
+    <a href="#">알림톡</a>
+    <a href="#" class="active">고객 관리</a>
+    <a href="#">통계</a>
+  </nav>
+</div>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>고객 관리</h1>
+    <p>알림톡·채팅·쿠폰 등 모든 접점의 고객을 한 곳에서 관리하세요.</p>
+  </div>
+
+  <!-- KPI 카드 -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="label">전체 고객수</div>
+      <div class="value">1,247</div>
+      <div class="sub">이번 달 +83명</div>
+      <span class="badge badge-green">↑ 7.1%</span>
+    </div>
+    <div class="kpi-card">
+      <div class="label">알림톡 발송 유입</div>
+      <div class="value">612</div>
+      <div class="sub">전화번호 보유 고객</div>
+      <span class="badge badge-blue">라이트</span>
+    </div>
+    <div class="kpi-card">
+      <div class="label">채팅 유입</div>
+      <div class="value">389</div>
+      <div class="sub">전화번호 없이 연결</div>
+      <span class="badge badge-green">플러스</span>
+    </div>
+    <div class="kpi-card">
+      <div class="label">쿠폰/기타 유입</div>
+      <div class="value">246</div>
+      <div class="sub">쿠폰 다운로드 고객</div>
+      <span class="badge badge-yellow">쿠폰</span>
+    </div>
+  </div>
+
+  <!-- 필터 바 -->
+  <div class="filter-bar">
+    <input type="text" placeholder="고객명, 닉네임 검색">
+    <select>
+      <option>유입 경로 전체</option>
+      <option>알림톡 (라이트)</option>
+      <option>채팅 (플러스)</option>
+      <option>쿠폰</option>
+      <option>카상매</option>
+    </select>
+    <select>
+      <option>방문 빈도 전체</option>
+      <option>3회 이상 (단골)</option>
+      <option>1~2회</option>
+      <option>신규</option>
+    </select>
+    <select>
+      <option>마지막 접점</option>
+      <option>1주일 이내</option>
+      <option>1개월 이내</option>
+      <option>3개월 이상</option>
+    </select>
+    <button class="btn btn-yellow">알림톡 보내기</button>
+    <button class="btn btn-outline">내보내기</button>
+  </div>
+
+  <!-- 테이블 -->
+  <div class="table-wrap">
+    <div class="table-top">
+      <h2>고객 목록</h2>
+      <span class="count">총 1,247명</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>고객</th>
+          <th>유입 경로</th>
+          <th>방문 횟수</th>
+          <th>마지막 접점</th>
+          <th>친구 여부</th>
+          <th>액션</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>
+            <div class="customer-name">노*희</div>
+            <div class="customer-sub">010-****-3842</div>
+          </td>
+          <td>
+            <div class="source-badges">
+              <span class="source-badge s-lite">📩 알림톡</span>
+              <span class="source-badge s-chat">💬 채팅</span>
+            </div>
+          </td>
+          <td>8회</td>
+          <td>
+            <div class="last-touch">예약 확인 알림톡</div>
+            <div class="last-touch ago">2일 전</div>
+          </td>
+          <td><span class="badge badge-green">친구 O</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn action-btn-msg">알림톡</button>
+              <button class="action-btn action-btn-detail">상세</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>
+            <div class="customer-name">카카오사용자_5k2m</div>
+            <div class="customer-sub">전화번호 없음</div>
+          </td>
+          <td>
+            <div class="source-badges">
+              <span class="source-badge s-chat">💬 채팅</span>
+              <span class="source-badge s-coupon">🎟 쿠폰</span>
+            </div>
+          </td>
+          <td>3회</td>
+          <td>
+            <div class="last-touch">쿠폰 다운로드</div>
+            <div class="last-touch ago">5일 전</div>
+          </td>
+          <td><span class="badge badge-yellow">친구 X</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn action-btn-msg">알림톡</button>
+              <button class="action-btn action-btn-detail">상세</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>
+            <div class="customer-name">이*진</div>
+            <div class="customer-sub">010-****-7201</div>
+          </td>
+          <td>
+            <div class="source-badges">
+              <span class="source-badge s-lite">📩 알림톡</span>
+            </div>
+          </td>
+          <td>1회</td>
+          <td>
+            <div class="last-touch">영업안내 알림톡 수신</div>
+            <div class="last-touch ago">1주일 전</div>
+          </td>
+          <td><span class="badge badge-yellow">친구 X</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn action-btn-msg">알림톡</button>
+              <button class="action-btn action-btn-detail">상세</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>
+            <div class="customer-name">카카오사용자_9xpq</div>
+            <div class="customer-sub">전화번호 없음</div>
+          </td>
+          <td>
+            <div class="source-badges">
+              <span class="source-badge s-kacsam">🤖 카상매</span>
+              <span class="source-badge s-chat">💬 채팅</span>
+            </div>
+          </td>
+          <td>2회</td>
+          <td>
+            <div class="last-touch">예약 문의 (카상매 응대)</div>
+            <div class="last-touch ago">3일 전</div>
+          </td>
+          <td><span class="badge badge-green">친구 O</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn action-btn-msg">알림톡</button>
+              <button class="action-btn action-btn-detail">상세</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td>
+            <div class="customer-name">박*수</div>
+            <div class="customer-sub">010-****-4419</div>
+          </td>
+          <td>
+            <div class="source-badges">
+              <span class="source-badge s-coupon">🎟 쿠폰</span>
+            </div>
+          </td>
+          <td>1회</td>
+          <td>
+            <div class="last-touch">쿠폰 만료 알림 발송</div>
+            <div class="last-touch ago">오늘</div>
+          </td>
+          <td><span class="badge badge-yellow">친구 X</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn action-btn-msg">알림톡</button>
+              <button class="action-btn action-btn-detail">상세</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 준비 중 안내 -->
+  <div class="coming-soon">
+    <div class="icon">🚧</div>
+    <div class="text">
+      <h3>고객 통합 관리 기능은 준비 중입니다</h3>
+      <p>알림톡·채팅·쿠폰·카상매 등 모든 접점의 고객을 하나로 통합하는 기능을 개발 중입니다. 법무·개보·데이터팀 협의 진행 중.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
