@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알림톡 in 카카오비즈니스 파트너센터</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#f5f6f8;color:#1a1a1a;font-size:14px;line-height:1.6;}
+.wrap{max-width:960px;margin:0 auto;padding:32px 24px;}
+
+/* 타이틀 */
+.doc-title{font-size:28px;font-weight:900;margin-bottom:4px;}
+.doc-sub{font-size:14px;color:#6b7280;margin-bottom:24px;}
+
+/* 인트로 박스 */
+.intro{background:#fff8d6;border-left:4px solid #ffcd00;border-radius:8px;padding:20px 24px;margin-bottom:32px;}
+.intro h3{font-size:15px;font-weight:800;margin-bottom:12px;}
+.intro .steps{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;}
+.step{background:#fff;border-radius:8px;padding:12px 16px;flex:1;min-width:200px;border:1px solid #f0e68c;}
+.step .num{font-size:11px;font-weight:800;color:#b45309;margin-bottom:4px;}
+.step .label{font-size:13px;font-weight:700;}
+.step .desc{font-size:12px;color:#6b7280;margin-top:2px;}
+.note{font-size:12px;color:#92400e;margin-top:12px;}
+
+/* 챕터 */
+.chapter{background:#fff;border-radius:12px;padding:28px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.chapter-title{font-size:20px;font-weight:800;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #f3f4f6;}
+.section-title{font-size:15px;font-weight:700;margin:20px 0 10px;color:#1e293b;}
+.section-title:first-child{margin-top:0;}
+
+/* 표 */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+th{background:#f8fafc;padding:10px 12px;text-align:left;font-weight:700;border:1px solid #e2e8f0;white-space:nowrap;}
+td{padding:10px 12px;border:1px solid #e2e8f0;vertical-align:top;}
+tr:hover td{background:#fafafa;}
+.highlight-row td{background:#eff6ff;font-weight:700;}
+
+/* 뱃지 */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-red{background:#fee2e2;color:#b91c1c;}
+.badge-yellow{background:#fef9c3;color:#b45309;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-gray{background:#f3f4f6;color:#374151;}
+
+/* 인포 박스 */
+.info-box{background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px;padding:14px 16px;margin:12px 0;font-size:13px;}
+.warn-box{background:#fff7ed;border-left:4px solid #f97316;border-radius:6px;padding:14px 16px;margin:12px 0;font-size:13px;}
+.warn-box .warn-title{font-weight:800;color:#c2410c;margin-bottom:8px;}
+.note-box{background:#f0fdf4;border-left:4px solid #22c55e;border-radius:6px;padding:14px 16px;margin:12px 0;font-size:13px;}
+
+/* 3열 카드 */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;}
+.card{background:#f8fafc;border-radius:8px;padding:14px;border:1px solid #e2e8f0;}
+.card .card-title{font-weight:700;font-size:13px;margin-bottom:6px;}
+.card .card-body{font-size:12px;color:#475569;}
+
+/* 결론 표 */
+.conclusion-table th:first-child{width:120px;}
+.star{color:#f59e0b;font-size:16px;}
+
+/* 리스트 */
+ul.clean{list-style:none;padding:0;}
+ul.clean li{padding:6px 0;border-bottom:1px solid #f3f4f6;font-size:13px;}
+ul.clean li:last-child{border:none;}
+ul.clean li::before{content:"→ ";color:#6b7280;}
+
+/* 토글 */
+details{margin:8px 0;}
+details summary{cursor:pointer;font-size:13px;font-weight:600;color:#2563eb;padding:8px 0;user-select:none;}
+details summary:hover{color:#1d4ed8;}
+details .toggle-content{background:#f8fafc;border-radius:6px;padding:14px;margin-top:6px;font-size:13px;}
+
+/* 링크 */
+a{color:#2563eb;text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* 섹션 내 소제목 */
+.sub-label{font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 6px;}
+
+p{margin:8px 0;font-size:13px;}
+strong{font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 타이틀 -->
+<div class="doc-title">알림톡 in 카카오비즈니스 파트너센터</div>
+<div class="doc-sub">부제 : 카비센 안에서 알림톡을 어떻게 풀어낼 것인가, 알림톡으로 시작되는 crm사업 고민</div>
+
+<!-- 인트로 -->
+<div class="intro">
+  <h3>이 문서는 무엇을 이야기하는가</h3>
+  <p>26.05 기준 카카오 채널 172만개 중 메시지를 보낸 채널은 3.3만개 — <strong>전체의 1.9% (비즈채널 기준 4.4%)</strong>, 알림톡을 집행하는 채널은 9.4만개 — <strong>전체의 5.5% (비즈채널 기준 12.4%)</strong>.<br/>
+  대부분의 소상공인 친구를 모으지 못하고, 채널을 1:1 채팅 수준으로만 활용, 알림톡을 보내고 싶으면 딜러사를 통해 집행한다.<br/>
+  이걸 카카오 생태계 안으로 끌어들일 수 있다면?</p>
+  <p style="margin-top:12px;font-weight:700;">우리가 하려는 것 — 3단계</p>
+  <div class="steps">
+    <div class="step">
+      <div class="num">① Base</div>
+      <div class="label">알림톡 라이트</div>
+      <div class="desc">일단 보내게 한다 (직접매출)</div>
+    </div>
+    <div class="step">
+      <div class="num">② Plus</div>
+      <div class="label">알림톡 +</div>
+      <div class="desc">채팅에서 연결하고 (채팅·채널 활성화), 채널 메시지로 확장한다.</div>
+    </div>
+    <div class="step">
+      <div class="num">③ 장기</div>
+      <div class="label">CRM 연결</div>
+      <div class="desc">쌓인 데이터로 재접촉, 생태계 확산 (장기자산)</div>
+    </div>
+  </div>
+  <p class="note">①②는 지금 할 수 있는 것 + 매출 추정 / ③은 협의가 필요한 장기적 방향성</p>
+</div>
+
+<!-- 1장 -->
+<div class="chapter">
+  <div class="chapter-title">1. 알림톡 라이트 — 직접매출, 사업적 의미</div>
+
+  <div class="section-title">1-1. 알림톡 라이트란</div>
+  <p>딜러사·API 연동 없이, 카카오비즈니스 파트너센터에서 소상공인이 직접 고객에게 알림톡을 보낼 수 있는 웹 발송기.</p>
+  <table>
+    <tr><th>구분</th><th>딜러사 웹발송기 (뿌리오 등)</th><th>알림톡 라이트</th></tr>
+    <tr><td><strong>주체</strong></td><td>외부 딜러사 (뿌리오 등)</td><td>각 DSP가 모듈 적용</td></tr>
+    <tr><td><strong>발송 방식</strong></td><td>웹사이트에서 엑셀/주소록 업로드, API 연동</td><td>사이트에서 엑셀 주소록 업로드 → 공용 템플릿 선택 → 발송</td></tr>
+    <tr><td><strong>템플릿</strong></td><td>레디셋(공용) 템플릿 + 직접 등록 후 심사 (딜러사 경유)</td><td>레디셋(공용) 템플릿 — 사전 심사 완료, 즉시 사용</td></tr>
+    <tr><td><strong>발송 모수</strong></td><td>전화번호 보유 고객만</td><td>전화번호 보유 고객만</td></tr>
+    <tr><td><strong>과금</strong></td><td>건당 ~8원 (카카오 3.3원 + 딜러사 마진 ~5원)</td><td>딜러사 웹발송기 소매가 이상 책정</td></tr>
+    <tr><td><strong>발송 후 데이터</strong></td><td>성공/실패만</td><td>성공/실패 + 친구 전환 여부</td></tr>
+    <tr><td><strong>현황</strong></td><td><span class="badge badge-green">✅ 서비스 중</span></td><td><span class="badge badge-red">드랍</span></td></tr>
+  </table>
+  <p>📎 <a href="#">(2026.06) 뿌리오 분석 - 알림톡을 중심으로</a> &nbsp;|&nbsp; <a href="#">알림톡 라이트 상세</a> &nbsp;|&nbsp; <a href="https://kakao.agit.in/g/300088414/wall/408863690">아지트: 알림톡 Lite 진행논의</a> &nbsp;|&nbsp; <a href="#">기획 wiki</a></p>
+
+  <div class="section-title" style="margin-top:24px;">1-2. 반대 논리 및 대응</div>
+  <ul class="clean">
+    <li><strong>딜러사 직접 경쟁·ROI 없음</strong> — 알림톡 미집행 채널 94.5%(비즈채널 기준 87.6%). 딜러사가 못 닿는 미개척 시장이 타겟. 직접매출(연 4~18억) 외 CRM·채널 활성화가 진짜 목적.</li>
+    <li><strong>딜러사로 충분·템플릿 기능 부족</strong> — 뿌리오 진입 허들을 못 넘는 소상공인도 있음. 첫 진입점이므로 완벽 불필요. 대체발송 미지원은 의도적 포지셔닝.</li>
+    <li><strong>전화번호 DB 없음</strong> — 라이트(전화번호 보유) + 플러스(채팅 기반, 전화번호 불필요) 이중 커버.</li>
+  </ul>
+  <p>📎 <a href="https://wiki.daumkakao.com/x/5gvxgQ">반대 논리 상세 (수치 포함)</a> &nbsp;|&nbsp; <a href="https://kakao.agit.in/g/300088414/wall/408863690">아지트: 알림톡 Lite 진행논의</a></p>
+
+  <div class="section-title" style="margin-top:24px;">1-3. 신규 타겟 모수 및 예상매출</div>
+  <p>알림톡 라이트의 타겟 = <strong>알림톡 미경험 소상공인 비즈채널 우선</strong> + 뿌리오 전환 타겟</p>
+  <p>기준: 비즈채널 + 알림톡 미집행 + 쇼핑제외 / 단가 10원 / 채널당 318건/월</p>
+
+  <table>
+    <tr><th rowspan="2">기준</th><th colspan="3">300명 이하 조건 적용</th><th colspan="3">300명 조건 없음</th></tr>
+    <tr><th>채널수</th><th>친구수 중앙값</th><th>10% 전환 연매출</th><th>채널수</th><th>친구수 중앙값</th><th>10% 전환 연매출</th></tr>
+    <tr><td>(1) 채팅활성</td><td>76,358</td><td>60명</td><td>2.9억</td><td>114,728</td><td>136명</td><td>4.4억</td></tr>
+    <tr class="highlight-row"><td>(2) 채팅ON ★</td><td>232,890</td><td>18명</td><td>8.9억</td><td>284,748</td><td>32명</td><td>10.9억</td></tr>
+    <tr><td>(3) 전체</td><td>495,336</td><td>2명</td><td>18.9억</td><td>559,645</td><td>4명</td><td>21.4억</td></tr>
+  </table>
+
+  <div class="info-box">
+    <strong>300명 기준 근거</strong>: 친구수 300명 이하 비즈채널의 채널메시지 발송율은 6.4% 이하 — 채널메시지를 마케팅 도구로 쓰기에 친구가 부족한 소상공인 구간. 301명부터 8.5%+로 올라가며 성격이 달라짐.<br/>
+    <strong>300명 조건 제거 시</strong>: 채팅ON 기준 모수 +51,858개 증가, 친구수 중앙값 18명→32명으로 여전히 소상공인 수준. 논리 성립.
+  </div>
+
+  <div class="sub-label" style="margin-top:16px;">전환율별 예상매출 — (2) 채팅ON 기준</div>
+  <table>
+    <tr><th>전환율</th><th colspan="2">300명 이하</th><th colspan="2">300명 조건 없음</th></tr>
+    <tr><th></th><th>월 매출</th><th>연 매출</th><th>월 매출</th><th>연 매출</th></tr>
+    <tr><td>5%</td><td>3,702만원</td><td><strong>4.4억</strong></td><td>4,527만원</td><td><strong>5.4억</strong></td></tr>
+    <tr><td>10%</td><td>7,405만원</td><td><strong>8.9억</strong></td><td>9,054만원</td><td><strong>10.9억</strong></td></tr>
+    <tr><td>20%</td><td>14,811만원</td><td><strong>17.8억</strong></td><td>18,109만원</td><td><strong>21.7억</strong></td></tr>
+    <tr><td>50%</td><td>37,029만원</td><td><strong>44.4억</strong></td><td>45,274만원</td><td><strong>54.3억</strong></td></tr>
+  </table>
+  <p>📎 <a href="https://wiki.daumkakao.com/x/2U6kgQ">전체 시나리오 (3가지 기준 × 5가지 전환율)</a> &nbsp;|&nbsp; 📎 318건: 알림톡 전체 발송량 중앙값 기준</p>
+
+  <details>
+    <summary>📎 10원에 대한 근거 — 왜 10원인가</summary>
+    <div class="toggle-content">
+      <p>딜러사 소매가(~8원) 이상으로 책정해야 이윤압착 프레임을 회피할 수 있음. (2024.11 공정거래팀 협의)</p>
+      <table>
+        <tr><th>구성요소</th><th>단가</th><th>설명</th></tr>
+        <tr><td>카카오 도매가</td><td>3.3원</td><td>알림톡 원가</td></tr>
+        <tr><td>딜러사 소매가</td><td>~8원</td><td>카카오 도매가 + 딜러사 마진 ~5원</td></tr>
+        <tr><td>알파 단가 (예정)</td><td>10원</td><td>딜러사 소매가 대비 +2원 (편의성 프리미엄)</td></tr>
+      </table>
+    </div>
+  </details>
+</div>
+
+<!-- 2장 -->
+<div class="chapter">
+  <div class="chapter-title">2. 알림톡 플러스 — 채널 활성화</div>
+
+  <div class="section-title">2-1. 알림톡 플러스란</div>
+  <p>1:1 채팅 흐름 안에서 유저의 액션이 트리거가 되어 알림톡이 발송되는 구조.<br/>
+  전화번호 없이 카카오 계정 기반 발송 가능. 라이트가 사장님이 엑셀파일 업로드 방식으로 "직접 보내는 것"이라면, 플러스는 "카카오 내 씬에서 자동으로 보내지는 것".</p>
+
+  <div class="section-title" style="margin-top:20px;">2-2. 씬별 정리</div>
+  <table>
+    <tr><th>씬</th><th>트리거 (유저 액션)</th><th>알림톡</th><th>기타</th></tr>
+    <tr><td><strong>(1) 채팅 예약·결제</strong></td><td>채팅에서 예약 확정 버튼 클릭</td><td>주문, 예약 확인, 결제 안내</td><td>1:1 채팅 내 직접 구현</td></tr>
+    <tr><td><strong>(2) 카상매 연계</strong></td><td>AI가 예약·주문·결제 문의 감지</td><td>동일</td><td>카상매 적용 채팅 방 내 직접 구현</td></tr>
+    <tr><td><strong>(3) 쿠폰 만료 알림</strong></td><td>채널 쿠폰 다운로드 후 미사용 시</td><td>쿠폰 만료 안내</td><td>채널 쿠폰 발행 시, 알림톡 발송 클릭</td></tr>
+    <tr><td><strong>(4) 채팅방 전화번호 수집</strong></td><td>채팅 중 전화번호 수신 후 동의</td><td>해당 없음</td><td>crm 포함 목적</td></tr>
+  </table>
+  <p style="color:#6b7280;font-size:12px;">ㄴ 예시일 뿐, 카카오 내 비즈니스 도구에서 보내지는 모든 알림톡씬을 crm으로 연결 시키자는 것</p>
+
+  <div class="card-grid" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-title">(1) 1:1 채팅방 내 예약 결제 씬 예시</div>
+      <div class="card-body">채팅에서 예약 확정 → 알림톡 자동 발송</div>
+    </div>
+    <div class="card">
+      <div class="card-title">(2) 카나나 상담매니저(카상매) 연동</div>
+      <div class="card-body">카상매 AI가 예약·결제·배송 관련 문의 감지 → 알림톡 발송.<br/>2026년 5월 기준 전체 문의 중 <strong>41.1%(257,501건/월)</strong>이 알림톡 트리거 가능.<br/>📎 <a href="#">카상매 × 알림톡+ 적합성 검토</a></div>
+    </div>
+    <div class="card">
+      <div class="card-title">(3) 쿠폰 만료 알림톡</div>
+      <div class="card-body">카비센에서 쿠폰 발급 시 쿠폰 만료 알림톡 발송을 ON/OFF 할 수 있도록 세팅 지원.<br/>사업자가 설정한 D-day에 따라 쿠폰 미사용 고객에게 자동으로 알림톡 발송.</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:24px;">2-3. 채팅·채널 활성화 기여</div>
+
+  <div class="sub-label">(1) 1:1 채팅 활성화</div>
+
+  <div class="sub-label">(2) 쿠폰 만료 알림톡</div>
+  <p>산출 기준 : 2025.05~2026.05 비즈채널 1년 월평균 쿠폰 다운로드 기준 | 전환율 = 쿠폰 만료 알림톡 세팅 채널 비율 가정 | 단가 10원</p>
+  <table>
+    <tr><th>구분</th><th>채널수</th><th>월평균 다운로드</th><th>전환율 30%</th><th>전환율 50%</th><th>전환율 70%</th></tr>
+    <tr><td>친구수 300명↑</td><td>16,170개</td><td>648만건</td><td>월 1,943만원 / <strong>연 2.3억원</strong></td><td>월 3,238만원 / <strong>연 3.9억원</strong></td><td>월 4,533만원 / <strong>연 5.4억원</strong></td></tr>
+  </table>
+  <p style="font-size:12px;color:#6b7280;">※ 친구수 기준을 높여도 매출 차이가 크지 않음, 현 기준 쿠폰 다운로드가 대형 채널에 집중된 구조. 500명↑<br/>→ 월평균 미사용률 87.8% (약 569만 건)</p>
+
+  <div class="sub-label" style="margin-top:16px;">(3) 채널메시지로의 확장 - 카카오 사업도구 사용 채널의 유상 채널메시지 전환율</div>
+  <div class="note-box">
+    <strong>핵심 결론</strong><br/>
+    카상매 사용 채널은 미사용 채널 대비 유상 채널메시지 전환율이 <strong>4.2배</strong> 높음 (1.8% → 7.6%). 특히 소규모 채널(0~99명)에서 효과가 가장 극적 — <strong>5.4배</strong> (0.7% → 3.8%).<br/>
+    알림톡 라이트/플러스가 카카오 사업도구로 자리 잡으면 유사한 전환율 상승 효과를 기대할 수 있을 것
+  </div>
+  <table>
+    <tr><th>친구수 구간</th><th>전체 (n=632,259)</th><th>예약하기 (n=23,072)</th><th>카상매 (n=4,715)</th></tr>
+    <tr><td>(1) 0~99명</td><td>0.7%</td><td>1.4%</td><td><strong>3.8%</strong></td></tr>
+    <tr><td>(2) 100~299명</td><td>3.3%</td><td>6.5%</td><td><strong>8.6%</strong></td></tr>
+    <tr><td>(3) 300~499명</td><td>4.9%</td><td><strong>9.4%</strong></td><td>8.2%</td></tr>
+    <tr><td>(4) 500명 이상</td><td>7.2%</td><td>9.8%</td><td><strong>10.7%</strong></td></tr>
+    <tr class="highlight-row"><td>합계</td><td>1.8%</td><td>3.1%</td><td>7.6%</td></tr>
+  </table>
+  <p style="font-size:12px;color:#6b7280;">T0: 2025.09~12 유상 채널메시지 미집행 비즈채널 / T1: 2026.01~06 유상 채널메시지 과금 발생 여부</p>
+  <p>📎 <a href="#">상세 분석 및 재현 쿼리: 알림톡 in 카비센 사업도구 사용 채널의 유상 채널메시지 전환율 분석</a></p>
+</div>
+
+<!-- 3장 -->
+<div class="chapter">
+  <div class="chapter-title">3. CRM 연결 — 장기자산</div>
+
+  <div class="section-title">3-1. 왜 CRM이 필요한가</div>
+  <p>라이트·플러스가 따로 놀아서는 안됨.<br/>
+  각 거점에서 발송된 알림톡들을 CRM으로 묶어야 소상공인 고객 데이터가 카카오와 사장님의 자산이 됨!</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;">
+    <div>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:8px;">파트너센터 &gt; 고객 관리 탭 (현재 없음)</p>
+      <div style="background:#f8fafc;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;border:1px solid #e2e8f0;line-height:2;">
+        ┌─────────────────────────────┐<br/>
+        │ 내 고객 목록                  │<br/>
+        │ ──────────────────────────── │<br/>
+        │ 고객A  전화번호O  채팅X  쿠폰X  │<br/>
+        │ 고객B  전화번호X  채팅O  쿠폰X  │  ← 채팅에서 온 고객<br/>
+        │ 고객C  전화번호X  채팅X  쿠폰O  │  ← 쿠폰으로 온 고객<br/>
+        │ ──────────────────────────── │<br/>
+        │ [알림톡 보내기]  [쿠폰 발송]    │<br/>
+        └─────────────────────────────┘
+      </div>
+      <p style="font-size:12px;color:#ef4444;margin-top:8px;"><strong>여기가 지금 없는 부분.</strong> 고객 A·B·C가 같은 사람일 수도 있는데 카카오가 모르고, 사장님도 누군지 관리 불가능</p>
+    </div>
+    <div>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:8px;">예를 들어, 라라네일 사업자(기존 채널 친구수 70명 가정)는 아래의 고객과 액션이 있었음.</p>
+      <div style="background:#f8fafc;border-radius:8px;padding:14px;border:1px solid #e2e8f0;font-size:12px;">
+        <p style="margin-bottom:8px;">1) 알림톡 라이트를 통해 전화번호 5명 업로드 발송- 7/7 예약 고객 5명에게 전화 번호 기반 단체 예약 알림톡 발송. (친구 2 / 비친구 3 혼재 가정)</p>
+        <p style="margin-bottom:8px;">2) 톡스토어 구매 - 이미 친구였던 A가 톡스토어에서 네일 제품 구매 → 주문완료(배송) 알림톡이 발송되었음</p>
+        <p>3) 유저 B가 1:1 채팅을 통해 무통장 입금 후 예약, 사장님이 1:1채팅에서 예약 알림톡을 발송함.</p>
+      </div>
+      <p style="font-size:12px;color:#6b7280;margin-top:8px;">기존에 1:1채팅 이력이 없지만, 김*수의 경우 엑셀파일 업로드를 통해서 친구관계 성립, 예약 알림톡을 통해 거래 확인되어 1:1 선톡 가능해지는 구조.</p>
+    </div>
+  </div>
+
+  <div class="section-title">3-2. 확인 필요 사항</div>
+  <div class="warn-box">
+    <div class="warn-title">전제 : SME 사장님들이 고객데이터를 보고, 재방문 마케팅 메시지를 보내는것에 관심이 있을까? 에 대한 확인</div>
+    <table style="margin:0;">
+      <tr><th>#</th><th>확인 필요 사항</th></tr>
+      <tr><td>1</td><td>전화번호 ↔ 카카오 계정(kuid) 매핑 가능 여부 / 법적, 기술적</td></tr>
+      <tr><td>2</td><td>톡스토어 및 사업자 알림톡을 CRM으로 실제 연동해도 되는지 (사장님 동의 필요 여부)</td></tr>
+      <tr><td>3</td><td>kuid로 들어온 접점(구매·채팅·쿠폰 등 다양한 접점이)이 묶일 수 있는지</td></tr>
+      <tr><td>4</td><td>"통합 마케팅 수신 동의"가 있고 어디까지 커버하는지 (1번 가능해도 법적으로 가능한지)</td></tr>
+      <tr><td>5</td><td><strong>사장님 선톡이 정책상 가능 여부</strong> (법적, 기술적 검토 완료 가정) <span class="badge badge-red">제일 큰 리스크</span></td></tr>
+    </table>
+  </div>
+
+  <div class="section-title">3-3. 메시지 발송</div>
+  <p>알림톡+를 통해 쌓인 고객 데이터는 <strong>친구 전환 → 채널메시지 → CRM</strong>으로 이어지는 장기 퍼널의 시작점.<br/>
+  <strong>친구 전환이 있지 않더라도, 거래 내역 기반 비친구 메시지 활용 가능.</strong></p>
+</div>
+
+<!-- 4장 결론 -->
+<div class="chapter">
+  <div class="chapter-title">4. 결론</div>
+  <div class="info-box" style="margin-bottom:16px;">
+    라이트 발송 이력을 나중에 CRM의 초석이 될 수 있도록 설계해서 진행해보자, 나중에 못 쓰게 데이터를 버리지만 말자.
+  </div>
+  <table class="conclusion-table">
+    <tr><th>구분</th><th>내용</th><th>기타</th></tr>
+    <tr><td><strong>결정 사항</strong></td><td>알림톡 라이트 — 파트너센터 웹 발송기 진행 여부</td><td>유료 (10원/건, 딜러사 소매가 이상)</td></tr>
+    <tr><td></td><td>알림톡 플러스 — 채팅 예약·결제·쿠폰 씬 알림톡</td><td>카카오 비즈니스 씬 내 무료 제안, 각 부서 채널 활성화 논의 시 알림톡 활용 필요 (거래 내역 확인을 위한 유저 액션 넣기)</td></tr>
+    <tr><td><strong>협의 필요</strong></td><td colspan="2">선톡 법무 / kuid 매핑 / 통합마케팅 동의 적용 범위 / 채팅 이력 CRM 활용 여부 확인</td></tr>
+    <tr><td><strong>장기 과제</strong></td><td colspan="2">CRM 통합 UI (파트너센터 고객 관리 탭) / 고객 프로파일 통합</td></tr>
+  </table>
+</div>
+
+<!-- 5장 기타 -->
+<div class="chapter">
+  <div class="chapter-title">5. 기타</div>
+
+  <div class="section-title">뿌리오 전환 타겟</div>
+  <p>현재 딜러사를 통해서만 알림톡을 집행하는 사업자를 카카오로 전환하는 시나리오. 직접 매출보다 딜러사 마진 회수 관점.</p>
+  <table>
+    <tr><th>항목</th><th>수치</th></tr>
+    <tr><td>딜러사 전용 채널 (알림톡O+월렛X)</td><td>56,375개 / 월 유상매출 94억</td></tr>
+    <tr><td>소상공인 추정 (쇼핑제외+300미만+발송 1~318건)</td><td>21,216개 / 월 184만건</td></tr>
+    <tr><td>딜러사 마진 회수 가능 (월)</td><td>약 3,600만원 (184만건 × 딜러사 마진 ~5원)</td></tr>
+  </table>
+  <p>📎 <a href="https://wiki.daumkakao.com/x/mPAMgQ">딜러사를 통해 알림톡을 집행하는 사업자 추정</a></p>
+
+  <div class="section-title" style="margin-top:24px;">관련 문서</div>
+  <table>
+    <tr><th>문서</th><th>링크</th></tr>
+    <tr><td>알림톡+ 작업 위키</td><td><a href="https://wiki.daumkakao.com/x/K-wMgQ">링크</a></td></tr>
+    <tr><td>고객군 매트릭스</td><td><a href="https://wiki.daumkakao.com/x/zUsygQ">링크</a></td></tr>
+    <tr><td>신규 예상 매출 시나리오</td><td><a href="https://wiki.daumkakao.com/x/2U6kgQ">링크</a></td></tr>
+    <tr><td>딜러사 사업자 추정</td><td><a href="https://wiki.daumkakao.com/x/mPAMgQ">링크</a></td></tr>
+    <tr><td>데이터 : 비즈인증x1:1채팅 조합</td><td><a href="https://wiki.daumkakao.com/x/EccMgQ">링크</a></td></tr>
+    <tr><td>알림톡 과제 히스토리</td><td><a href="https://wiki.daumkakao.com/x/0XC4g">링크</a></td></tr>
+    <tr><td>1:1채팅 BM 아이데이션 아지트</td><td><a href="https://kakao.agit.in/g/300089355/wall/459651482">링크</a></td></tr>
+    <tr><td>채팅스쿼드 과제 목표와 범위</td><td><a href="https://wiki.daumkakao.com/spaces/rocket/pages/1726946740">링크</a></td></tr>
+  </table>
+</div>
+
+</div>
+</body>
+</html>
