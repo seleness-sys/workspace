@@ -1,0 +1,738 @@
+<title>친구수 임계값과 채널메시지 발송지속성 검증</title>
+<style>
+:root{
+  --surface-0:#ffffff; --surface-1:#fcfcfb; --surface-2:#f4f3f0;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7a7873;
+  --rule:#e2e1dc; --rule-strong:#c9c7c0;
+  --series-1:#2a78d6; --series-2:#eb6834;
+  --accent-soft:#cde2fb; --deemph:#b5b3ab;
+  --good:#1baf7a; --warn:#eda100; --crit:#e34948;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    --surface-0:#131312; --surface-1:#1a1a19; --surface-2:#222220;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#96948b;
+    --rule:#33332f; --rule-strong:#4a4a45;
+    --series-1:#3987e5; --series-2:#d95926;
+    --accent-soft:#184f95; --deemph:#5c5b55;
+    --good:#199e70; --warn:#c98500; --crit:#e66767;
+  }
+}
+:root[data-theme="dark"]{
+  --surface-0:#131312; --surface-1:#1a1a19; --surface-2:#222220;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#96948b;
+  --rule:#33332f; --rule-strong:#4a4a45;
+  --series-1:#3987e5; --series-2:#d95926;
+  --accent-soft:#184f95; --deemph:#5c5b55;
+  --good:#199e70; --warn:#c98500; --crit:#e66767;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--surface-0); color:var(--text-primary);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:15px; line-height:1.65; letter-spacing:-0.01em;
+}
+.wrap{max-width:900px; margin:0 auto; padding:56px 24px 96px}
+header{border-bottom:2px solid var(--text-primary); padding-bottom:20px; margin-bottom:36px}
+.eyebrow{font-size:12px; letter-spacing:0.08em; color:var(--text-muted); text-transform:uppercase; margin-bottom:10px}
+h1{font-size:28px; line-height:1.3; margin:0 0 12px; letter-spacing:-0.02em}
+.sub{color:var(--text-secondary); font-size:15px; margin:0}
+.meta{margin-top:16px; font-size:13px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:6px 20px}
+h2{font-size:20px; margin:52px 0 6px; letter-spacing:-0.02em; padding-top:18px; border-top:1px solid var(--rule)}
+h2 .num{color:var(--text-muted); font-variant-numeric:tabular-nums; margin-right:10px; font-weight:600}
+h3{font-size:16px; margin:32px 0 8px; letter-spacing:-0.01em}
+p{margin:10px 0}
+.lead{font-size:16px; color:var(--text-secondary)}
+strong{font-weight:650}
+.verdict{
+  background:var(--surface-2); border-left:3px solid var(--series-1);
+  padding:18px 22px; margin:24px 0; border-radius:0 8px 8px 0;
+}
+.verdict h3{margin:0 0 10px; font-size:15px}
+.verdict ol{margin:0; padding-left:20px}
+.verdict li{margin:8px 0}
+.callout{
+  border:1px solid var(--rule-strong); border-radius:10px; padding:16px 20px;
+  margin:22px 0; background:var(--surface-1); font-size:14.5px;
+}
+.callout .tag{
+  display:inline-block; font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:6px; font-weight:650;
+}
+figure{margin:28px 0; background:var(--surface-1); border:1px solid var(--rule); border-radius:12px; padding:20px 20px 16px}
+figcaption{font-size:13px; color:var(--text-secondary); margin-top:12px; line-height:1.55}
+figcaption b{color:var(--text-primary); font-weight:650}
+.fig-title{font-size:15px; font-weight:650; margin:0 0 2px}
+.fig-sub{font-size:13px; color:var(--text-muted); margin:0 0 14px}
+.legend{display:flex; gap:18px; flex-wrap:wrap; font-size:13px; color:var(--text-secondary); margin:0 0 8px}
+.legend span{display:inline-flex; align-items:center; gap:7px}
+.swatch{width:14px; height:3px; border-radius:2px; display:inline-block}
+.swatch.dot{width:9px; height:9px; border-radius:50%}
+.chart-scroll{overflow-x:auto}
+svg{display:block; max-width:100%; height:auto}
+.tbl-wrap{overflow-x:auto; margin:20px 0}
+table{border-collapse:collapse; width:100%; font-size:14px; font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px; text-align:right; border-bottom:1px solid var(--rule); white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{
+  font-size:12px; color:var(--text-secondary); font-weight:650;
+  border-bottom:1.5px solid var(--rule-strong); letter-spacing:0.01em;
+}
+tbody tr:hover{background:var(--surface-2)}
+tr.total td{font-weight:700; border-top:1.5px solid var(--rule-strong); border-bottom:none}
+tr.hl td{background:var(--accent-soft)}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--text-muted)}
+.pos{color:var(--good)} .neg{color:var(--crit)}
+.note{font-size:13px; color:var(--text-muted); margin-top:8px}
+.footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--rule); font-size:13px; color:var(--text-muted)}
+.footer code{font-family:var(--mono); font-size:12px; background:var(--surface-2); padding:1px 5px; border-radius:4px}
+.tooltip{
+  position:fixed; pointer-events:none; opacity:0; transition:opacity .12s;
+  background:var(--surface-0); border:1px solid var(--rule-strong); border-radius:8px;
+  padding:8px 11px; font-size:12.5px; line-height:1.5; z-index:50;
+  box-shadow:0 6px 20px rgba(0,0,0,.14); font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.tooltip b{font-weight:650}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin:24px 0}
+.stat{background:var(--surface-1); border:1px solid var(--rule); border-radius:10px; padding:16px 18px}
+.stat .k{font-size:12px; color:var(--text-muted); letter-spacing:0.02em}
+.stat .v{font-size:26px; font-weight:700; letter-spacing:-0.02em; margin:4px 0 2px; font-variant-numeric:tabular-nums}
+.stat .d{font-size:13px; color:var(--text-secondary); line-height:1.45}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">데이터 분석 리포트 · 2026-08-05</div>
+  <h1>친구수에 채널메시지 발송을 촉발하는 임계값이 있는가</h1>
+  <p class="sub">친구수 300·100·50·30·10 전 구간 임계값 검정 — 결론: <strong>임계값은 존재하지 않는다</strong></p>
+  <div class="meta">
+    <span>분석기간 2025-01 ~ 2026-07 (19개월)</span>
+    <span>채널 × 월 패널 3,058만 행 / 277.8만 채널</span>
+    <span>작성 selene.ss</span>
+  </div>
+</header>
+
+<p class="lead">
+기존 리포트의 「친구수 구간별 지속성 요약」 표에서 친구수 300을 경계로 발송지속성이 달라지는 것처럼 보였다.
+이 보고서는 그 경계가 실재하는지, 그리고 더 낮은 구간(50·30·10)에 진짜 임계값이 숨어 있는지를
+단면 불연속 검정과 패널 시계열 분석으로 검증한다.
+</p>
+
+<div class="verdict">
+  <h3>결론</h3>
+  <ol>
+    <li><strong>어떤 친구수에도 계단은 없다.</strong> 10 · 20 · 30 · 50 · 100 · 150 · 200 · 300 · 500 · 700 — 열 개 지점을 모두 검정했고 전부 0이었다. 발송 확률은 친구수를 따라 매끄럽게 오르는 <strong>오르막</strong>이지 문턱이 아니다.</li>
+    <li><strong>0명 → 1명에서만 계단이 보이지만, 이것도 임계값이 아니다.</strong> 첫 발송 확률이 6.2배 뛰지만 이 구간 첫 발송의 <strong>41.5%가 채널주 본인 대상 테스트 발송</strong>이고(수신자 1~2명·1건, 82%가 단발로 종료), 나머지는 <strong>친구가 0명이면 메시지를 받을 사람 자체가 없어 발송이 불가능</strong>하다는 사정을 반영한 것이다. 즉 "친구가 몇 명 모이면 보낼 마음이 생긴다"는 행동의 문턱이 아니라, 발송이 가능해지는 최소 조건일 뿐이다.</li>
+    <li><strong>발송을 촉발하는 것은 친구수 '수준'이 아니라 친구가 늘어나는 '시점'이다.</strong> 채널은 특정 숫자를 넘어서 보내는 게 아니라, 친구를 새로 모으는 그 달에 함께 보낸다. 실제로 300 돌파 채널은 <strong>돌파 6개월 전부터 발송률이 7.4% → 10.8%로 계속 오르던 중</strong>이었고, 돌파 직후 12.3%로 정점을 찍은 뒤 <strong>더 오르지 않는다</strong>. 넘어서 동력이 생기는 게 아니라, 넘고 나서 오르기를 멈춘다. 그리고 이후 식는 이유는 친구가 늘어서가 아니라 <strong>친구 늘리는 활동이 끝나서</strong>다 — 친구가 계속 는 채널은 발송률도 유지했다(4-1절).</li>
+  </ol>
+</div>
+
+<h2><span class="num">1</span>분석목적 · 분석조건</h2>
+
+<h3>목적</h3>
+<p>
+① 친구수 300 돌파가 채널메시지 발송지속성을 높이는지(인과관계) 검증<br>
+② 300이 아니라면 더 낮은 구간에 실질적 임계값이 있는지 탐색<br>
+③ "친구 몇 명은 되어야 메시지를 보내기 시작하는가"에 대한 실무 기준선 도출
+</p>
+
+<h3>데이터</h3>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>항목</th><th>내용</th></tr></thead>
+  <tbody>
+    <tr><td>친구수</td><td style="text-align:left"><code>mystore.tableau_bizplatform_activeness_monthly_v2</code> 월별 스냅샷 (<code>status &lt;&gt; 'DELETED'</code>)</td></tr>
+    <tr><td>발송</td><td style="text-align:left"><code>bi_lake.plusfriend_send_msg</code> — 카비센 광고성 채널메시지 (성공 발송, 웰컴메시지·모먼트 제외)</td></tr>
+    <tr><td>기간</td><td style="text-align:left">2025-01 ~ 2026-07 (19개월)</td></tr>
+    <tr><td>모수</td><td style="text-align:left">친구수 0명부터 전 구간. 인하우스 채널 및 카카오 계열 채널 제외</td></tr>
+    <tr><td>단위</td><td style="text-align:left">채널 × 월 (3,058만 행 / 277.8만 채널)</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>검정 방법 세 가지</h3>
+<p>
+<strong>① 단면 불연속 검정</strong> — 임계값 바로 아래와 바로 위 채널의 이후 6개월 발송률을 비교한다. 진짜 문턱이면 299명과 301명 사이에 계단이 생긴다.<br>
+<strong>② 돌파 이벤트 추적</strong> — 실제로 그 숫자를 넘은 채널을 넘기 6개월 전부터 넘은 뒤 6개월까지 따라간다. 같은 시점에 비슷한 친구수였지만 넘지 않은 채널을 대조군으로 붙인다.<br>
+<strong>③ 위약 임계값 비교</strong> — 300이 특별하다면 200이나 500에서는 아무 일도 없어야 한다. 여러 지점에 같은 검정을 돌려 300만의 특이성을 확인한다.
+</p>
+
+<h2><span class="num">2</span>기존 표로는 답할 수 없었던 이유</h2>
+<p>
+기존 「3.4 친구수 구간별 지속성 요약」 표에는 두 가지 구조적 한계가 있어, 그 자체로는 인과 판단의 근거가 되지 못한다.
+</p>
+<div class="callout">
+  <div class="tag">한계 1 — 원인을 결과 이후에 측정</div>
+  표의 친구수는 <code>pdt='20260601'</code> 단일 스냅샷이고, 설명 대상인 발송개월수는 그 이전 1~6월 실적이다.
+  <strong>결과가 다 끝난 뒤에 원인을 잰 셈</strong>이라, 상반기에 함께 성장한 두 지표를 사후에 묶은 것 이상을 말할 수 없다.
+</div>
+<div class="callout">
+  <div class="tag">한계 2 — 모수가 결과변수에 조건부</div>
+  표의 60,140채널은 "상반기에 최소 1번은 보낸 채널"이다. 친구수가 적은 구간일수록 이 조건이 더 강하게 걸러내므로
+  구간 간 지속성 비교가 체계적으로 왜곡된다.
+</div>
+<p>
+덧붙여 표의 수치 자체도 300에서 꺾이지 않는다. 평균 발송개월은 1.21 → 2.42 → 2.97 → 3.21 → 3.43 → 3.77 → 4.07로,
+친구수가 10배 늘 때마다 약 +0.5~0.8개월씩 <strong>일정하게</strong> 증가한다. 300 자리의 굵은 가로선은 데이터의 단절이 아니라 표를 만들며 그은 구분선이다.
+</p>
+
+<h2><span class="num">3</span>검정 ① — 친구수를 잘게 쪼개면 계단이 없다</h2>
+<p>
+구간을 5명 단위까지 잘게 쪼개 이후 6개월 내 발송 여부를 그렸다. 어느 지점에도 단절이 없다.
+</p>
+
+<figure>
+  <p class="fig-title">친구수별 이후 6개월 내 메시지 발송률</p>
+  <p class="fig-sub">전 채널 기준 · 5명 단위(100까지) / 25명 단위(100~400)</p>
+  <div class="chart-scroll" id="c-curve"></div>
+  <figcaption>
+    임계값이 있다면 그 자리에서 선이 <b>수직으로 튀어야</b> 한다. 실제로는 30·50·100·300 어디에서도 꺾임 없이 매끄럽게 오른다.
+    친구수는 발송을 <b>허가하는 문턱</b>이 아니라 <b>연속적으로 확률을 높이는 변수</b>다.
+  </figcaption>
+</figure>
+
+<p>
+이 매끄러움을 수치로 확인하기 위해, 각 지점의 바로 왼쪽·오른쪽 구간에 회귀선을 따로 그어 그 사이의 '계단 높이'를 추정했다(국소선형 회귀 불연속 검정). 계단 높이가 0이면 임계값이 없다는 뜻이다.
+</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>검정 지점(친구수)</th><th>계단 높이 (%p)</th><th>표준오차</th><th>t값</th><th>판정</th></tr></thead>
+  <tbody>
+    <tr><td>10명</td><td>+0.021</td><td>0.044</td><td>0.48</td><td class="muted">계단 없음</td></tr>
+    <tr><td>20명</td><td>−0.199</td><td>0.077</td><td>−2.57</td><td class="muted">음(−)의 방향 · 다중검정 노이즈</td></tr>
+    <tr><td>30명</td><td>0.000</td><td>0.102</td><td>0.00</td><td class="muted">계단 없음</td></tr>
+    <tr><td>50명</td><td>−0.168</td><td>0.134</td><td>−1.25</td><td class="muted">계단 없음</td></tr>
+    <tr><td>100명</td><td>−0.359</td><td>0.201</td><td>−1.78</td><td class="muted">계단 없음</td></tr>
+    <tr><td>150명</td><td>−0.208</td><td>0.266</td><td>−0.78</td><td class="muted">계단 없음</td></tr>
+    <tr><td>200명</td><td>+0.304</td><td>0.313</td><td>0.97</td><td class="muted">계단 없음</td></tr>
+    <tr class="hl"><td><strong>300명</strong></td><td><strong>+0.061</strong></td><td>0.398</td><td>0.15</td><td class="muted">계단 없음</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="note">
+※ 20명 지점만 통계적으로 유의하나 <strong>방향이 음(−)</strong>이다. "20명을 넘으면 오히려 덜 보낸다"는 해석은 성립하지 않으며, 8회 검정 중 1회 유의는 우연히 나올 수 있는 수준이다.
+별도 분석(밴드폭 ±50~±200)에서 300 지점의 신뢰구간은 발송개월수 기준 ±0.03개월로, <strong>기저값의 8%를 넘는 효과는 통계적으로 배제</strong>된다.
+</p>
+
+<h2><span class="num">4</span>검정 ② — 실제로 넘은 채널을 따라가면, 넘은 뒤에 멈춘다</h2>
+<p>
+가장 결정적인 증거다. 각 임계값을 실제로 상향 돌파한 채널을 찾아 <strong>돌파 6개월 전 ~ 돌파 6개월 후</strong>까지 매달 발송 여부를 추적했다.
+대조군은 같은 시점 친구수가 비슷했지만 창 기간 내내 그 선을 넘지 않은 채널이다.
+</p>
+
+<figure>
+  <p class="fig-title">임계값 돌파 전후 월별 발송률</p>
+  <p class="fig-sub">0 = 돌파한 달 · 처리군은 최초 상향 돌파 채널, 대조군은 미돌파 유사 채널</p>
+  <div class="legend">
+    <span><i class="swatch" style="background:var(--series-1)"></i> 돌파 채널(처리군)</span>
+    <span><i class="swatch" style="background:var(--series-2)"></i> 미돌파 채널(대조군)</span>
+  </div>
+  <div class="chart-scroll" id="c-traj"></div>
+  <figcaption>
+    세 패널 모두 같은 모양이다. <b>돌파 훨씬 전부터 발송이 이미 오르고 있고</b>, 돌파한 달에 한 번 올라선 뒤
+    <b>그 다음부터는 더 오르지 않고 오히려 내려온다</b>. 임계값을 넘어 동력이 생기는 그림이 아니라,
+    이미 달리던 채널이 그 지점을 통과하고 나서 힘이 빠지는 그림이다.
+  </figcaption>
+</figure>
+
+<div class="grid2">
+  <div class="stat">
+    <div class="k">300 돌파 전 6개월</div>
+    <div class="v">7.4% → 10.8%</div>
+    <div class="d">돌파 전부터 매달 +0.70%p씩 이미 상승 중</div>
+  </div>
+  <div class="stat">
+    <div class="k">300 돌파 후 6개월</div>
+    <div class="v">12.3% → 11.1%</div>
+    <div class="d">돌파 1개월 뒤 정점 · 단 대조군도 4.6→3.9%로 함께 하락(4-1절)</div>
+  </div>
+  <div class="stat">
+    <div class="k">사전추세 연장 대비</div>
+    <div class="v neg">−3.8%p</div>
+    <div class="d">기존 속도대로 올랐다면 도달했을 수준에 크게 미달</div>
+  </div>
+</div>
+
+<p>
+통계 모형(이중차분)으로는 돌파 후 +1.3~1.5%p의 상승이 잡히지만, <strong>이 숫자를 인과효과로 읽어서는 안 된다.</strong>
+돌파 이전 6개월 동안 이미 강한 상승 추세가 있었기 때문에(평행추세 가정 위배), 이 값은 "돌파의 효과"가 아니라
+"돌파 전부터 진행 중이던 성장의 잔여분"이다. 오히려 사전 추세를 그대로 연장했을 때의 예측치와 비교하면 실제는 6개월 뒤 3.8%p <strong>미달</strong>한다.
+</p>
+
+<h3>4-1. 돌파 후 하락은 '친구가 더 늘어서' 생긴 것인가</h3>
+<p>
+돌파 후 발송률이 12.3%에서 11.1%로 내려가는데, 같은 기간 처리군의 친구수 중앙값은 310명에서 409명으로 <strong>계속 늘어난다</strong>.
+친구가 느는데 발송이 준 것처럼 보이므로, 하락의 원인을 분해했다.
+</p>
+
+<p><strong>첫째, 하락의 절반 이상은 처리군만의 현상이 아니다.</strong> 대조군도 같은 기간 함께 내려간다.</p>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>구분</th><th>돌파 직후 정점</th><th>+6개월</th><th>변화</th></tr></thead>
+  <tbody>
+    <tr><td>처리군 (원자료)</td><td>12.29%</td><td>11.11%</td><td class="neg">−1.18%p</td></tr>
+    <tr><td>대조군 (원자료)</td><td>4.56%</td><td>3.86%</td><td class="neg">−0.70%p</td></tr>
+    <tr class="hl"><td><strong>대조군 대비 격차</strong></td><td><strong>7.89%p</strong></td><td><strong>7.25%p</strong></td><td><strong>−0.64%p</strong></td></tr>
+  </tbody>
+</table>
+</div>
+<p>
+공통 시간추세(전체 채널의 완만한 발송 감소)를 걷어내면, 돌파 후 처리군은 <strong>하락이라기보다 정체</strong>다.
+격차는 돌파 전 6개월간 2.5%p → 6.1%p로 급격히 벌어졌다가, 돌파 후에는 7.3~7.9%p에서 더 벌어지지 않고 유지된다.
+</p>
+
+<p><strong>둘째, 친구 증가는 하락의 원인이 아니라 오히려 방어 요인이다.</strong>
+돌파 후 6개월간 친구가 얼마나 늘었는지로 처리군을 3등분했다.</p>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>그룹</th><th>채널수</th><th>친구수 (돌파월→+6개월)</th><th>증가 배수</th><th>발송률 (돌파월)</th><th>발송률 (+6개월)</th><th>변화</th></tr></thead>
+  <tbody>
+    <tr><td>저성장</td><td>3,590</td><td>304 → 332명</td><td>1.07배</td><td>10.97%</td><td>8.77%</td><td class="neg"><strong>−2.20%p</strong></td></tr>
+    <tr><td>중간</td><td>3,590</td><td>309 → 396명</td><td>1.26배</td><td>10.45%</td><td>9.94%</td><td class="neg">−0.51%p</td></tr>
+    <tr class="hl"><td><strong>고성장</strong></td><td>3,590</td><td>327 → 637명</td><td>1.88배</td><td>14.23%</td><td>14.62%</td><td class="pos"><strong>+0.39%p</strong></td></tr>
+  </tbody>
+</table>
+</div>
+<p>
+방향이 정반대다. <strong>친구가 계속 늘어난 채널은 발송률을 유지하거나 오히려 올렸고(+0.39%p), 친구 증가가 멈춘 채널만 크게 떨어졌다(−2.20%p).</strong>
+돌파 후 구간만 떼어 같은 채널 안에서 회귀해도 <code>log(친구수)</code> 계수는 <strong>+3.62%p</strong>(t=4.79)로 뚜렷한 양(+)이다.
+"친구가 늘어서 발송이 줄었다"는 해석은 성립하지 않는다.
+</p>
+
+<div class="callout">
+  <div class="tag">4장의 정확한 독법</div>
+  돌파 후 발송이 식는 이유는 <strong>친구가 늘어서가 아니라 친구 늘리는 활동이 끝나서</strong>다.
+  채널이 친구를 모으는 국면에서 메시지 발송도 함께 올라가고, 그 국면이 끝나면 둘 다 같이 식는다.
+  300 돌파는 그 국면 위에 찍힌 한 점일 뿐, 원인도 전환점도 아니다.
+  <strong>거꾸로 말하면 친구 유입이 유지되는 한 발송도 유지된다</strong> — 이것이 이 분석에서 나온 가장 실행 가능한 신호다.
+</div>
+
+<h2><span class="num">5</span>검정 ③ — 어느 숫자로 잘라도 결과가 같다</h2>
+<p>
+300이 진짜 특별하다면 다른 숫자에서는 아무 일도 없어야 한다. 30부터 700까지 아홉 개 지점에 동일한 설계를 적용했다.
+</p>
+
+<figure>
+  <p class="fig-title">임계값별 돌파 후 발송률 상승폭</p>
+  <p class="fig-sub">이중차분 추정 · 돌파 후 6개월 평균 (%p)</p>
+  <div class="chart-scroll" id="c-placebo"></div>
+  <figcaption>
+    30명이든 700명이든 <b>+1.0~1.4%p로 판박이</b>다. 300에서 보이던 패턴은 300의 성질이 아니라,
+    "친구가 늘면 발송도 는다"는 완만한 오르막을 임의의 지점에서 잘랐을 때 <b>어디서나 똑같이 나타나는 모습</b>이다.
+    <br><span style="color:var(--text-muted)">※ 30·50·100명은 저구간 전용 패널(친구수 0~700), 200명 이상은 주 패널(친구수 100~1,200) 기준.
+    각 패널의 유효 범위 안에서만 추정치를 취했다.</span>
+  </figcaption>
+</figure>
+
+<p>
+고정효과 회귀(<code>발송 ~ log(친구수) + 임계더미 + 채널고정효과 + 월고정효과</code>)에서도 결론은 같다.
+임계더미는 200~700 전 구간에서 +0.35~0.58%p로 고르게 유의하며, <strong>300(+0.376%p)은 350(+0.462%p)·400(+0.578%p)보다 오히려 작다.</strong>
+이 작은 양수는 특정 임계의 증거가 아니라 관계가 완전한 로그-선형에서 살짝 벗어난 곡률을 반영한 값이다.
+</p>
+
+<h2><span class="num">6</span>그렇다면 친구 몇 명부터 보내기 시작하는가</h2>
+<p>
+"임계값이 없다"가 "친구수가 무관하다"는 뜻은 아니다. 다만 답은 <strong>하나의 숫자가 아니라 분포</strong>다.
+2025-07 이후 생애 첫 메시지를 보낸 채널 17,413개가 그때 몇 명의 친구를 갖고 있었는지 세어 보았다.
+</p>
+
+<figure>
+  <p class="fig-title">생애 첫 메시지 발송 시점의 친구수 분포</p>
+  <p class="fig-sub">직전 6개월 이상 무발송이던 채널의 첫 발송 시점 기준 · 17,413채널</p>
+  <div class="legend">
+    <span><i class="swatch dot" style="background:var(--deemph)"></i> 전체 (17,413채널)</span>
+    <span><i class="swatch dot" style="background:var(--series-1)"></i> 테스트 발송 제외 (16,333채널)</span>
+    <span><i class="swatch" style="background:repeating-linear-gradient(90deg,var(--series-2) 0 4px,transparent 4px 7px)"></i> 중앙값 172명</span>
+  </div>
+  <div class="chart-scroll" id="c-first"></div>
+  <figcaption>
+    첫 메시지를 보낸 채널을 <b>그때의 친구수</b> 순으로 줄 세우면 한가운데가 <b>172명</b>이다.
+    그런데 앞에서 1/4 지점은 <b>50명</b>, 뒤에서 1/4 지점은 <b>643명</b>으로 13배나 벌어져 있고,
+    10명 중 1명은 친구 <b>15명 이하</b>에서도 첫 메시지를 보낸다.
+    "몇 명은 돼야 보낸다"는 선이 있었다면 그 숫자 바로 위에 채널이 몰리고 아래는 비어 있어야 하는데,
+    실제로는 어느 구간에서나 고르게 보낸다. <b>최소 기준선은 없다.</b>
+    회색과 파랑의 차이가 1~9명 칸에만 몰려 있다는 것은, 테스트 발송 문제가 <b>친구 10명 미만 구간에 국한</b>된다는 뜻이다(다음 절).
+    <br><span style="color:var(--text-muted)">※ 가로축 구간 폭이 서로 달라(1~9명 vs 1천~5천명) 막대 높이의 직접 비교보다 분포가 넓게 퍼진 형태를 볼 것.</span>
+  </figcaption>
+</figure>
+
+<p>
+다만 위 분포는 "친구수가 적은 채널이 훨씬 많다"는 모수 구성의 영향을 받는다.
+이를 보정해, <strong>아직 한 번도 안 보낸 채널이 그 달에 처음 보낼 확률</strong>을 친구수 구간별로 계산했다.
+</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>친구수 구간</th><th>관측 채널·월</th><th>그 달 첫 발송 확률</th><th>직전 구간 대비</th></tr></thead>
+  <tbody>
+    <tr><td>0명</td><td>12,136,790</td><td>0.010%</td><td class="muted">—</td></tr>
+    <tr class="hl"><td>1~4명</td><td>4,680,235</td><td>0.064%</td><td><strong>6.2배</strong></td></tr>
+    <tr><td>5~9명</td><td>1,767,491</td><td>0.100%</td><td>1.56배</td></tr>
+    <tr><td>10~19명</td><td>1,690,289</td><td>0.142%</td><td>1.42배</td></tr>
+    <tr><td>20~29명</td><td>977,346</td><td>0.206%</td><td>1.45배</td></tr>
+    <tr><td>30~49명</td><td>1,179,389</td><td>0.258%</td><td>1.25배</td></tr>
+    <tr><td>50~99명</td><td>1,609,140</td><td>0.339%</td><td>1.31배</td></tr>
+    <tr><td>100~199명</td><td>1,402,387</td><td>0.489%</td><td>1.44배</td></tr>
+    <tr><td>200~299명</td><td>690,678</td><td>0.614%</td><td>1.26배</td></tr>
+    <tr><td>300~499명</td><td>698,368</td><td>0.724%</td><td>1.18배</td></tr>
+    <tr><td>500~700명</td><td>355,105</td><td>0.806%</td><td>1.11배</td></tr>
+    <tr class="total"><td>합계</td><td>27,187,218</td><td>0.140%</td><td class="muted">—</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="callout">
+  <div class="tag">전 구간에서 발견된 단 하나의 불연속</div>
+  <strong>0명 → 1~4명에서 6.2배.</strong> 그 위로는 1.1~1.5배씩 매끄럽게 체감한다.
+  배수가 점점 작아진다는 것은 <strong>친구 한 명의 한계 효과가 저친구수 구간에서 가장 크다</strong>는 뜻이다.
+  다만 이 계단의 성격은 별도 검증이 필요했다 — 아래 참조.
+</div>
+
+<h3>6-1. 저친구수 첫 발송은 '본인 대상 테스트 발송'인가</h3>
+<p>
+친구가 1~4명뿐인 채널이 메시지를 보낸다면, 채널주가 본인 계정으로 친구를 맺고 테스트로 보낸 것일 가능성이 있다.
+이 경우 위 계단은 실제 사업 행동이 아니라 측정 아티팩트가 된다. 세 가지 지표로 판별했다.
+</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>첫 발송 시 친구수</th><th>수신자 수 중앙값</th><th>수신자 1~2명 비중</th><th>캠페인 수 중앙값</th><th>6개월 내 재발송률</th></tr></thead>
+  <tbody>
+    <tr class="hl"><td><strong>1~4명</strong></td><td><strong>2명</strong></td><td><strong>53.5%</strong></td><td>1건</td><td class="neg"><strong>17.9%</strong></td></tr>
+    <tr><td>5~9명</td><td>6명</td><td>14.1%</td><td>1건</td><td>25.0%</td></tr>
+    <tr><td>10~29명</td><td>17명</td><td>6.4%</td><td>1건</td><td>34.3%</td></tr>
+    <tr><td>30~49명</td><td>37명</td><td>4.5%</td><td>1건</td><td>40.4%</td></tr>
+    <tr><td>50~99명</td><td>72명</td><td>3.2%</td><td>1건</td><td>45.4%</td></tr>
+    <tr><td>100~299명</td><td>186명</td><td>1.7%</td><td>1건</td><td>47.7%</td></tr>
+    <tr><td>300명+</td><td>467명</td><td>1.3%</td><td>1건</td><td>46.1%</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+<strong>테스트 발송이 맞다.</strong> 친구 1~4명 채널의 첫 발송은 수신자가 1명(23.7%) 또는 2명(29.8%)에 몰려 있고,
+<strong>친구수 대비 수신자 비율의 중앙값이 정확히 1.00</strong>(= 있는 친구 전원에게 발송), 그리고
+<strong>82%가 그 한 번으로 끝난다</strong>(재발송률 17.9%, 100명 이상 채널의 절반 이하).
+전형적인 "본인 친구 맺고 한 번 눌러본" 패턴이다.
+</p>
+
+<p>
+다만 규모는 국지적이다. 테스트 발송(수신자 2명 이하 &amp; 캠페인 1건)으로 추정되는 채널은
+<strong>전체 첫 발송의 6.2%</strong>이며, 친구 1~9명 구간에서만 41.5%로 몰리고 10명 이상 구간에서는 1~6%에 그친다.
+</p>
+
+<div class="callout">
+  <div class="tag">테스트 발송을 걷어낸 뒤</div>
+  ① 첫 발송 시점 친구수 중앙값 <strong>153명 → 172명</strong>, p10 <strong>9명 → 15명</strong>, p25 <strong>39명 → 50명</strong>으로 소폭 상향된다.<br>
+  ② 그러나 0명 → 1~4명 계단은 <strong>사라지지 않는다</strong>(수신자 10명 이상 발송만으로 다시 계산해도 5.3배).<br>
+  ③ 결론은 바뀌지 않는다. 남은 계단도 <strong>친구가 0명이면 메시지를 받을 사람이 없어 애초에 보낼 수 없다</strong>는
+  사정을 반영한 것이지, "몇 명이 모이면 보낼 마음이 생긴다"는 행동의 문턱이 아니다.
+  <strong>테스트 발송 + 발송 가능해지는 최소 조건</strong>이 섞인 구간이며, 사업 정책의 기준선으로 삼을 근거가 되지 못한다.
+</div>
+
+<h2><span class="num">7</span>그럼 무엇이 발송을 촉발하는가</h2>
+<p>
+임계값이 아니라면 무엇인가. 세 요인을 한 모형에 함께 넣어 비교했다(채널고정효과 + 월고정효과, 표본 2,544만 행).
+</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>요인</th><th>발송 확률에 대한 효과</th><th>t값</th></tr></thead>
+  <tbody>
+    <tr class="hl"><td><strong>같은 달 친구 증가율</strong></td><td><strong>+1.263%p</strong></td><td>45.9</td></tr>
+    <tr><td>친구수 수준 (log, 전월)</td><td>+1.024%p</td><td>48.6</td></tr>
+    <tr><td>전달 친구 증가율</td><td>+0.478%p</td><td>25.7</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+<strong>친구수가 얼마인가(수준)보다 지금 친구가 늘고 있는가(증가)가 더 강하게 발송을 끌어당긴다.</strong>
+채널은 특정 숫자에 도달해서 보내는 게 아니라, 친구를 모으는 활동을 하는 그 달에 함께 보낸다.
+검정 ②에서 돌파한 달에만 계단이 서고 그 뒤로 평평해지는 것도 같은 현상이다.
+</p>
+
+<p>
+한편 별도 교차지연 분석에서 지속성의 가장 강한 예측 변수는 친구수가 아니라 <strong>직전 달 발송 여부</strong>였다.
+</p>
+
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>경로</th><th>효과</th><th>t값</th></tr></thead>
+  <tbody>
+    <tr class="hl"><td><strong>직전 달 발송 → 이번 달 발송</strong></td><td><strong>+11.95%p</strong></td><td>58.5</td></tr>
+    <tr><td>직전 달 친구 증가율 → 이번 달 발송</td><td>+1.70%p (100% 증가당)</td><td>17.4</td></tr>
+    <tr><td>직전 달 발송 → 이번 달 친구 증가율</td><td class="neg">−1.19%</td><td>−18.8</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+직전 달 발송의 영향력이 친구수 효과의 <strong>7배</strong>다. 지속성은 친구수가 만드는 것이 아니라 <strong>관성</strong>이 만든다.
+또한 발송은 친구를 늘리지 않고 오히려 소폭 줄인다(차단·이탈). 즉 기존 표에서 보이던 상관은
+"친구가 늘어서 보낸다"도 "보내서 친구가 는다"도 아니고, <strong>사업 규모·마케팅 역량이라는 공통 원인이 둘을 함께 끌어올린 결과</strong>에 가깝다.
+</p>
+
+<h2><span class="num">8</span>실무 함의</h2>
+<div class="verdict">
+  <ol>
+    <li><strong>친구수 기준 세그먼트 정책은 근거가 없다.</strong> 300이든 50이든, 그 선을 기준으로 타깃을 가르거나 정책을 달리 가져갈 데이터 근거가 확인되지 않았다. 커뮤니케이션 편의상 구간을 나누는 것과, 그 구간에 인과적 의미를 부여하는 것은 구분해야 한다.</li>
+    <li><strong>레버는 "친구 모으는 시점"에 있다.</strong> 발송은 친구 증가와 같은 달에 몰린다. 친구 확보 캠페인·신규 유입 시점에 메시지 발송을 함께 제안하는 것이 임의의 친구수 구간을 타깃하는 것보다 효과적일 가능성이 높다.</li>
+    <li><strong>친구 유입 정체는 발송 이탈의 선행지표다.</strong> 돌파 후 친구 증가가 멈춘 채널은 6개월간 발송률이 −2.20%p 떨어진 반면, 계속 늘어난 채널은 +0.39%p로 유지됐다(4-1절). <strong>친구수 절대값이 아니라 친구 증가율 둔화</strong>를 이탈 위험 신호로 모니터링하는 편이 낫다.</li>
+    <li><strong>지속성 관리는 '끊기지 않게'가 핵심이다.</strong> 직전 달 발송 여부가 지속성의 지배적 결정요인이므로, 신규 발송 유도보다 <strong>연속 발송이 끊긴 채널의 조기 감지·복구</strong>가 KPI 관점에서 레버가 크다.</li>
+    <li><strong>저친구수 채널을 일괄 제외하는 것은 재검토가 필요하다.</strong> 테스트 발송을 걷어낸 뒤에도 첫 발송 채널의 <strong>17%가 친구 30명 미만</strong>에서 출발했고, 친구 한 명의 한계 효과는 저구간에서 가장 크다. 다만 친구 10명 미만 구간은 테스트 발송 비중이 41.5%로 높아, 이 구간을 타깃 모수에 넣을 때는 <strong>수신자 수 기준 필터를 함께 걸어야</strong> 허수를 걸러낼 수 있다.</li>
+  </ol>
+</div>
+
+<h2><span class="num">9</span>분석의 한계</h2>
+<p>
+<strong>① 관측 데이터 기반이다.</strong> 임계값 부재는 여러 설계에서 일관되게 확인됐으나, 무작위 실험이 아니므로
+관측되지 않은 요인이 친구수와 발송을 동시에 움직였을 가능성을 완전히 배제할 수는 없다.
+다만 임계값 가설은 그 요인이 <em>특정 숫자에서만</em> 작동해야 성립하는데, 그런 흔적이 어느 지점에서도 없었다.<br>
+<strong>② 돌파 이벤트의 이중차분 추정치는 평행추세 가정을 만족하지 않는다.</strong> 본문에서 이 값을 인과효과로 해석하지 않은 이유이며,
+사전추세 연장 대비 비교를 함께 제시한 이유다.<br>
+<strong>③ 친구수는 월 단위 스냅샷이다.</strong> 월 중 등락은 관측되지 않으며, 돌파 시점은 월 해상도로만 식별된다.<br>
+<strong>④ 발송 정의는 카비센 광고성 채널메시지 기준이다.</strong> 모먼트 집행분과 알림톡은 포함되지 않는다.<br>
+<strong>⑤ 테스트 발송 판별은 휴리스틱이다.</strong> "수신자 2명 이하 &amp; 캠페인 1건"으로 정의했으며, 발송 로그에 테스트 여부 플래그가 없어 직접 식별은 불가능하다.
+소량 실발송이 테스트로 잘못 분류되거나(과대추정), 지인 3~5명에게 보낸 테스트가 누락될(과소추정) 수 있다.
+본문의 결론은 이 정의를 수신자 10명 기준으로 바꿔도 유지된다.
+</p>
+
+<div class="footer">
+  <p><strong>재현 코드</strong> · <code>sql/persist_panel_build.py</code> (패널 구축) · <code>persist_threshold_rdd.py</code> (불연속 검정) ·
+  <code>persist_threshold_did.py</code> (이중차분) · <code>persist_low_threshold.py</code> (저구간) ·
+  <code>persist_first_send.py</code> (첫 발송·동시성) · <code>persist_test_send_check.py</code> (테스트 발송 판별) ·
+  <code>persist_first_send_clean.py</code> (테스트 제외 재계산) · <code>persist_post_decline.py</code> (돌파 후 하락 분해) · <code>persist_report_data.py</code> (차트 데이터)</p>
+  <p><strong>산출물</strong> · <code>outputs/pp_report_data.json</code>, <code>pp_raw_trajectory.csv</code>, <code>pp_first_send_uncensored.csv</code>, <code>pp_first_send_hazard.csv</code>, <code>pp_low_curve.csv</code></p>
+  <p>hadoop_bi_hive에서 복사한 임시 테이블은 분석 종료 후 모두 삭제 완료.</p>
+</div>
+</div>
+
+<div class="tooltip" id="tt"></div>
+
+<script type="module">
+const DATA = {"traj300": {"k": [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6], "treat": [7.35, 7.82, 8.8, 9.2, 9.8, 10.76, 11.88, 12.29, 11.97, 12.05, 11.74, 11.36, 11.11], "ctrl": [4.85, 4.68, 4.81, 4.75, 4.67, 4.67, 4.6, 4.51, 4.37, 4.26, 4.11, 4.09, 3.88]}, "first_send": {"label": ["0", "1~9", "10~29", "30~49", "50~99", "100~199", "200~299", "300~499", "500~999", "1천~5천", "5천+"], "share": [0.1, 10.4, 10.6, 7.4, 12.0, 15.1, 7.8, 9.0, 9.7, 12.8, 5.1], "channels": [20, 1808, 1841, 1292, 2081, 2624, 1365, 1570, 1688, 2234, 890], "real_share": [0.1, 6.5, 10.6, 7.6, 12.5, 15.9, 8.3, 9.5, 10.2, 13.5, 5.4], "real_channels": [14, 1058, 1738, 1241, 2039, 2591, 1353, 1552, 1668, 2201, 878], "test_pct": [30.0, 41.5, 5.6, 3.9, 2.0, 1.3, 0.9, 1.1, 1.2, 1.5, 1.3]}, "hazard": {"label": ["0", "1~4", "5~9", "10~19", "20~29", "30~49", "50~99", "100~199", "200~299", "300~499", "500~700"], "rate": [0.0099999997764825, 0.0640000030398368, 0.1000000014901161, 0.1420000046491623, 0.2060000002384185, 0.257999986410141, 0.3389999866485595, 0.488999992609024, 0.6140000224113464, 0.7239999771118164, 0.8059999942779541]}, "curve": {"friend": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675], "pct": [0.16099999845027924, 0.597000002861023, 0.8690000176429749, 1.2369999885559082, 1.4420000314712524, 1.847000002861023, 2.2079999446868896, 2.437000036239624, 2.927999973297119, 3.1600000858306885, 3.299999952316284, 3.6640000343322754, 3.9790000915527344, 3.809000015258789, 4.500999927520752, 4.9039998054504395, 4.88700008392334, 5.052999973297119, 5.24399995803833, 5.5920000076293945, 6.013000011444092, 7.14900016784668, 7.822000026702881, 8.435999870300293, 9.095000267028809, 9.711000442504883, 10.251999855041504, 10.744999885559082, 11.326000213623047, 11.77299976348877, 11.998000144958496, 12.520999908447266, 13.006999969482422, 13.258000373840332, 14.253000259399414, 12.954000473022461, 13.772000312805176, 14.446999549865723, 14.392000198364258, 14.649999618530273, 15.034000396728516, 14.791000366210938, 13.87399959564209, 11.649999618530273], "n": [3198793, 358506, 205086, 146836, 113993, 91715, 76453, 66222, 58782, 52190, 47630, 43937, 40811, 41354, 34703, 32138, 29812, 29111, 27405, 25088, 109857, 85318, 69646, 57742, 49609, 43393, 37650, 33681, 29878, 27241, 24555, 21915, 20181, 17982, 16467, 15470, 14515, 13518, 12264, 10860, 9665, 8309, 6833, 4910]}, "traj50": {"k": [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6], "treat": [1.41, 1.6, 1.78, 1.76, 2.21, 2.52, 3.93, 3.85, 3.75, 3.75, 3.7, 3.58, 3.54], "ctrl": [0.96, 0.95, 0.92, 0.82, 0.77, 0.75, 0.75, 0.71, 0.68, 0.66, 0.63, 0.63, 0.59], "n_treat": 17359}, "traj100": {"k": [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6], "treat": [2.98, 3.31, 3.6, 3.92, 4.32, 5.02, 6.57, 6.2, 6.01, 5.98, 5.79, 5.75, 5.55], "ctrl": [2.07, 2.01, 2.06, 1.99, 1.91, 1.85, 1.8, 1.82, 1.73, 1.66, 1.61, 1.56, 1.49], "n_treat": 14605}, "placebo": {"cutoff": [30, 50, 100, 200, 250, 300, 400, 500, 700], "post_pp": [1.12, 1.32, 1.15, 1.16, 1.31, 1.33, 1.44, 1.0, 1.02], "base_pct": [1.32, 2.52, 5.02, 8.89, 10.01, 10.76, 12.67, 14.5, 16.92], "src": ["저", "저", "저", "주", "주", "주", "주", "주", "주"]}, "rdd": {"cutoff": [10, 20, 30, 50, 100, 150, 200, 300, 400, 500, 700], "jump_pp": [0.021, -0.199, 0.0, -0.168, -0.359, -0.208, 0.304, 0.061, null, null, null], "se_pp": [0.044, 0.077, 0.102, 0.134, 0.201, 0.266, 0.313, 0.398, null, null, null]}};
+const tt = document.getElementById('tt');
+const NS = 'http://www.w3.org/2000/svg';
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function showTip(evt, html){
+  tt.innerHTML = html; tt.style.opacity = 1;
+  const r = tt.getBoundingClientRect();
+  let x = evt.clientX + 14, y = evt.clientY - r.height - 10;
+  if (x + r.width > innerWidth - 8) x = evt.clientX - r.width - 14;
+  if (y < 8) y = evt.clientY + 16;
+  tt.style.left = x + 'px'; tt.style.top = y + 'px';
+}
+const hideTip = () => tt.style.opacity = 0;
+
+function el(tag, attrs, parent){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function svgRoot(mount, w, h){
+  mount.innerHTML = '';
+  const s = el('svg', {viewBox:`0 0 ${w} ${h}`, width:w, height:h, role:'img'}, mount);
+  s.style.minWidth = Math.min(w, 640) + 'px';
+  return s;
+}
+function axis(s, {x0,y0,x1,y1,ticks,fmt,horiz,label}){
+  el('line', {x1:x0, y1:y0, x2:horiz?x1:x0, y2:horiz?y0:y1,
+    stroke:css('--rule-strong'), 'stroke-width':1}, s);
+  ticks.forEach(t => {
+    const g = el('text', {
+      x: horiz ? t.p : x0 - 8, y: horiz ? y0 + 16 : t.p + 4,
+      'text-anchor': horiz ? 'middle' : 'end',
+      'font-size':11, fill:css('--text-muted')}, s);
+    g.textContent = fmt ? fmt(t.v) : t.v;
+  });
+}
+function gridlines(s, xs, xe, ys){
+  ys.forEach(y => el('line', {x1:xs, x2:xe, y1:y, y2:y,
+    stroke:css('--rule'), 'stroke-width':1}, s));
+}
+
+/* ---------- 1. 친구수별 발송률 곡선 ---------- */
+function drawCurve(){
+  const mount = document.getElementById('c-curve');
+  const idx = DATA.curve.friend.map((f,i)=>i).filter(i => DATA.curve.friend[i] <= 400);
+  const fs = idx.map(i => DATA.curve.friend[i]);
+  const ps = idx.map(i => DATA.curve.pct[i]);
+  const ns = idx.map(i => DATA.curve.n[i]);
+  const W = 820, H = 340, L = 52, R = 22, T = 18, B = 44;
+  const s = svgRoot(mount, W, H);
+  const xmax = 400, ymax = 14;
+  const X = v => L + (v / xmax) * (W - L - R);
+  const Y = v => H - B - (v / ymax) * (H - T - B);
+  gridlines(s, L, W - R, [0,2,4,6,8,10,12,14].map(Y));
+  axis(s, {x0:L, y0:H-B, x1:W-R, y1:H-B, horiz:true,
+    ticks:[0,50,100,150,200,250,300,350,400].map(v=>({p:X(v), v}))});
+  axis(s, {x0:L, y0:H-B, x1:L, y1:T,
+    ticks:[0,2,4,6,8,10,12,14].map(v=>({p:Y(v), v:v+'%'}))});
+  // 참고선: 관심 지점
+  [50,100,300].forEach(v => {
+    el('line', {x1:X(v), x2:X(v), y1:T, y2:H-B, stroke:css('--rule-strong'),
+      'stroke-width':1, 'stroke-dasharray':'2 4'}, s);
+    const t = el('text', {x:X(v), y:T+11, 'text-anchor':'middle', 'font-size':10.5,
+      fill:css('--text-muted')}, s);
+    t.textContent = v + '명';
+  });
+  const d = fs.map((f,i) => `${i?'L':'M'}${X(f)},${Y(ps[i])}`).join(' ');
+  el('path', {d, fill:'none', stroke:css('--series-1'), 'stroke-width':2,
+    'stroke-linejoin':'round', 'stroke-linecap':'round'}, s);
+  fs.forEach((f,i) => {
+    el('circle', {cx:X(f), cy:Y(ps[i]), r:2.5, fill:css('--series-1')}, s);
+    const hit = el('circle', {cx:X(f), cy:Y(ps[i]), r:11, fill:'transparent',
+      style:'cursor:crosshair'}, s);
+    hit.addEventListener('mousemove', e => showTip(e,
+      `친구수 <b>${f}~${fs[i+1] ? fs[i+1]-1 : 400}명</b><br>6개월 내 발송률 <b>${ps[i].toFixed(2)}%</b><br><span style="color:${css('--text-muted')}">관측 ${ns[i].toLocaleString()}건</span>`));
+    hit.addEventListener('mouseleave', hideTip);
+  });
+  const lab = el('text', {x:W-R, y:H-6, 'text-anchor':'end', 'font-size':11,
+    fill:css('--text-muted')}, s);
+  lab.textContent = '친구수(명)';
+}
+
+/* ---------- 2. 돌파 전후 궤적 (small multiples) ---------- */
+function drawTraj(){
+  const mount = document.getElementById('c-traj');
+  const panels = [
+    {key:'traj50',  title:'50명 돌파',  n:'17,359채널', ymax:5},
+    {key:'traj100', title:'100명 돌파', n:'14,605채널', ymax:8},
+    {key:'traj300', title:'300명 돌파', n:'10,770채널', ymax:14},
+  ];
+  const PW = 262, H = 300, L = 40, R = 14, T = 44, B = 42, GAP = 14;
+  const W = PW * 3 + GAP * 2;
+  const s = svgRoot(mount, W, H);
+  panels.forEach((p, pi) => {
+    const ox = pi * (PW + GAP);
+    const d = DATA[p.key];
+    const X = k => ox + L + ((k + 6) / 12) * (PW - L - R);
+    const Y = v => H - B - (v / p.ymax) * (H - T - B);
+    const ty = el('text', {x:ox + L - 6, y:20, 'font-size':13, 'font-weight':650,
+      fill:css('--text-primary')}, s);
+    ty.textContent = p.title;
+    const tn = el('text', {x:ox + L - 6, y:35, 'font-size':11, fill:css('--text-muted')}, s);
+    tn.textContent = p.n;
+    const yt = p.ymax <= 5 ? [0,1,2,3,4,5] : p.ymax <= 8 ? [0,2,4,6,8] : [0,4,8,12];
+    gridlines(s, ox + L, ox + PW - R, yt.map(Y));
+    axis(s, {x0:ox+L, y0:H-B, x1:ox+PW-R, y1:H-B, horiz:true,
+      ticks:[-6,-3,0,3,6].map(v=>({p:X(v), v: v===0?'돌파':(v>0?'+'+v:v)}))});
+    axis(s, {x0:ox+L, y0:H-B, x1:ox+L, y1:T,
+      ticks:yt.map(v=>({p:Y(v), v:v+'%'}))});
+    // 돌파 시점 표시
+    el('line', {x1:X(0), x2:X(0), y1:T, y2:H-B, stroke:css('--text-secondary'),
+      'stroke-width':1.5, 'stroke-dasharray':'3 3', opacity:.55}, s);
+    [['treat','--series-1'], ['ctrl','--series-2']].forEach(([k, cvar]) => {
+      const path = d.k.map((kk,i) => `${i?'L':'M'}${X(kk)},${Y(d[k][i])}`).join(' ');
+      el('path', {d:path, fill:'none', stroke:css(cvar), 'stroke-width':2,
+        'stroke-linejoin':'round', 'stroke-linecap':'round'}, s);
+      d.k.forEach((kk,i) => el('circle', {cx:X(kk), cy:Y(d[k][i]), r:2.1,
+        fill:css(cvar)}, s));
+    });
+    // 크로스헤어 히트존
+    d.k.forEach((kk,i) => {
+      const hit = el('rect', {x:X(kk)-8, y:T, width:16, height:H-B-T,
+        fill:'transparent', style:'cursor:crosshair'}, s);
+      hit.addEventListener('mousemove', e => showTip(e,
+        `<b>${kk===0?'돌파한 달':(kk>0?`돌파 ${kk}개월 후`:`돌파 ${-kk}개월 전`)}</b><br>
+         <span style="color:${css('--series-1')}">■</span> 돌파 채널 <b>${d.treat[i].toFixed(2)}%</b><br>
+         <span style="color:${css('--series-2')}">■</span> 미돌파 채널 <b>${d.ctrl[i].toFixed(2)}%</b>`));
+      hit.addEventListener('mouseleave', hideTip);
+    });
+  });
+}
+
+/* ---------- 3. 위약 임계값 막대 ---------- */
+function drawPlacebo(){
+  const mount = document.getElementById('c-placebo');
+  const d = DATA.placebo;
+  const W = 820, H = 280, L = 52, R = 22, T = 20, B = 52;
+  const s = svgRoot(mount, W, H);
+  const ymax = 1.8;
+  const bw = (W - L - R) / d.cutoff.length;
+  const Y = v => H - B - (v / ymax) * (H - T - B);
+  gridlines(s, L, W - R, [0,0.5,1.0,1.5].map(Y));
+  axis(s, {x0:L, y0:H-B, x1:W-R, y1:H-B, horiz:true,
+    ticks:d.cutoff.map((c,i)=>({p:L + bw*i + bw/2, v:c+'명'}))});
+  axis(s, {x0:L, y0:H-B, x1:L, y1:T,
+    ticks:[0,0.5,1.0,1.5].map(v=>({p:Y(v), v:v.toFixed(1)}))});
+  d.cutoff.forEach((c,i) => {
+    const isFocus = c === 300;
+    const x = L + bw*i + bw*0.22, w = bw*0.56;
+    const y = Y(d.post_pp[i]);
+    el('path', {d:`M${x},${H-B} L${x},${y+4} Q${x},${y} ${x+4},${y}
+      L${x+w-4},${y} Q${x+w},${y} ${x+w},${y+4} L${x+w},${H-B} Z`,
+      fill: isFocus ? css('--series-1') : css('--deemph')}, s);
+    const t = el('text', {x:x+w/2, y:y-7, 'text-anchor':'middle', 'font-size':11.5,
+      'font-weight': isFocus?700:500, fill:css(isFocus?'--text-primary':'--text-secondary')}, s);
+    t.textContent = '+' + d.post_pp[i].toFixed(2);
+    const hit = el('rect', {x:L+bw*i, y:T, width:bw, height:H-B-T,
+      fill:'transparent', style:'cursor:pointer'}, s);
+    hit.addEventListener('mousemove', e => showTip(e,
+      `<b>친구수 ${c}명 돌파</b><br>돌파 후 상승폭 <b>+${d.post_pp[i].toFixed(2)}%p</b><br>
+       <span style="color:${css('--text-muted')}">돌파 직전 발송률 ${d.base_pct[i].toFixed(2)}%</span>`));
+    hit.addEventListener('mouseleave', hideTip);
+  });
+  const lab = el('text', {x:L, y:H-8, 'font-size':11, fill:css('--text-muted')}, s);
+  lab.textContent = '검정 지점(임계값)';
+  const yl = el('text', {x:L-6, y:T-4, 'text-anchor':'end', 'font-size':11,
+    fill:css('--text-muted')}, s);
+  yl.textContent = '%p';
+}
+
+/* ---------- 4. 첫 발송 시점 친구수 분포 ---------- */
+function drawFirst(){
+  const mount = document.getElementById('c-first');
+  const d = DATA.first_send;
+  const W = 820, H = 300, L = 52, R = 22, T = 20, B = 56;
+  const s = svgRoot(mount, W, H);
+  const ymax = 16;
+  const bw = (W - L - R) / d.label.length;
+  const Y = v => H - B - (v / ymax) * (H - T - B);
+  gridlines(s, L, W - R, [0,4,8,12,16].map(Y));
+  axis(s, {x0:L, y0:H-B, x1:W-R, y1:H-B, horiz:true,
+    ticks:d.label.map((l,i)=>({p:L + bw*i + bw/2, v:l}))});
+  axis(s, {x0:L, y0:H-B, x1:L, y1:T,
+    ticks:[0,4,8,12,16].map(v=>({p:Y(v), v:v+'%'}))});
+  let cum = 0;
+  d.label.forEach((l,i) => {
+    cum += d.real_share[i];
+    const gw = bw*0.62, x0 = L + bw*i + bw*0.19;
+    [[d.share[i], '--deemph'], [d.real_share[i], '--series-1']].forEach(([v, cvar], j) => {
+      const x = x0 + j*(gw/2 + 1), w = gw/2 - 1, y = Y(v);
+      el('path', {d:`M${x},${H-B} L${x},${y+3} Q${x},${y} ${x+3},${y}
+        L${x+w-3},${y} Q${x+w},${y} ${x+w},${y+3} L${x+w},${H-B} Z`, fill:css(cvar)}, s);
+      const t = el('text', {x:x+w/2, y:y-6, 'text-anchor':'middle', 'font-size':10,
+        fill:css(j ? '--text-primary' : '--text-muted'),
+        'font-weight': j ? 650 : 400}, s);
+      t.textContent = v.toFixed(1);
+    });
+    const c = cum;
+    const hit = el('rect', {x:L+bw*i, y:T, width:bw, height:H-B-T,
+      fill:'transparent', style:'cursor:pointer'}, s);
+    hit.addEventListener('mousemove', e => showTip(e,
+      `첫 발송 시 친구 <b>${l}명</b><br>
+       <span style="color:${css('--deemph')}">■</span> 전체 <b>${d.share[i].toFixed(1)}%</b> (${d.channels[i].toLocaleString()}채널)<br>
+       <span style="color:${css('--series-1')}">■</span> 테스트 제외 <b>${d.real_share[i].toFixed(1)}%</b> (${d.real_channels[i].toLocaleString()}채널)<br>
+       <span style="color:${css('--text-muted')}">이 구간 테스트 추정 ${d.test_pct[i].toFixed(1)}% · 제외 기준 누적 ${c.toFixed(1)}%</span>`));
+    hit.addEventListener('mouseleave', hideTip);
+  });
+  // 중앙값 표시
+  const medX = L + bw*5 + bw*0.5;
+  el('line', {x1:medX, x2:medX, y1:T, y2:H-B, stroke:css('--series-2'),
+    'stroke-width':1.5, 'stroke-dasharray':'4 3'}, s);
+  const lab = el('text', {x:L, y:H-8, 'font-size':11, fill:css('--text-muted')}, s);
+  lab.textContent = '첫 발송 시점의 친구수';
+}
+
+function drawAll(){ drawCurve(); drawTraj(); drawPlacebo(); drawFirst(); }
+drawAll();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
+new MutationObserver(drawAll).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+</script>
