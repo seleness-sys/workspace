@@ -308,11 +308,16 @@ input.input{font-family:inherit;outline:none}
 .aipol{margin-top:12px;background:#fff;border:1px dashed #c9bdf0;border-radius:8px;padding:12px 14px}
 .aipt{white-space:pre-line;line-height:1.6}
 .aiload{padding:6px 0;color:#6b5bb5;font-weight:600}
-.memo{max-width:900px;background:#fffbe0;border:1px solid #f0dd7a;border-left:4px solid #fee500;border-radius:8px;padding:12px 16px;margin:0 0 22px;font-size:13px;line-height:1.6}
-.memo .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.memo .mh a,.memo.off a{color:#8a7a00;font-size:12px;cursor:pointer}
-.memo ul{margin:0;padding-left:18px;color:#4a4300}
-.memo.off{padding:6px 12px;display:inline-block}
+#memofab{position:fixed;left:16px;bottom:20px;z-index:60;background:#191919;color:#fff;border-radius:20px;padding:9px 14px;font-size:13px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+#memofab span{display:inline-block;background:#fee500;color:#191919;border-radius:9px;padding:0 6px;margin-left:4px;font-size:11px}
+#memofab.on{background:#fee500;color:#191919}#memofab.on span{background:#191919;color:#fee500}
+#memodrawer{position:fixed;left:16px;bottom:66px;width:320px;max-height:60vh;overflow:auto;z-index:59;background:#fffdf0;border:1px solid #f0dd7a;border-radius:12px;padding:16px 18px;font-size:13px;line-height:1.6;box-shadow:0 10px 30px rgba(0,0,0,.15);transform:translateY(12px);opacity:0;pointer-events:none;transition:.18s}
+#memodrawer.open{transform:none;opacity:1;pointer-events:auto}
+#memodrawer .mh{display:flex;justify-content:space-between;align-items:center}
+#memodrawer .mh a{color:#999;cursor:pointer}
+#memodrawer .msub{font-size:12px;color:#8a7a00;margin:2px 0 8px}
+#memodrawer ul{margin:0;padding-left:18px;color:#3d3700}
+#memodrawer li{margin-bottom:4px}
 .hidden{display:none!important}
 </style></head>
 <body>
@@ -869,13 +874,15 @@ function memoKey(r){
  if(r==='at-send'){if(S.sent)return'done';if(S.step===0)return(S.hasHistory&&!S.browse)?'quick':'gallery';return S.step===1?'step1':'step2'}
  return {'at-list':'list','at-detail':'detail','at-tpl':'tpl','at-new':'newtpl','at-report':'report','msg-new':'msgnew','msg-compose':'compose','msg-target':'target','msg-file':'file'}[r];
 }
-function memoOpen(){try{return localStorage.getItem('memoOff')!=='1'}catch(e){return true}}
-function memoToggle(){try{localStorage.setItem('memoOff',memoOpen()?'1':'0')}catch(e){}render()}
+function memoToggle(){S.memoOpen=!S.memoOpen;addMemo()}
 function addMemo(){
- const k=memoKey(route()), m=MEMO[k], main=document.querySelector('#app main'); if(!m||!main)return;
- const d=document.createElement('div'); d.className='memo'+(memoOpen()?'':' off');
- d.innerHTML=memoOpen()?`<div class="mh"><b>📝 사업 메모</b><a onclick="memoToggle()">접기</a></div><ul>${m.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<a onclick="memoToggle()">📝 사업 메모 보기</a>`;
- main.prepend(d);
+ const m=MEMO[memoKey(route())];
+ let f=document.getElementById('memofab'), d=document.getElementById('memodrawer');
+ if(!f){f=document.createElement('button');f.id='memofab';f.onclick=memoToggle;document.body.appendChild(f);
+  d=document.createElement('div');d.id='memodrawer';document.body.appendChild(d)}
+ f.style.display=m?'':'none'; f.innerHTML=`📝 사업 메모 <span>${m?m.length:0}</span>`; f.className=S.memoOpen?'on':'';
+ d.className=(S.memoOpen&&m)?'open':'';
+ d.innerHTML=m?`<div class="mh"><b>📝 사업 메모</b><a onclick="memoToggle()">✕</a></div><div class="msub">이 화면의 의도와 미정 사항</div><ul>${m.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';
 }
 function setScen(h){Object.assign(S,{hasHistory:h,browse:false,step:0,tpl:null,uploaded:false,sent:false,again:false});document.getElementById('sc0').className=h?'':'on';document.getElementById('sc1').className=h?'on':'';go('at-send');render()}
 function render(){const r=route();document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
