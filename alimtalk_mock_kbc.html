@@ -318,6 +318,15 @@ input.input{font-family:inherit;outline:none}
 #memodrawer .msub{font-size:12px;color:#8a7a00;margin:2px 0 8px}
 #memodrawer ul{margin:0;padding-left:18px;color:#3d3700}
 #memodrawer li{margin-bottom:4px}
+.seg{display:inline-flex;background:#f1f1f1;border-radius:8px;padding:3px;margin-bottom:12px}
+.seg span{padding:7px 14px;border-radius:6px;font-size:13px;cursor:pointer;color:#666}
+.seg span small{color:#999;margin-left:4px;font-size:11px}
+.seg span.on{background:#fff;color:#191919;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mtb{width:100%;border-collapse:collapse;font-size:13px}
+.mtb th{text-align:left;font-weight:500;color:#777;padding:0 4px 6px;font-size:12px}
+.mtb td{padding:3px 4px}.mtb .input{width:100%;height:36px}
+.mtb td:last-child{width:20px;text-align:center}
+.mtb td:first-child{width:42%}
 .hidden{display:none!important}
 </style></head>
 <body>
@@ -349,7 +358,7 @@ const I={
 const ico=(k,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 26 26">${I[k]}</svg>`;
 
 /* ---------------- state ---------------- */
-const S={hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
+const S={recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
 const TPL={
  '교육':[
   {id:'t1',name:'수강료 납부 안내',when:'납부일이 다가올 때',to:'학부모',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'안녕하세요, #{이름} 학부모님.\n#{학원명}입니다.\n\n#{월}월 수강료 납부를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}\n\n문의는 채널 채팅으로 남겨주세요.',btn:'납부 안내 보기'},
@@ -425,7 +434,7 @@ function phone(){
  const t=S.tpl?Object.values(TPL).flat().find(x=>x.id===S.tpl):null;
  let body='템플릿을 선택하면<br>미리보기가 표시돼요.';
  if(t){
-  body=t.body.replace(/#\{(.+?)\}/g,(m,k)=>{const v=VARS[k]||m;const sample={'이름':'김민지','금액':'280,000'}[k];return `<span class="v">${sample||(/엑셀/.test(v)?m:v)}</span>`});
+  body=t.body.replace(/#\{(.+?)\}/g,(m,k)=>{const v=VARS[k]||m;const mr=(S.recvMode==='manual'&&S.rows&&S.rows[0])?S.rows[0][k]:null;const sample=mr||{'이름':'김민지','금액':'280,000'}[k];return `<span class="v">${sample||(/엑셀/.test(v)?m:v)}</span>`});
  }
  return `<div><div class="phone"><div class="screen">
   <div class="top">대호</div>
@@ -469,14 +478,15 @@ P['at-send']=()=>{
    ${TPL[S.cat].map(t=>`<div class="tpl" onclick="${t.st==='ok'?`S.tpl='${t.id}';render()`:''}" style="${t.st!=='ok'?'opacity:.55;cursor:default':''}"><div style="flex:1"><div class="t">${t.name}${t.set?'<span class="badge b-at">바로 사용</span>':''}${t.st==='ing'?'<span class="badge b-ing">검수 중</span>':''}</div><div class="s">${t.when} · ${t.to}에게</div></div></div>`).join('')}
    <div class="help"><a style="color:#3a6fd8" onclick="S.step=0;S.browse=true;render()">예시 보면서 고르기</a> · <a style="color:#3a6fd8" onclick="newTpl()">직접 만들기</a></div></div>`;
   const chosen=ct?`<div class="fsec"><div class="lab">보낼 알림</div><div class="filerow" style="background:#fffbe0;border-color:#f3e27a"><div><b>${ct.name}</b><div style="font-size:12px;color:#777;margin-top:3px;line-height:1.6">${ct.when} · ${ct.to}에게<br>필요한 열: ${ct.cols}</div></div><a style="color:#3a6fd8;font-size:13px" onclick="S.tpl=null;render()">바꾸기</a></div></div>`:pickTpl;
-  const vars=ct&&S.uploaded?`<div class="fsec"><div class="lab">내용 채우기</div><div class="vars">${(ct.body.match(/#\{(.+?)\}/g)||[]).filter((v,i,a)=>a.indexOf(v)===i).map(v=>{const k=v.slice(2,-1);return `<div class="varrow"><code>${v}</code><span class="arr">→</span><div class="input">${VARS[k]||'직접 입력'}</div></div>`}).join('')}</div>
+  const vars=ct&&S.recvMode==='manual'?commonVarsHTML(ct):ct&&S.uploaded?`<div class="fsec"><div class="lab">내용 채우기</div><div class="vars">${(ct.body.match(/#\{(.+?)\}/g)||[]).filter((v,i,a)=>a.indexOf(v)===i).map(v=>{const k=v.slice(2,-1);return `<div class="varrow"><code>${v}</code><span class="arr">→</span><div class="input">${VARS[k]||'직접 입력'}</div></div>`}).join('')}</div>
    <div class="help">엑셀 열 이름이 같으면 자동으로 채워져요. 미리보기에서 확인하세요.</div></div>`:'';
   form=`${chosen}
   <div class="fsec"><div class="lab">받는 사람<span class="req">*</span></div>
-   ${S.uploaded?`<div class="filerow"><div class="nm"><span class="xls">${S.fromList?'명단':'XLS'}</span>${S.fileName}</div><a style="color:#888;font-size:13px" onclick="S.uploaded=false;render()">삭제</a></div>
+   <div class="seg"><span class="${S.recvMode==='manual'?'on':''}" onclick="S.recvMode='manual';render()">직접 입력 <small>몇 명일 때</small></span><span class="${S.recvMode!=='manual'?'on':''}" onclick="S.recvMode='excel';render()">엑셀·명단 <small>여러 명일 때</small></span></div>
+   ${S.recvMode==='manual'?manualHTML(ct):S.uploaded?`<div class="filerow"><div class="nm"><span class="xls">${S.fromList?'명단':'XLS'}</span>${S.fileName}</div><a style="color:#888;font-size:13px" onclick="S.uploaded=false;render()">삭제</a></div>
    <div class="stats">${S.fromList?`<div class="stat">불러온 명단<b>${S.fileCnt}명</b></div><div class="stat">발송 대상<b>${S.fileCnt}명</b></div><div class="stat">불러온 곳<b style="font-size:14px;margin-top:5px">${S.fromList}</b></div>`:`<div class="stat">전체 행<b>312</b></div><div class="stat">발송 대상<b>300명</b></div><div class="stat warn">중복·오류 제외<b>12</b></div>`}</div>`
    :`<div class="drop" onclick="S.uploaded=true;S.fromList=null;S.fileName='학부모명단_2610.xlsx';S.fileCnt=300;render()"><b>엑셀 파일을 끌어다 놓거나 클릭해서 올리세요</b><span style="font-size:12px">전화번호 열 필수 · 최대 1만 명 · .xlsx .csv</span></div>
-   <div style="display:flex;gap:14px;margin-top:10px;font-size:13px"><a style="color:#3a6fd8">${ct?ct.name+' 양식':'양식'} 다운로드</a><span style="color:#ddd">|</span><a style="color:#3a6fd8">직접 입력</a><span style="color:#ddd">|</span><a style="color:#3a6fd8;font-weight:600" onclick="S.picker='recent';render()">저장된 명단 불러오기</a></div>`}
+   <div style="display:flex;gap:14px;margin-top:10px;font-size:13px"><a style="color:#3a6fd8">${ct?ct.name+' 양식':'양식'} 다운로드</a><span style="color:#ddd">|</span><a style="color:#3a6fd8;font-weight:600" onclick="S.picker='recent';render()">저장된 명단 불러오기</a></div>`}
   </div>
   ${vars}
 `;
@@ -492,8 +502,8 @@ P['at-send']=()=>{
    <div class="help">메시지와 같은 비즈월렛 캐시에서 차감돼요. 받지 못한 분(카톡 미사용 등)은 비용이 차감되지 않고, 발송 후 명단을 확인할 수 있어요.</div></div>
   <div class="fsec"><div class="notice"><b>정보성 메시지만 보낼 수 있어요</b><br>· 할인·이벤트 등 광고 내용이 섞이면 발송이 제한될 수 있어요.<br>· 광고는 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 보내기</a>에서 채널 친구에게 보내세요.</div></div>`;
  }
- const ready=S.uploaded&&S.tpl;
- const next=st===1?`<button class="btn ${ready?'y':'dis'}" onclick="S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="S.sent=true;render()">${S.fileCnt}명에게 발송</button></span>`;
+ const ready=S.tpl&&(S.recvMode==='manual'?manualN()>0:S.uploaded);
+ const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="S.sent=true;render()">${S.fileCnt}명에게 발송</button></span>`;
  const prev=`<button class="btn line" onclick="${st===1?'S.step=0;S.browse=false':'S.step=1'};render()">이전</button>`;
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
   <div class="h1"><span class="step">Step ${st}.</span>${['알림톡 작성','알림톡 발송 설정'][st-1]}</div>
@@ -502,8 +512,26 @@ P['at-send']=()=>{
   <div class="formwrap"><div class="form">${form}<div class="footbtn">${prev}${next}</div></div>${phone()}</div>
  </main></div>${pickerHTML()}`;
 };
+const SHOPV=['학원명','가게명','병원명'];
+function tvars(t){return (t.body.match(/#\{(.+?)\}/g)||[]).map(v=>v.slice(2,-1)).filter((v,i,a)=>a.indexOf(v)===i)}
+function perVars(t){return tvars(t).filter(k=>!SHOPV.includes(k)&&!['월','기한'].includes(k))}
+function manualN(){return (S.rows||[]).filter(r=>(r.phone||'').replace(/\D/g,'').length>=10).length}
+function mRow(i,k,v){S.rows[i][k]=v;const n=manualN();const c=document.getElementById('mcount');if(c)c.textContent=n+'명';const nb=document.getElementById('nextbtn');if(nb)nb.className='btn '+(n&&S.tpl?'y':'dis');if(i===0){const pv=document.querySelector('.phone');if(pv)pv.parentElement.outerHTML=phone()}}
 const HIST=[{tpl:'t1',file:'학부모명단_2610',cnt:300,d:'10.13',ok:296},{tpl:'t2',file:'보강반_1002',cnt:84,d:'10.02',ok:84},{tpl:'t7',file:'출결_전체원생',cnt:212,d:'09.30',ok:210}];
 function again(i){const h=HIST[i];Object.assign(S,{tpl:h.tpl,cat:catOf(h.tpl),uploaded:true,fromList:'최근 알림톡',fileName:h.file,fileCnt:h.cnt,step:2,again:true,sent:false,saved:false});go('at-send');render()}
+function manualHTML(ct){
+ if(!S.rows) S.rows=[{phone:''}];
+ const pv=ct?perVars(ct):['이름'];
+ return `<table class="mtb"><tr><th>전화번호</th>${pv.map(k=>`<th>${k}</th>`).join('')}<th></th></tr>
+  ${S.rows.map((r,i)=>`<tr><td><input class="input" placeholder="010-0000-0000" value="${r.phone||''}" oninput="mRow(${i},'phone',this.value)"></td>${pv.map(k=>`<td><input class="input" placeholder="${{'이름':'김민지','금액':'280,000','일시':'10월 20일 19:00','인원':'4','날짜':'10월 18일','시간':'오후 2시','장소':'본관 3층','시각':'15:02','상품':'사과 5kg','송장번호':'','만료일':'10월 31일','픽업시간':'12시 30분','객실':'201호'}[k]||''}" value="${r[k]||''}" oninput="mRow(${i},'${k}',this.value)"></td>`).join('')}<td>${S.rows.length>1?`<a style="color:#aaa" onclick="S.rows.splice(${i},1);render()">✕</a>`:''}</td></tr>`).join('')}</table>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px"><a style="color:#3a6fd8;font-weight:600" onclick="S.rows.push({phone:''});render()">+ 한 명 더</a><span>받는 사람 <b id="mcount">${manualN()}명</b></span></div>
+  <div class="help">10명 이상이면 엑셀·명단이 편해요. 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.</div>`;
+}
+function commonVarsHTML(ct){
+ const cv=tvars(ct).filter(k=>!perVars(ct).includes(k)); if(!cv.length) return '';
+ return `<div class="fsec"><div class="lab">공통 내용</div><div class="vars">${cv.map(k=>`<div class="varrow"><code>#{${k}}</code><span class="arr">→</span><div class="input">${VARS[k]||''}</div></div>`).join('')}</div><div class="help">모든 받는 분에게 똑같이 들어가는 내용이에요.</div></div>`;
+}
+
 P['at-quick']=()=>{
  const myT=Object.values(TPL).flat().filter(t=>['t1','t2','t7','t3'].includes(t.id));
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
@@ -652,9 +680,9 @@ P['at-report']=()=>{
 };
 
 P['at-done']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done">
- <div class="donebox"><div class="ok">✓</div><h3>300명에게 알림톡을 보냈어요</h3><p>수강료 납부 안내 · 방금 전<br>성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a></p>
-  <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
- ${S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
+ <div class="donebox"><div class="ok">✓</div><h3>${S.fromList==='직접 입력'?S.fileCnt:300}명에게 알림톡을 보냈어요</h3><p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.rows=null;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
+ ${S.fromList==='직접 입력'?'':S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">광고 메시지 보내기</button><button class="btn line sm" onclick="go('msg-file')">고객 파일 보기</button></div></div>`
  :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>이 명단을 고객 파일에 저장해 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.saved=true;render()">고객 파일에 저장</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
@@ -856,7 +884,7 @@ const MEMO={
  home:['LNB 알림톡 독립 메뉴 (메시지 ↔ 소식·쿠폰 사이, 10/8 결정)','홈 퀵카드·배너를 보조 진입점으로 활용','써본 사장님은 퀵카드가 "최근 보낸 알림"으로 전환'],
  gallery:['빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
  quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
- step1:['템플릿 먼저 → 받는 사람 순서 (템플릿이 엑셀 양식을 결정)','저장된 명단 불러오기 = 최근 알림톡 명단 + 고객 파일 (C안)','논의 필요: 광고용으로 올린 고객 파일을 알림톡에 열지 여부'],
+ step1:['받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 최근 알림톡 명단 + 고객 파일 (C안)','논의 필요: 광고용으로 올린 고객 파일을 알림톡에 열지 여부'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
  done:['실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 고객 파일 저장 (A안, 사장님이 선택)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
  list:['현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
