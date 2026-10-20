@@ -472,7 +472,7 @@ tr.hl td,.tb tr.hl td{background:#fafafa!important}
 </style></head>
 <body>
 <div class="mock">가상 화면 · 실제 서비스 아님</div>
-<div class="scen"><span class="vl">버전</span><span id="va" onclick="setVer('a')">A 정기 발송형</span><span id="vb" onclick="setVer('b')">B 연결 중심형</span><span class="sep"></span>시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
+<div class="scen"><span class="vl">버전</span><span id="va" onclick="setVer('a')">A 반복 발송형</span><span id="vb" onclick="setVer('b')">B 연결 중심형</span><span class="sep"></span>시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
 <div class="gnb">
   <div class="logo">kakao business<small>파트너센터</small></div>
   <nav><b>파트너</b><span>광고</span><span>판매</span><span>비즈도구</span><span>지원</span></nav>
@@ -649,7 +649,7 @@ P['at-send']=()=>{
   <div class="fsec"><div class="notice"><b>정보성 메시지만 보낼 수 있어요</b><br>· 할인·이벤트 등 광고 내용이 섞이면 발송이 제한될 수 있어요.<br>· 광고는 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 보내기</a>에서 채널 친구에게 보내세요.</div></div>`;
  }
  const ready=S.tpl&&(S.recvMode==='manual'?manualN()>0:S.uploaded);
- const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="if(S.tpl&&!myIds().includes(S.tpl))S.myTpl.push(S.tpl);S.recur=(S.sendMode||(S.ver!=='b'&&findT(S.tpl).rec?'recur':'now'))==='recur';S.sent=true;render()">${(S.sendMode||(S.ver!=='b'&&ct&&ct.rec?'recur':'now'))==='recur'?'정기 발송 등록':S.fileCnt+'명에게 발송'}</button></span>`;
+ const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="if(S.tpl&&!myIds().includes(S.tpl))S.myTpl.push(S.tpl);S.recur=false;S.sent=true;render()">${false?'정기 발송 등록':S.fileCnt+'명에게 발송'}</button></span>`;
  const prev=`<button class="btn line" onclick="${st===1?'S.step=0;S.browse=false':'S.step=1'};render()">이전</button>`;
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
   <div class="h1"><span class="step">Step ${st}.</span>${['알림톡 작성','알림톡 발송 설정'][st-1]}</div>
@@ -676,10 +676,10 @@ function manualHTML(ct){
 
 
 function sendTimeHTML(ct){
- const m=S.sendMode||(S.ver!=='b'&&ct&&ct.rec?'recur':'now');
+ const m=S.sendMode==='later'?'later':'now';
  const opt=(k,l,extra='')=>`<span class="radio ${m===k?'on':''}" onclick="S.sendMode='${k}';render()"><i></i>${l}${extra}</span>`;
  return `<div class="fsec"><div class="lab">발송 날짜/시간 설정</div>
-  ${opt('now','즉시 발송')}${opt('later','예약 발송')}${S.ver!=='b'?opt('recur','정기 발송',ct&&ct.rec?' <span class="recchip">추천</span>':''):''}
+  ${opt('now','즉시 발송')}${opt('later','예약 발송')}
   ${m==='recur'?`<div class="recbox">
     <div class="brow"><span class="bl">반복</span><div style="display:flex;gap:6px;align-items:center;flex:1"><div class="sel">매월</div><div class="sel">25일</div><div class="sel">오전 10시</div></div></div>
     <div class="brow"><span class="bl">받는 사람</span><div style="flex:1"><span class="radio on"><i></i>이번 명단 그대로</span><span class="radio"><i></i>매번 명단 확인 후 발송</span></div></div>
@@ -705,12 +705,8 @@ P['at-quick']=()=>{
  const myT=myIds().map(findT);
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
  <div class="h1">알림톡 보내기</div><div class="desc">자주 보내는 알림을 바로 다시 보낼 수 있어요.</div>
- <div class="remind"><div><b>지난달 10월 13일에 「수강료 납부 안내」를 300명에게 보냈어요</b><span>이번 달도 보낼 때가 됐어요. 매달 보낸다면 정기 발송으로 설정해 두세요.</span></div><div style="display:flex;gap:6px;flex:none"><button class="btn line sm" onclick="again(0)">이번 달 보내기</button><button class="btn y sm" onclick="again(0);S.sendMode='recur';render()">정기 발송 설정</button></div></div>
- <div class="secT" style="margin-top:28px">정기 발송<small>설정한 날짜에 자동으로 보내요</small></div>
- <table class="tb" style="max-width:900px"><tr><th>알림</th><th>주기</th><th>받는 사람</th><th>다음 발송</th><th>상태</th><th></th></tr>
-  <tr><td><b>학부모 성적표 안내</b></td><td>매월 말일 오후 6시</td><td>학부모명단 · 300명</td><td>10.31</td><td><span class="badge b-ok">진행 중</span></td><td><a style="color:#3a6fd8">수정</a> · <a style="color:#999">중지</a></td></tr>
-  <tr><td><b>출결 알림</b></td><td>매주 월요일 오전 9시</td><td>출결_전체원생 · 212명</td><td>10.27</td><td><span class="badge b-ok">진행 중</span></td><td><a style="color:#3a6fd8">수정</a> · <a style="color:#999">중지</a></td></tr>
- </table>
+ <div class="remind"><div><b>지난달 10월 13일에 「수강료 납부 안내」를 300명에게 보냈어요</b><span>이번 달도 보낼 때가 됐어요. 지난번 명단·내용 그대로 불러와요.</span></div><div style="display:flex;gap:6px;flex:none"><button class="btn y sm" onclick="again(0)">이번 달도 보내기</button></div></div>
+
  <div class="secT" style="margin-top:32px">최근 보낸 알림<small>누르면 지난번 명단·내용 그대로 확인 화면으로 가요</small></div>
  <div class="qgrid">${HIST.map((h,i)=>{const t=findT(h.tpl);return `<div class="qrow" onclick="again(${i})">
    <div class="bubble mini qb"><div class="hd">알림톡 도착</div><div class="bd">${t.body.split('\n').filter(Boolean)[0].replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지'}[k]||VARS[k]||m))}</div></div>
@@ -730,7 +726,7 @@ P['at-gallery']=()=>{
  const prev=t=>t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지','금액':'280,000'}[k]||VARS[k]||m));
  const card=(t,rank)=>`<div class="sc ${t.st!=='ok'?'off':''}" onclick="${t.st==='ok'?`S.tpl='${t.id}';S.cat='${catOf(t.id)}';S.step=1;render()`:''}">
    ${rank?`<span class="rank">${rank}</span>`:''}<div class="scbub"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
-   <div class="sctx"><div class="when">${t.when}${S.ver!=='b'&&t.rec?'<span class="recchip">정기 '+t.rec+'</span>':''}</div><b>${t.name}</b>${t.st==='ok'?'<span class="badge b-at">바로 사용</span>':'<span class="badge b-ing">검수 필요</span>'}<div class="to">${rank?catOf(t.id)+' · ':''}${t.to}에게</div></div></div>`;
+   <div class="sctx"><div class="when">${t.when}${S.ver!=='b'&&t.rec?'<span class="recchip">'+t.rec+' 보내는 알림</span>':''}</div><b>${t.name}</b>${t.st==='ok'?'<span class="badge b-at">바로 사용</span>':'<span class="badge b-ing">검수 필요</span>'}<div class="to">${rank?catOf(t.id)+' · ':''}${t.to}에게</div></div></div>`;
  const nogo=`<div class="nogo"><div><b>이런 건 알림톡으로 보낼 수 없어요</b><span>할인·이벤트 · 신메뉴·신상품 홍보 · 쿠폰 · 재방문 유도</span></div><div style="display:flex;gap:10px;align-items:center"><span style="font-size:13px;color:#666">채널 친구에게 광고로 보내세요</span><button class="btn line sm" onclick="go('msg-new')">메시지 보내기 →</button></div></div>`;
  const addc=`<div class="sc addc" onclick="newTpl()"><div class="plus">+</div><b>찾는 알림이 없나요?</b><span>직접 만들어 검수를 받으면<br>다음부터 바로 쓸 수 있어요</span></div>`;
  let inner;
@@ -742,12 +738,12 @@ P['at-gallery']=()=>{
   inner=my.length?myTop+`<div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}</div>${nogo}`:`<div class="hero2">
    <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 대호 채널 · ${mine}</div>
     <div class="big">이런 알림을<br><em>카톡으로</em> 보낼 수 있어요</div>
-    <p>${S.ver==='b'?'손님 휴대폰 번호만 있으면 돼요.<br>받은 손님이 [채널 추가]를 누르면 우리 채널 친구가 돼요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 <b>정기 발송</b>으로 한 번만 설정하세요.'}</p>
+    <p>${S.ver==='b'?'손님 휴대폰 번호만 있으면 돼요.<br>받은 손님이 [채널 추가]를 누르면 우리 채널 친구가 돼요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 다음 달에 <b>다시 보내기</b>로 바로 보낼 수 있어요.'}</p>
     <div class="catsw">업종이 다른가요? ${Object.keys(TPL).filter(c=>c!==mine).map(c=>`<a onclick="S.myCat='${c}';render()">${c}</a>`).join('')}</div></div>
    <div class="hr">${mt.slice(0,3).map(t=>`<div class="hb" onclick="S.tpl='${t.id}';S.cat='${mine}';S.step=1;render()">
      <div class="who"><span class="avatar" style="width:22px;height:22px"></span>대호</div>
      <div class="bubble mini"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
-     <div class="hbname">${t.when}${S.ver!=='b'&&t.rec?' · 정기':''}<br><b>${t.name}</b></div><div class="go">이걸로 보내기 ›</div></div>`).join('')}</div>
+     <div class="hbname">${t.when}${S.ver!=='b'&&t.rec?' · 매달':''}<br><b>${t.name}</b></div><div class="go">이걸로 보내기 ›</div></div>`).join('')}</div>
   </div>
   <div class="secT" style="margin-top:40px">업종별로 준비돼 있어요<small>업종을 고르면 바로 쓸 수 있는 알림을 보여드려요</small></div>
   <div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}
@@ -1140,7 +1136,7 @@ function memoKey(r){
  return {'at-list':'list','at-detail':'detail','at-tpl':'tpl','at-new':'newtpl','at-report':'report','msg-new':'msgnew','msg-compose':'compose','msg-target':'target','msg-file':'file'}[r];
 }
 function memoToggle(){S.memoOpen=!S.memoOpen;addMemo()}
-const MEMO_VER={a:{gallery:'[A안] 정기형 템플릿(수강료·성적표·관리비 등) 앞 배치 + "정기" 표시',step2:'[A안] 정기 발송(매월 N일) — 매달 바뀌는 금액·기한은 발송 3일 전 카톡 확인 요청',quick:'[A안] 지난달 발송 리마인드 + 정기 발송 목록',done:'[A안] 정기 발송 등록 완료 안내'},
+const MEMO_VER={a:{gallery:'[A안] 매달 보내는 알림(수강료·성적표·관리비 등) 앞 배치 + "매달 보내는 알림" 표시',quick:'[A안] 지난달 발송 리마인드 → 이번 달도 보내기(명단·내용 그대로)'},
  b:{gallery:'[B안] 반복 없음 가정 — 항상 예시 갤러리, 내 템플릿·다시 보내기 없음',step1:'[B안] 저장된 명단 불러오기 없음, 직접 입력·엑셀만',done:'[B안] 친구 연결 안내를 발송 결과보다 위에 배치',tpl:'[B안] 담기 없이 검수 완료 템플릿에서 바로 보내기',report:'[B안] 알림톡으로 늘어난 친구를 맨 위에'}};
 function addMemo(){
  const k0=memoKey(route()), vx=(MEMO_VER[S.ver||'a']||{})[k0], m=MEMO[k0]?(vx?[vx,...MEMO[k0]]:MEMO[k0]):null;
