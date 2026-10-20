@@ -342,6 +342,23 @@ input.input{font-family:inherit;outline:none}
 .lh-f b{font-size:40px;color:#191919;background:#fee500;padding:0 8px;border-radius:6px}
 .lh-note{margin-top:12px;font-size:14px;color:#444}
 .lh-note b{color:#191919}
+.fbox{max-width:1000px;margin-top:24px;background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:20px 22px}
+.fb-h{display:flex;align-items:center;gap:8px;font-size:16px}
+.fb-nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.fb-nums div{background:#f7f7f7;border-radius:10px;padding:14px 16px}
+.fb-nums span{display:block;font-size:12px;color:#777}.fb-nums b{font-size:26px}
+.fb-nums em{display:block;font-style:normal;font-size:12px;color:#8a7a00}
+.fb-nums .hl{background:#fffbe0}.fb-nums .hl b{color:#191919}
+.fb-msg{margin:16px 0 10px;font-size:14px}
+.adgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.adc{border:1px solid #eee;border-radius:10px;padding:12px;display:flex;flex-direction:column}
+.adtag{font-size:12px;font-weight:700;display:flex;justify-content:space-between;margin-bottom:8px}
+.adtag span{font-weight:600;color:#1d8a4e;background:#e6f6ee;border-radius:4px;padding:1px 6px}
+.adb{background:#b2c7da;border-radius:10px;padding:10px;flex:1}
+.adw2{font-size:11px;color:#333;margin-bottom:4px}
+.adbody{background:#fff;border-radius:4px 10px 10px 10px;padding:10px;font-size:12px;line-height:1.55;white-space:pre-line}
+.adbtn{background:#fff;border-radius:6px;text-align:center;font-size:12px;padding:6px;margin-top:6px}
+.aduse{margin-top:10px;font-size:13px;font-weight:700;color:#3a6fd8;cursor:pointer}
 .hidden{display:none!important}
 </style></head>
 <body>
@@ -714,6 +731,28 @@ P['at-done']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class=
    <div class="acts"><button class="btn y sm" onclick="S.saved=true;render()">고객 파일에 저장</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
 </div></main></div>`;
 
+const ADEX=[
+ {tag:'교육 · 수학학원',body:'[겨울방학 특강 모집]\n중등 내신 대비 특강을 열어요.\n친구 등록하신 학부모님께 첫 달 교재비를 지원해 드려요.',btn:'특강 신청하기',ctr:'클릭률 높음'},
+ {tag:'교육 · 영어학원',body:'[친구 추천 이벤트]\n함께 등록하면 두 분 모두 한 달 수강료 10% 할인!\n이번 달 말까지만 진행돼요.',btn:'자세히 보기',ctr:'반응 많음'},
+ {tag:'운동 · 필라테스',body:'[신규 클래스 오픈]\n평일 저녁 7시 소그룹 클래스가 새로 열렸어요.\n채널 친구에게만 1회 무료 체험을 드려요.',btn:'체험 예약하기',ctr:'예약 전환 높음'}
+];
+function useAd(i){const a=ADEX[i];S.msg=S.msg||{};S.msg.kind='ad';S.msg.body=a.body;S.msgGroup=null;go('msg-compose');render()}
+function friendBox(){
+ const total=180, byAt=6+11;
+ return `<div class="fbox">
+  <div class="fb-h"><b>알림톡으로 늘어난 친구</b><span class="badge b-gr">수치는 예시</span></div>
+  <div class="fb-nums">
+   <div><span>내 채널 전체 친구</span><b>${total}명</b></div>
+   <div class="hl"><span>알림톡 보고 친구가 된 분</span><b>+${byAt}명</b><em>최근 3개월 · 말풍선 [채널 추가]</em></div>
+  </div>
+  <div class="fb-msg">친구가 된 고객에게는 <b>메시지로 광고·이벤트</b>를 보낼 수 있어요. 다른 가게들은 이렇게 보내고 있어요.</div>
+  <div class="adgrid">${ADEX.map((a,i)=>`<div class="adc"><div class="adtag">${a.tag}<span>${a.ctr}</span></div>
+    <div class="adb"><div class="adw2">(광고) 대호</div><div class="adbody">${a.body}</div><div class="adbtn">${a.btn}</div></div>
+    <a class="aduse" onclick="useAd(${i})">이 문구로 메시지 쓰기 ›</a></div>`).join('')}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px"><span class="help" style="margin:0">추천 문구는 비슷한 업종 채널에서 반응이 좋았던 메시지를 바탕으로 해요.</span><button class="btn y sm" onclick="S.msgGroup=null;go('msg-compose');render()">친구 ${total}명에게 메시지 보내기</button></div>
+ </div>`;
+}
+
 P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
  <div class="h1">알림톡 목록</div>
  <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
@@ -722,7 +761,7 @@ P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class=
  <tr><td>26.10.02 10:15</td><td>보강 일정 안내</td><td>84</td><td>84 / 0</td><td>+2</td><td><span class="badge b-gr">미저장</span></td><td></td></tr>
  <tr><td>26.09.25 09:00</td><td>수강료 납부 안내</td><td>291</td><td>288 / 3 <a style="color:#e0442c;margin-left:4px" onclick="openDetail('b')">실패 보기</a></td><td>+11</td><td><span class="badge b-ok">저장됨</span></td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2609';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>
  </table>
- <div class="infobox"><b>ⓘ 발송 후 친구 추가</b><br>알림톡 말풍선의 [채널 추가] 버튼으로 친구가 된 수예요. 친구가 된 고객에게는 메시지 보내기로 광고를 보낼 수 있어요.</div>
+ ${friendBox()}
 </main></div>`;
 
 P['at-tpl']=()=>{
@@ -928,7 +967,7 @@ const MEMO={
  step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
  done:['실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 고객 파일 저장 (A안, 사장님이 선택)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
- list:['현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
+ list:['하단에 내 채널 친구 수 · 알림톡으로 늘어난 친구 수 + 비슷한 업종 광고 문구 추천 → 메시지로 연결','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['심사 완료 세트 = 검수 없이 바로 사용','내 템플릿: 검수 중 / 사용 가능 / 반려(사유 + 재신청)'],
  newtpl:['세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','AI 문구 조언: 광고 표현·자리표시·승인 팁 지적 + 다듬은 문구 제안 (9/29 AI 제외 번복)','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
