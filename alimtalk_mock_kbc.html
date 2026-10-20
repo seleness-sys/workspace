@@ -543,7 +543,7 @@ P['at-send']=()=>{
   <div class="fsec"><div class="notice"><b>정보성 메시지만 보낼 수 있어요</b><br>· 할인·이벤트 등 광고 내용이 섞이면 발송이 제한될 수 있어요.<br>· 광고는 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 보내기</a>에서 채널 친구에게 보내세요.</div></div>`;
  }
  const ready=S.tpl&&(S.recvMode==='manual'?manualN()>0:S.uploaded);
- const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="S.sent=true;render()">${S.fileCnt}명에게 발송</button></span>`;
+ const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="if(S.tpl&&!myIds().includes(S.tpl))S.myTpl.push(S.tpl);S.sent=true;render()">${S.fileCnt}명에게 발송</button></span>`;
  const prev=`<button class="btn line" onclick="${st===1?'S.step=0;S.browse=false':'S.step=1'};render()">이전</button>`;
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
   <div class="h1"><span class="step">Step ${st}.</span>${['알림톡 작성','알림톡 발송 설정'][st-1]}</div>
@@ -583,7 +583,7 @@ function commonVarsHTML(ct){
 }
 
 P['at-quick']=()=>{
- const myT=Object.values(TPL).flat().filter(t=>['t1','t2','t7','t3'].includes(t.id));
+ const myT=myIds().map(findT);
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
  <div class="h1">알림톡 보내기</div><div class="desc">자주 보내는 알림을 바로 다시 보낼 수 있어요.</div>
  <div class="secT" style="margin-top:32px">최근 보낸 알림<small>누르면 지난번 명단·내용 그대로 확인 화면으로 가요</small></div>
@@ -591,7 +591,7 @@ P['at-quick']=()=>{
    <div class="bubble mini qb"><div class="hd">알림톡 도착</div><div class="bd">${t.body.split('\n').filter(Boolean)[0].replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지'}[k]||VARS[k]||m))}</div></div>
    <div style="flex:1;min-width:0"><b style="font-size:16px">${t.name}</b><div style="font-size:13px;color:#777;margin-top:4px">${h.file} · ${h.cnt}명<br>${h.d} 발송</div></div>
    <button class="btn y sm">다시 보내기</button></div>`}).join('')}</div>
- <div class="secT" style="margin-top:40px">새로 보내기</div>
+ <div class="secT" style="margin-top:40px">내 템플릿으로 보내기 <small><a style="color:#3a6fd8" onclick="S.tplTab='lib';go('at-tpl');render()">템플릿 더 가져오기 ›</a></small></div>
  <div class="newrow">
   ${myT.filter(t=>t.st==='ok').map(t=>`<div class="nb" onclick="Object.assign(S,{tpl:'${t.id}',cat:'${catOf(t.id)}',uploaded:false,step:1,again:false});render()"><b>${t.name}</b><span>${t.when}</span></div>`).join('')}
   <div class="nb ghost" onclick="S.browse=true;S.step=0;render()"><b>다른 알림 고르기 ›</b><span>업종별 예시 보기</span></div>
@@ -610,8 +610,11 @@ P['at-gallery']=()=>{
  const addc=`<div class="sc addc" onclick="newTpl()"><div class="plus">+</div><b>찾는 알림이 없나요?</b><span>직접 만들어 검수를 받으면<br>다음부터 바로 쓸 수 있어요</span></div>`;
  let inner;
  if(S.gcat==='전체'){
-  const mine=S.myCat||'교육', mt=TPL[mine].filter(t=>t.st==='ok');
-  inner=`<div class="hero2">
+  const mine=S.myCat||'교육', mt=TPL[mine].filter(t=>t.st==='ok'), my=myIds().map(findT);
+  const myTop=my.length?`<div class="secT">내 템플릿<small>담아둔 템플릿이에요. 골라서 바로 보내세요.</small></div>
+  <div class="scgrid">${my.map(t=>card(t)).join('')}<div class="sc addc" style="min-height:0" onclick="S.tplTab='lib';go('at-tpl');render()"><div class="plus">+</div><b>템플릿 더 가져오기</b><span>업종별 검수 완료 템플릿</span></div></div>
+  <div class="secT" style="margin-top:44px">다른 알림 둘러보기<small>마음에 들면 보낸 뒤 내 템플릿에 자동으로 담겨요</small></div>`:'';
+  inner=my.length?myTop+`<div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}</div>${nogo}`:`<div class="hero2">
    <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 대호 채널 · ${mine}</div>
     <div class="big">이런 알림을<br><em>카톡으로</em> 보낼 수 있어요</div>
     <p>손님 휴대폰 번호만 있으면 돼요.<br>채널 친구가 아니어도 카톡으로 도착해요.</p>
@@ -635,7 +638,7 @@ P['at-gallery']=()=>{
   <div class="scgrid">${list.map(t=>card(t)).join('')}${addc}</div>${nogo}`;
  }
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
- ${S.hasHistory?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}<div class="h1">무엇을 알려드릴까요?</div>
+ ${S.hasHistory?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}<div class="h1">${myIds().length&&S.gcat==='전체'?'어떤 알림을 보낼까요?':'무엇을 알려드릴까요?'}</div>
  <div class="desc">손님에게 꼭 전해야 하는 안내를 전화번호로 보내요. 채널 친구가 아니어도 받을 수 있어요. <u>알림톡 이용 가이드</u></div>
  <div style="margin-top:32px">${inner}</div>
  </main></div>`;
@@ -771,7 +774,7 @@ P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class=
  ${friendBox()}
 </main></div>`;
 
-function myIds(){if(!S.myTpl)S.myTpl=['t1','t2'];return S.myTpl}
+function myIds(){if(!S.myTpl)S.myTpl=S.hasHistory?['t1','t2','t7']:[];return S.myTpl}
 function addTpl(id){const m=myIds();if(!m.includes(id))m.push(id);S.justAdded=id;render()}
 function rmTpl(id){S.myTpl=myIds().filter(x=>x!==id);render()}
 P['at-tpl']=()=>{
@@ -980,7 +983,7 @@ P['msg-file']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-file')}<main cl
 
 const MEMO={
  home:['LNB 알림톡 독립 메뉴 (메시지 ↔ 소식·쿠폰 사이, 10/8 결정)','홈 퀵카드·배너를 보조 진입점으로 활용','써본 사장님은 퀵카드가 "최근 보낸 알림"으로 전환'],
- gallery:['빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
+ gallery:['내 템플릿이 있으면 담아둔 템플릿부터, 없으면 예시 갤러리부터 노출','보낸 템플릿은 내 템플릿에 자동으로 담김','빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
  quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
  step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
@@ -1010,7 +1013,7 @@ function addMemo(){
  d.className=(S.memoOpen&&m)?'open':'';
  d.innerHTML=m?`<div class="mh"><b>📝 사업 메모</b><a onclick="memoToggle()">✕</a></div><div class="msub">이 화면의 의도와 미정 사항</div><ul>${m.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';
 }
-function setScen(h){Object.assign(S,{hasHistory:h,browse:false,step:0,tpl:null,uploaded:false,sent:false,again:false});document.getElementById('sc0').className=h?'':'on';document.getElementById('sc1').className=h?'on':'';go('at-send');render()}
+function setScen(h){Object.assign(S,{myTpl:null,hasHistory:h,browse:false,step:0,tpl:null,uploaded:false,sent:false,again:false});document.getElementById('sc0').className=h?'':'on';document.getElementById('sc1').className=h?'on':'';go('at-send');render()}
 
 const DEEP={
  'at-step1':()=>Object.assign(S,{hasHistory:false,browse:false,tpl:'t1',cat:'교육',step:1,sent:false,recvMode:'manual',uploaded:false}),
