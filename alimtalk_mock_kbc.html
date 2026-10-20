@@ -710,7 +710,7 @@ P['at-report']=()=>{
  return `<div class="wrap">${rail('at')}${subAt('at-report')}<main class="main">
  <div class="h1">알림톡 리포트</div><div class="desc">보낸 알림이 잘 도착했는지, 알림톡으로 친구가 얼마나 늘었는지 확인하세요. <span class="badge b-gr">수치는 예시</span></div>
  <div class="tabs" style="margin-top:24px">${[['30d','최근 30일'],['3m','최근 3개월'],['6m','최근 6개월']].map(([k,l])=>`<span class="chip ${per===k?'on':''}" onclick="S.rper='${k}';render()">${l}</span>`).join('')}</div>
- <div class="kpis" style="margin-top:14px"><div><span>10월 발송 건수</span><b>1,284건</b><em>9월 대비 +9%</em></div><div><span>10월 받음률</span><b>98.6%</b><em>받지 못함 18건</em></div><div><span>10월 친구 추가</span><b>+43명</b><em>&nbsp;</em></div><div><span>10월 사용 캐시</span><b>— 원</b><em>단가 미정</em></div></div>
+ <div class="kpis" style="margin-top:14px"><div><span>10월 발송 건수</span><b>1,284건</b><em>9월 대비 +9%</em></div><div><span>10월 받음률</span><b>98.6%</b><em>받지 못함 18건</em></div><div><span>10월 친구 추가</span><b>+43명</b><em>&nbsp;</em></div><div><span>10월 사용 캐시</span><b>— 원</b><em>&nbsp;</em></div></div>
  <div class="rgrid">
   <div class="rcard"><div class="rt">월별 발송 건수</div>
    <div class="bars">${M.map(([m,v])=>`<div class="bcol" title="${m} ${v.toLocaleString()}건"><div class="bv">${m==='10월'?v.toLocaleString():''}</div><div class="bar" style="height:${Math.round(v/mx*150)}px"></div><div class="bl">${m}</div></div>`).join('')}</div></div>
