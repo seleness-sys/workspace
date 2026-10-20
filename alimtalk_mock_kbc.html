@@ -710,18 +710,18 @@ P['at-report']=()=>{
  return `<div class="wrap">${rail('at')}${subAt('at-report')}<main class="main">
  <div class="h1">알림톡 리포트</div><div class="desc">보낸 알림이 잘 도착했는지, 알림톡으로 친구가 얼마나 늘었는지 확인하세요. <span class="badge b-gr">수치는 예시</span></div>
  <div class="tabs" style="margin-top:24px">${[['30d','최근 30일'],['3m','최근 3개월'],['6m','최근 6개월']].map(([k,l])=>`<span class="chip ${per===k?'on':''}" onclick="S.rper='${k}';render()">${l}</span>`).join('')}</div>
- <div class="kpis" style="margin-top:14px"><div><span>10월 보낸 알림</span><b>1,284</b><em>9월 대비 +9%</em></div><div><span>10월 받음률</span><b>98.6%</b><em>받지 못함 18건</em></div><div><span>10월 친구 추가</span><b>+43</b><em>말풍선 [채널 추가]로</em></div><div><span>10월 사용 캐시</span><b>— 원</b><em>단가 미정</em></div></div>
+ <div class="kpis" style="margin-top:14px"><div><span>10월 발송 건수</span><b>1,284건</b><em>9월 대비 +9%</em></div><div><span>10월 받음률</span><b>98.6%</b><em>받지 못함 18건</em></div><div><span>10월 친구 추가</span><b>+43명</b><em>&nbsp;</em></div><div><span>10월 사용 캐시</span><b>— 원</b><em>단가 미정</em></div></div>
  <div class="rgrid">
-  <div class="rcard"><div class="rt">월별 보낸 알림</div>
+  <div class="rcard"><div class="rt">월별 발송 건수</div>
    <div class="bars">${M.map(([m,v])=>`<div class="bcol" title="${m} ${v.toLocaleString()}건"><div class="bv">${m==='10월'?v.toLocaleString():''}</div><div class="bar" style="height:${Math.round(v/mx*150)}px"></div><div class="bl">${m}</div></div>`).join('')}</div></div>
   <div class="rcard"><div class="rt">받지 못한 사유 <span style="font-weight:400;color:#888;font-size:13px">10월 · ${rt}건</span></div>
    ${R.map(([k,v])=>`<div class="hrow" title="${k} ${v}건"><span class="hk">${k}</span><div class="htrack"><div class="hbar" style="width:${Math.round(v/R[0][1]*100)}%"></div></div><span class="hv">${v}건</span></div>`).join('')}
    <div class="help" style="margin-top:12px">카톡 미사용·수신 차단은 문자나 전화로 안내하세요. <a style="color:#3a6fd8;white-space:nowrap" onclick="openDetail('a')">받지 못한 명단 보기</a></div></div>
  </div>
  <div class="rcard" style="margin-top:16px;max-width:1190px"><div class="rt">알림별 성과 <span style="font-weight:400;color:#888;font-size:13px">10월</span></div>
-  <table class="tb"><tr><th>알림</th><th>보낸 건수</th><th>받음률</th><th>발송 후 친구 추가</th><th>마지막 발송</th><th></th></tr>
-  ${T.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1].toLocaleString()}</td><td>${r[2]}%</td><td>+${r[3]}</td><td>${r[4]}</td><td><a style="color:#3a6fd8" onclick="again(0)">다시 보내기</a></td></tr>`).join('')}
-  <tr style="font-weight:700"><td>합계</td><td>1,284</td><td>98.6%</td><td>+43</td><td></td><td></td></tr></table></div>
+  <table class="tb"><tr><th>알림</th><th>발송 건수</th><th>받음률</th><th>발송 후 친구 추가</th><th>마지막 발송</th><th></th></tr>
+  ${T.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1].toLocaleString()}</td><td>${r[2]}%</td><td>+${r[3]}명</td><td>${r[4]}</td><td><a style="color:#3a6fd8" onclick="again(0)">다시 보내기</a></td></tr>`).join('')}
+  <tr style="font-weight:700"><td>합계</td><td>1,284</td><td>98.6%</td><td>+43명</td><td></td><td></td></tr></table></div>
  <div class="rcard" style="margin-top:16px;max-width:1190px"><div class="rt">알림톡에서 메시지로 <span style="font-weight:400;color:#888;font-size:13px">10월</span></div>
   <div class="flow">
    <div class="fs"><span>알림톡 받은 분</span><b>1,266명</b><em>&nbsp;</em></div><div class="fa">→</div>
@@ -753,7 +753,7 @@ function friendBox(){
   <div class="fb-h"><b>알림톡으로 늘어난 친구</b><span class="badge b-gr">수치는 예시</span></div>
   <div class="fb-nums">
    <div><span>내 채널 전체 친구</span><b>${total}명</b></div>
-   <div class="hl"><span>알림톡 보고 친구가 된 분</span><b>+${byAt}명</b><em>최근 3개월 · 말풍선 [채널 추가]</em></div>
+   <div class="hl"><span>알림톡 보고 친구가 된 분</span><b>+${byAt}명</b><em>최근 3개월</em></div>
   </div>
   <div class="fb-msg">친구가 된 고객에게는 <b>메시지로 광고·이벤트</b>를 보낼 수 있어요. 다른 가게들은 이렇게 보내고 있어요.</div>
   <div class="adgrid">${ADEX.map((a,i)=>`<div class="adc"><div class="adtag">${a.tag}<span>${a.ctr}</span></div>
