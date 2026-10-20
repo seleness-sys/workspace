@@ -1168,9 +1168,12 @@ const DEEP={
  'at-step1':()=>Object.assign(S,{hasHistory:false,browse:false,tpl:'t1',cat:'교육',step:1,sent:false,recvMode:'manual',uploaded:false}),
  'at-step2':()=>Object.assign(S,{hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:false,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
  'at-done':()=>Object.assign(S,{hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:true,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
- 'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null})
+ 'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
+ 'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});return 'msg-compose'},
+ 'msg-target-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});S.msg.target='group';S.msg.group='학부모명단_2610';return 'msg-target'},
+ 'msg-file-saved':()=>{S.saved=true;return 'msg-file'}
 };
-function render(){let r=route();if(DEEP[r]){DEEP[r]();history.replaceState(null,'','#at-send');r='at-send';const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
+function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
 render();syncVer();
 </script>
 </body></html>
