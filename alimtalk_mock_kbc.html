@@ -478,7 +478,7 @@ tr.hl td,.tb tr.hl td{background:#fafafa!important}
 </style></head>
 <body>
 <div class="mock">가상 화면 · 실제 서비스 아님</div>
-<div class="scen"><span class="vl">버전</span><span id="va" onclick="setVer('a')">A 반복 발송형</span><span id="vb" onclick="setVer('b')">B 연결 중심형</span><span class="sep"></span>시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
+<div class="scen">시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
 <div class="gnb">
   <div class="logo">kakao business<small>파트너센터</small></div>
   <nav><b>파트너</b><span>광고</span><span>판매</span><span>비즈도구</span><span>지원</span></nav>
@@ -504,7 +504,7 @@ const I={
 const ico=(k,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 26 26">${I[k]}</svg>`;
 
 /* ---------------- state ---------------- */
-const S={ver:(new URLSearchParams(location.search).get('ver')==='b')?'b':'a',sendMode:null,recur:null,recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
+const S={ver:'a',sendMode:null,recur:null,recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
 const TPL={
  '교육':[
   {id:'t1',rec:'매달',name:'수강료 납부 안내',when:'납부일이 다가올 때',to:'학부모',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'안녕하세요, #{이름} 학부모님.\n#{학원명}입니다.\n\n#{월}월 수강료 납부를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}\n\n문의는 채널 채팅으로 남겨주세요.',btn:'납부 안내 보기'},
