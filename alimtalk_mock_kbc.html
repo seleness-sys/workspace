@@ -366,6 +366,26 @@ input.input{font-family:inherit;outline:none}
 .libtx .to{font-size:12px;color:#888;margin-top:4px;line-height:1.5}
 .libcta{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fffbe0;border:1px solid #f0dd7a;border-radius:10px;padding:14px 18px;margin-top:18px}
 .libcta b{display:block}.libcta span{font-size:13px;color:#666}
+.rsum{max-width:1000px;margin-top:18px;background:#191919;color:#fff;border-radius:12px;padding:18px 22px;font-size:17px;line-height:1.6}
+.rsum b{color:#fee500}.rsum span{color:#ff9b85}
+.rq{max-width:1000px;margin-top:26px}
+.rqh{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:700;margin-bottom:12px}
+.rqn{width:22px;height:22px;border-radius:50%;background:#191919;color:#fee500;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.rqg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rk{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px 18px}
+.rk span{display:block;font-size:13px;color:#777}.rk b{font-size:30px;font-weight:800}
+.rk em{display:block;font-style:normal;font-size:13px;color:#888;margin-top:2px}.rk em a{color:#3a6fd8;font-weight:700;cursor:pointer}
+.rk.bad b{color:#e0442c}.rk.hl{background:#fffbe0;border-color:#f0dd7a}
+.rk.wide{grid-column:1/-1;padding:16px 18px 6px}
+.rk.wide .hg{width:190px;font-size:12px;color:#888;flex:none}
+.racts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ract{position:relative;background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px 36px 16px 18px;cursor:pointer}
+.ract:hover{border-color:#191919}
+.ract b{display:block;font-size:15px}.ract span{font-size:13px;color:#777}
+.ract i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;color:#bbb;font-size:20px}
+.ract:first-child{background:#fffbe0;border-color:#f0dd7a}
+.rmore{max-width:1000px;margin-top:26px}
+.rmore summary{cursor:pointer;font-size:14px;color:#555;padding:10px 0}
 .hidden{display:none!important}
 </style></head>
 <body>
@@ -701,34 +721,43 @@ P['at-detail']=()=>{
 };
 
 P['at-report']=()=>{
- const per=S.rper||'6m';
+ const per=S.rper||'30d';
  const M=[['5월',612],['6월',688],['7월',903],['8월',1012],['9월',1176],['10월',1284]];
  const mx=Math.max(...M.map(x=>x[1]));
- const R=[['카카오톡 미사용',9],['알림톡 수신 차단',5],['일시적 오류',3],['번호 오류',1]];
- const rt=R.reduce((a,b)=>a+b[1],0);
- const T=[['수강료 납부 안내',591,98.6,23,'10.13'],['보강 일정 안내',412,99.3,12,'10.02'],['출결 알림',281,97.9,8,'09.30']];
+ const R=[['카카오톡 미사용',9,'문자·전화로 알려주세요'],['알림톡 수신 차단',5,'문자·전화로 알려주세요'],['일시적 오류',3,'다시 보내면 받을 수 있어요'],['번호 오류',1,'번호를 확인해 주세요']];
+ const SD=[['10.13','수강료 납부 안내',300,296,6,48],['10.09','출결 알림',212,210,0,0],['10.02','보강 일정 안내',84,84,2,21],['10.01','출결 알림',688,676,35,0]];
+ const tot=SD.reduce((a,r)=>[a[0]+r[2],a[1]+r[3],a[2]+r[4],a[3]+r[5]],[0,0,0,0]);
+ const fail=tot[0]-tot[1];
  return `<div class="wrap">${rail('at')}${subAt('at-report')}<main class="main">
- <div class="h1">알림톡 리포트</div><div class="desc">보낸 알림이 잘 도착했는지, 알림톡으로 친구가 얼마나 늘었는지 확인하세요. <span class="badge b-gr">수치는 예시</span></div>
- <div class="tabs" style="margin-top:24px">${[['30d','최근 30일'],['3m','최근 3개월'],['6m','최근 6개월']].map(([k,l])=>`<span class="chip ${per===k?'on':''}" onclick="S.rper='${k}';render()">${l}</span>`).join('')}</div>
- <div class="kpis" style="margin-top:14px"><div><span>10월 발송 건수</span><b>1,284건</b><em>9월 대비 +9%</em></div><div><span>10월 받음률</span><b>98.6%</b><em>받지 못함 18건</em></div><div><span>10월 친구 추가</span><b>+43명</b><em>&nbsp;</em></div><div><span>10월 사용 캐시</span><b>— 원</b><em>&nbsp;</em></div></div>
- <div class="rgrid">
-  <div class="rcard"><div class="rt">월별 발송 건수</div>
-   <div class="bars">${M.map(([m,v])=>`<div class="bcol" title="${m} ${v.toLocaleString()}건"><div class="bv">${m==='10월'?v.toLocaleString():''}</div><div class="bar" style="height:${Math.round(v/mx*150)}px"></div><div class="bl">${m}</div></div>`).join('')}</div></div>
-  <div class="rcard"><div class="rt">받지 못한 사유 <span style="font-weight:400;color:#888;font-size:13px">10월 · ${rt}건</span></div>
-   ${R.map(([k,v])=>`<div class="hrow" title="${k} ${v}건"><span class="hk">${k}</span><div class="htrack"><div class="hbar" style="width:${Math.round(v/R[0][1]*100)}%"></div></div><span class="hv">${v}건</span></div>`).join('')}
-   <div class="help" style="margin-top:12px">카톡 미사용·수신 차단은 문자나 전화로 안내하세요. <a style="color:#3a6fd8;white-space:nowrap" onclick="openDetail('a')">받지 못한 명단 보기</a></div></div>
- </div>
- <div class="rcard" style="margin-top:16px;max-width:1190px"><div class="rt">알림별 성과 <span style="font-weight:400;color:#888;font-size:13px">10월</span></div>
-  <table class="tb"><tr><th>알림</th><th>발송 건수</th><th>받음률</th><th>발송 후 친구 추가</th><th>마지막 발송</th><th></th></tr>
-  ${T.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1].toLocaleString()}</td><td>${r[2]}%</td><td>+${r[3]}명</td><td>${r[4]}</td><td><a style="color:#3a6fd8" onclick="again(0)">다시 보내기</a></td></tr>`).join('')}
-  <tr style="font-weight:700"><td>합계</td><td>1,284</td><td>98.6%</td><td>+43명</td><td></td><td></td></tr></table></div>
- <div class="rcard" style="margin-top:16px;max-width:1190px"><div class="rt">알림톡에서 메시지로 <span style="font-weight:400;color:#888;font-size:13px">10월</span></div>
-  <div class="flow">
-   <div class="fs"><span>알림톡 받은 분</span><b>1,266명</b><em>&nbsp;</em></div><div class="fa">→</div>
-   <div class="fs"><span>그중 채널 친구</span><b>214명</b><em>원래 친구 171 + 새로 43</em></div><div class="fa">→</div>
-   <div class="fs hl"><span>이 친구들에게 보낸 광고</span><b>1건</b><em>받은 친구 50 · 클릭 12</em></div>
-  </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px"><span class="help" style="margin:0">알림톡 받은 분 중 친구 214명에게는 메시지로 광고를 보낼 수 있어요.</span><span style="display:flex;gap:6px"><button class="btn line sm">메시지 통계 보기</button><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose');render()">친구에게 광고 보내기</button></span></div></div>
+ <div class="h1">알림톡 리포트</div><div class="desc">보낸 알림이 잘 도착했는지, 어떤 효과가 있었는지 확인하세요. <span class="badge b-gr">수치는 예시</span></div>
+ <div class="tabs" style="margin-top:22px">${[['30d','최근 30일'],['3m','최근 3개월'],['6m','최근 6개월']].map(([k,l])=>`<span class="chip ${per===k?'on':''}" onclick="S.rper='${k}';render()">${l}</span>`).join('')}</div>
+ <div class="rsum">최근 30일 동안 <b>${tot[1].toLocaleString()}명</b>이 알림톡을 받았고, 그중 <b>${tot[2]}명</b>이 채널 친구가 됐어요.${fail?` <span>${fail}명은 받지 못했어요.</span>`:''}</div>
+ <div class="rq"><div class="rqh"><span class="rqn">1</span>잘 도착했나요?</div>
+  <div class="rqg">
+   <div class="rk"><span>받은 분</span><b>${tot[1].toLocaleString()}명</b><em>발송 ${tot[0].toLocaleString()}건 중 ${(tot[1]/tot[0]*100).toFixed(1)}%</em></div>
+   <div class="rk bad"><span>받지 못한 분</span><b>${fail}명</b><em><a onclick="openDetail('a')">명단 보기 ›</a></em></div>
+   <div class="rk wide">${R.map(([k,v,g])=>`<div class="hrow" title="${k} ${v}명"><span class="hk">${k}</span><div class="htrack"><div class="hbar" style="width:${Math.round(v/R[0][1]*100)}%"></div></div><span class="hv">${v}명</span><span class="hg">${g}</span></div>`).join('')}</div>
+  </div></div>
+ <div class="rq"><div class="rqh"><span class="rqn">2</span>효과가 있었나요?</div>
+  <div class="rqg">
+   <div class="rk hl"><span>알림톡 보고 친구가 된 분</span><b>+${tot[2]}명</b><em>내 채널 친구 180명</em></div>
+   <div class="rk"><span>버튼을 누른 분</span><b>${tot[3]}명</b><em>납부 안내 보기 · 일정 확인 등</em></div>
+  </div></div>
+ <div class="rq"><div class="rqh"><span class="rqn">3</span>다음에 할 일</div>
+  <div class="racts">
+   <div class="ract" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose');render()"><b>친구가 된 ${tot[2]}명에게 광고 보내기</b><span>이벤트·특강 소식을 메시지로</span><i>›</i></div>
+   <div class="ract" onclick="again(0)"><b>수강료 납부 안내 다시 보내기</b><span>지난번 명단·내용 그대로</span><i>›</i></div>
+   <div class="ract" onclick="openDetail('a')"><b>받지 못한 ${fail}명 확인하기</b><span>명단 내려받아 문자·전화로</span><i>›</i></div>
+  </div></div>
+ <div class="rq"><div class="rqh"><span class="rqn" style="background:#999">·</span>발송 건별 결과</div>
+  <table class="tb"><tr><th>발송일</th><th>알림</th><th>발송</th><th>받음</th><th>친구 추가</th><th>버튼 누름</th><th></th></tr>
+  ${SD.map((r,i)=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2].toLocaleString()}건</td><td>${r[3].toLocaleString()}명</td><td>+${r[4]}명</td><td>${r[5]?r[5]+'명':'-'}</td><td><a style="color:#3a6fd8" onclick="openDetail('a')">자세히</a></td></tr>`).join('')}
+  <tr style="font-weight:700"><td>합계</td><td></td><td>${tot[0].toLocaleString()}건</td><td>${tot[1].toLocaleString()}명</td><td>+${tot[2]}명</td><td>${tot[3]}명</td><td></td></tr></table></div>
+ <details class="rmore"><summary>자세히 보기 · 월별 발송 건수, 사용 캐시</summary>
+  <div class="rgrid" style="margin-top:14px">
+   <div class="rcard"><div class="rt">월별 발송 건수</div><div class="bars">${M.map(([m,v])=>`<div class="bcol" title="${m} ${v.toLocaleString()}건"><div class="bv">${m==='10월'?v.toLocaleString():''}</div><div class="bar" style="height:${Math.round(v/mx*150)}px"></div><div class="bl">${m}</div></div>`).join('')}</div></div>
+   <div class="rcard"><div class="rt">사용 캐시</div><div style="font-size:28px;font-weight:800">— 원</div><div class="help">비즈월렛 캐시에서 차감 · 받지 못한 건은 차감되지 않아요</div></div>
+  </div></details>
  </main></div>`;
 };
 
@@ -992,7 +1021,7 @@ const MEMO={
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
  newtpl:['세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','AI 문구 조언: 광고 표현·자리표시·승인 팁 지적 + 다듬은 문구 제안 (9/29 AI 제외 번복)','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
- report:['수치는 예시','알림톡 받은 분 → 그중 친구 → 친구 대상 광고 흐름','12/29 통계 개편 시 메시지 통계와 상호 이동 연계'],
+ report:['사장님 질문 순서: ① 잘 도착했나 ② 효과가 있었나 ③ 다음에 할 일','월별 추세·캐시는 "자세히 보기"로 접음, 발송 건별 결과 중심','버튼 클릭 수 집계 가능 여부 확인 필요','12/29 메시지 통계 개편과 상호 이동 연계'],
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
  compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
  target:['현행 발송 설정 재현 (전체 15원 / 타겟 20원)','친구그룹 목록에 알림톡 명단(친구 N명) 바로 노출','미정: 고객 파일 → 친구그룹 자동 생성 여부 (현행은 수동)'],
