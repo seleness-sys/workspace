@@ -331,6 +331,17 @@ input.input{font-family:inherit;outline:none}
 .brow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .brow .bl{width:64px;flex:none;font-size:13px;color:#555}
 .vc{background:#fff3a8;border-radius:3px;padding:1px 5px;font-family:inherit;font-weight:700;font-size:12px}
+.lhero{max-width:900px;background:#fffbe0;border:2px solid #fee500;border-radius:14px;padding:18px 22px;margin-bottom:26px}
+.lh-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lh-top .ic{background:#191919;color:#fee500;font-size:11px;font-weight:700;border-radius:4px;padding:3px 8px}
+.lh-top b{font-size:16px}.lh-sub{font-size:13px;color:#8a7a00}
+.lh-nums{display:flex;align-items:center;gap:18px;margin-top:14px}
+.lh-nums span{display:block;font-size:13px;color:#666}
+.lh-nums b{font-size:30px;font-weight:800;line-height:1.2}
+.lh-arr{font-size:24px;color:#c9b400}
+.lh-f b{font-size:40px;color:#191919;background:#fee500;padding:0 8px;border-radius:6px}
+.lh-note{margin-top:12px;font-size:14px;color:#444}
+.lh-note b{color:#191919}
 .hidden{display:none!important}
 </style></head>
 <body>
@@ -707,7 +718,7 @@ P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class=
  <div class="h1">알림톡 목록</div>
  <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
  <table class="tb"><tr><th>발송일시</th><th>템플릿</th><th>받는 사람</th><th>성공 / 실패</th><th>발송 후 친구 추가</th><th>고객 파일</th><th></th></tr>
- ${S.sent?`<tr class="hl"><td>26.10.13 17:40</td><td>수강료 납부 안내</td><td>300</td><td>${S.retried?'298 / 2':'296 / 4'} <a style="color:#e0442c;margin-left:4px" onclick="openDetail('a')">실패 보기</a></td><td>+6</td><td>${S.saved?'<span class="badge b-ok">저장됨</span>':'<a style="color:#3a6fd8" onclick="S.saved=true;render()">저장하기</a>'}</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>`:''}
+ ${S.sent?`<tr class="hl"><td>26.10.13 17:40</td><td>수강료 납부 안내</td><td>300</td><td>${S.retried?'298 / 2':'296 / 4'} <a style="color:#e0442c;margin-left:4px" onclick="openDetail('a')">실패 보기</a></td><td>+6</td><td>${S.saved?'<span class="badge b-ok">저장됨</span>':'<a style="color:#3a6fd8" onclick="S.saved=true;render()">저장하기</a>'}</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2609';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>`:''}
  <tr><td>26.10.02 10:15</td><td>보강 일정 안내</td><td>84</td><td>84 / 0</td><td>+2</td><td><span class="badge b-gr">미저장</span></td><td></td></tr>
  <tr><td>26.09.25 09:00</td><td>수강료 납부 안내</td><td>291</td><td>288 / 3 <a style="color:#e0442c;margin-left:4px" onclick="openDetail('b')">실패 보기</a></td><td>+11</td><td><span class="badge b-ok">저장됨</span></td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>
  </table>
@@ -847,11 +858,18 @@ P['msg-new']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main clas
 S.msg={kind:'ad',body:'',target:'all',group:null};
 function msgPreview(){const b=(S.msg.body||'내용').replace(/[<>]/g,'');return `<div class="mmsg"><div class="who">${S.msg.kind==='ad'?'(광고)':''}대호</div><div class="mb">${b}</div><div class="mf">${S.msg.kind==='ad'?'수신거부 | 홈 &gt; 채널차단':''}</div></div>`}
 function mphone(){return `<div><div class="phone"><div class="screen"><div class="top">대호<br><span style="font-weight:400;color:#666">010-2056-8892</span></div><div id="mpv">${msgPreview()}</div></div></div></div>`}
+const LISTS={'학부모명단_2610':{t:300,f:50,tpl:'수강료 납부 안내',d:'10.13'},'학부모명단_2609':{t:291,f:47,tpl:'수강료 납부 안내',d:'09.25'}};
+function listHero(n,mode){
+ const L=LISTS[n]; if(!L) return '';
+ return `<div class="lhero"><div class="lh-top"><span class="ic">알림톡 명단</span><b>${n}</b><span class="lh-sub">${L.d} ${L.tpl} 발송</span></div>
+  <div class="lh-nums"><div><span>명단 전체</span><b>${L.t.toLocaleString()}명</b></div><div class="lh-arr">→</div><div class="lh-f"><span>그중 채널 친구</span><b>${L.f}명</b></div></div>
+  <div class="lh-note">${mode==='target'?`이 메시지는 <b>${L.f}명</b>에게만 발송돼요.`:`메시지 광고는 이 <b>${L.f}명</b>에게만 보낼 수 있어요.`} 친구가 아닌 ${(L.t-L.f).toLocaleString()}명에게는 보내지지 않아요.</div></div>`;
+}
+
 P['msg-compose']=()=>{
  const m=S.msg; if(S.msgGroup){m.target='group';m.group=S.msgGroup}
  return `<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main class="main">
- <div style="display:flex;justify-content:space-between;align-items:flex-start;max-width:900px"><div class="h1"><span class="step">Step 1.</span>기본 텍스트형 작성</div><button class="btn line sm">이전 메시지 불러오기</button></div>
- ${S.msgGroup?`<div class="mbanner" style="border:2px solid #fee500;max-width:555px"><div class="l"><span class="ic">명단</span><div><b>알림톡 명단 ‘${S.msgGroup}’의 친구 50명</b><small>Step 2 받는 대상에 이 명단이 선택돼 있어요.</small></div></div></div>`:''}
+ ${S.msgGroup?listHero(S.msgGroup,'compose'):''}<div style="display:flex;justify-content:space-between;align-items:flex-start;max-width:900px"><div class="h1"><span class="step">Step 1.</span>기본 텍스트형 작성</div><button class="btn line sm">이전 메시지 불러오기</button></div>
  <div class="stepper"><div class="on">1 작성</div><div>2 발송 설정</div></div>
  <div class="formwrap"><div class="form">
   <div class="fsec"><div class="lab">메시지 종류</div><span class="radio ${m.kind==='ad'?'on':''}" onclick="S.msg.kind='ad';render()"><i></i>광고성</span><span class="radio ${m.kind==='info'?'on':''}" onclick="S.msg.kind='info';render()"><i></i>정보성</span><div class="help" style="color:#333">광고성 내용이 포함된 경우에 체크해주세요. <span class="q">?</span></div>
@@ -869,7 +887,7 @@ P['msg-target']=()=>{
  const m=S.msg, g=GROUPS().find(x=>x.n===m.group);
  const cnt=m.target==='all'?180:(g?g.f:0), unit=m.target==='all'?15:20;
  return `<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main class="main">
- <div class="h1"><span class="step">Step 2.</span>메시지 발송 설정</div>
+ ${m.target==='group'&&LISTS[m.group]?listHero(m.group,'target'):''}<div class="h1"><span class="step">Step 2.</span>메시지 발송 설정</div>
  <div class="stepper"><div class="done">1 작성</div><div class="on">2 발송 설정</div></div>
  <div class="formwrap"><div class="form">
   <div class="fsec"><div class="lab">연령인증 메시지 <span class="q">?</span></div><span class="radio on"><i></i>선택안함</span><span class="radio"><i></i>선택함</span></div>
