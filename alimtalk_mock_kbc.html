@@ -469,6 +469,12 @@ tr.hl td,.tb tr.hl td{background:#fafafa!important}
 .remind{max-width:900px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:#f8f8f8;border-radius:8px;padding:14px 18px;margin-top:22px}
 .remind b{display:block;font-size:15px}.remind span{font-size:13px;color:#666}
 .mock{left:360px!important;transform:none!important}
+
+.bflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.bflow div{background:#fff;border-radius:18px;padding:6px 12px;font-size:13px;font-weight:600}
+.bflow i{font-style:normal;display:inline-flex;width:18px;height:18px;border-radius:50%;background:#191919;color:#fff;font-size:11px;align-items:center;justify-content:center;margin-right:6px}
+.bflow span{color:#bbb}
+.chboost{margin:0 10px 10px;border-radius:6px;background:#fee500;text-align:center;font-weight:700;font-size:12px;padding:9px}
 </style></head>
 <body>
 <div class="mock">가상 화면 · 실제 서비스 아님</div>
@@ -586,7 +592,7 @@ function phone(){
   <div class="msg"><span class="avatar"></span><div><div class="who">대호</div>
    <div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>
    ${t&&t.btn?`<div class="bt">${t.btn}</div>`:''}
-   <div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div></div>
+   ${S.ver==='b'&&S.chBoost!==false?`<div class="chboost">+ 채널 추가하고 소식 받기</div>`:`<div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div>`}</div>
   </div></div>
  </div></div><div class="phonecap">받는 사람 화면 미리보기 (첫 번째 행 기준)</div></div>`;
 }
@@ -635,6 +641,7 @@ P['at-send']=()=>{
   </div>
   ${vars}
   ${btnLinkHTML(ct)}
+  ${S.ver==='b'?boostHTML():''}
 `;
  }
  if(st===2){
@@ -671,7 +678,7 @@ function manualHTML(ct){
  return `<table class="mtb"><tr><th>전화번호</th>${pv.map(k=>`<th>${k}</th>`).join('')}<th></th></tr>
   ${S.rows.map((r,i)=>`<tr><td><input class="input" placeholder="010-0000-0000" value="${r.phone||''}" oninput="mRow(${i},'phone',this.value)"></td>${pv.map(k=>`<td><input class="input" placeholder="${{'이름':'김민지','금액':'280,000','일시':'10월 20일 19:00','인원':'4','날짜':'10월 18일','시간':'오후 2시','장소':'본관 3층','시각':'15:02','상품':'사과 5kg','송장번호':'','만료일':'10월 31일','픽업시간':'12시 30분','객실':'201호'}[k]||''}" value="${r[k]||''}" oninput="mRow(${i},'${k}',this.value)"></td>`).join('')}<td>${S.rows.length>1?`<a style="color:#aaa" onclick="S.rows.splice(${i},1);render()">✕</a>`:''}</td></tr>`).join('')}</table>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px"><a style="color:#3a6fd8;font-weight:600" onclick="S.rows.push({phone:''});render()">+ 한 명 더</a><span>받는 사람 <b id="mcount">${manualN()}명</b></span></div>
-  <div class="help">10명 이상이면 엑셀·명단이 편해요. 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.</div>`;
+  <div class="help">10명 이상이면 엑셀·명단이 편해요.${S.ver==='b'?'':` 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.`}</div>`;
 }
 
 
@@ -687,6 +694,11 @@ function sendTimeHTML(ct){
   :m==='later'?`<div style="display:flex;gap:6px;margin-top:10px"><div class="sel">2026.10.25</div><div class="sel">오전 10시</div></div>`
   :`<div class="help">정보성 알림톡은 야간에도 발송돼요.</div>`}</div>`;
 }
+
+function boostHTML(){const on=S.chBoost!==false;
+ return `<div class="fsec"><div class="lab">친구 늘리기</div>
+  <label class="chk ${on?'on':''}" onclick="S.chBoost=!(S.chBoost!==false);render()"><i></i><span>알림톡 아래 [채널 추가] 버튼을 크게 보여주기 <span class="recchip">추천</span><small>받은 손님이 한 번에 친구가 될 수 있어요. 친구에게는 다음에 이벤트·할인 메시지를 보낼 수 있어요.</small></span></label>
+  <div class="help">비슷한 업종에서는 받은 손님 100명 중 평균 3~5명이 친구가 돼요 (예시 수치)</div></div>`}
 function btnLinkHTML(ct){
  if(!ct||!ct.btn) return '';
  const pm=S.linkPer;
@@ -737,8 +749,9 @@ P['at-gallery']=()=>{
   <div class="secT" style="margin-top:44px">다른 알림 둘러보기<small>마음에 들면 보낸 뒤 내 템플릿에 자동으로 담겨요</small></div>`:'';
   inner=my.length?myTop+`<div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}</div>${nogo}`:`<div class="hero2">
    <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 대호 채널 · ${mine}</div>
-    <div class="big">이런 알림을<br><em>카톡으로</em> 보낼 수 있어요</div>
-    <p>${S.ver==='b'?'손님 휴대폰 번호만 있으면 돼요.<br>받은 손님이 [채널 추가]를 누르면 우리 채널 친구가 돼요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 다음 달에 <b>다시 보내기</b>로 바로 보낼 수 있어요.'}</p>
+    <div class="big">${S.ver==='b'?'알림톡 한 번으로<br><em>단골 손님</em>을 만드세요':'이런 알림을<br><em>카톡으로</em> 보낼 수 있어요'}</div>
+    ${S.ver==='b'?`<div class="bflow"><div><i>1</i>알림톡 보내기</div><span>→</span><div><i>2</i>손님이 [채널 추가]</div><span>→</span><div><i>3</i>친구에게 이벤트·할인 메시지</div></div>`:''}
+    <p>${S.ver==='b'?'예약·납부 안내를 받은 손님이 [채널 추가]를 누르면<br>우리 채널 친구가 되고, 다음엔 광고도 보낼 수 있어요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 다음 달에 <b>다시 보내기</b>로 바로 보낼 수 있어요.'}</p>
     <div class="catsw">업종이 다른가요? ${Object.keys(TPL).filter(c=>c!==mine).map(c=>`<a onclick="S.myCat='${c}';render()">${c}</a>`).join('')}</div></div>
    <div class="hr">${mt.slice(0,3).map(t=>`<div class="hb" onclick="S.tpl='${t.id}';S.cat='${mine}';S.step=1;render()">
      <div class="who"><span class="avatar" style="width:22px;height:22px"></span>대호</div>
@@ -896,14 +909,14 @@ function friendBox(){
 }
 
 P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
- <div class="h1">알림톡 목록</div>
+ <div class="h1">알림톡 목록</div>${S.ver==='b'?'<div style="margin:-10px 0 24px">'+friendBox()+'</div>':''}
  <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
  <table class="tb"><tr><th>발송일시</th><th>템플릿</th><th>받는 사람</th><th>성공 / 실패</th><th>발송 후 친구 추가</th><th>고객 파일</th><th></th></tr>
  ${S.sent?`<tr class="hl"><td>26.10.13 17:40</td><td>수강료 납부 안내</td><td>300</td><td>${S.retried?'298 / 2':'296 / 4'} <a style="color:#e0442c;margin-left:4px" onclick="openDetail('a')">실패 보기</a></td><td>+6</td><td>${S.saved?'<span class="badge b-ok">저장됨</span>':'<a style="color:#3a6fd8" onclick="S.saved=true;render()">저장하기</a>'}</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>`:''}
  <tr><td>26.10.02 10:15</td><td>보강 일정 안내</td><td>84</td><td>84 / 0</td><td>+2</td><td><span class="badge b-gr">미저장</span></td><td></td></tr>
  <tr><td>26.09.25 09:00</td><td>수강료 납부 안내</td><td>291</td><td>288 / 3 <a style="color:#e0442c;margin-left:4px" onclick="openDetail('b')">실패 보기</a></td><td>+11</td><td><span class="badge b-ok">저장됨</span></td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2609';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>
  </table>
- ${friendBox()}
+ ${S.ver==='b'?'':friendBox()}
 </main></div>`;
 
 function myIds(){if(!S.myTpl)S.myTpl=S.hasHistory?['t1','t2','t7']:[];return S.myTpl}
@@ -1137,7 +1150,7 @@ function memoKey(r){
 }
 function memoToggle(){S.memoOpen=!S.memoOpen;addMemo()}
 const MEMO_VER={a:{gallery:'[A안] 매달 보내는 알림(수강료·성적표·관리비 등) 앞 배치 + "매달 보내는 알림" 표시',quick:'[A안] 지난달 발송 리마인드 → 이번 달도 보내기(명단·내용 그대로)'},
- b:{gallery:'[B안] 반복 없음 가정 — 항상 예시 갤러리, 내 템플릿·다시 보내기 없음',step1:'[B안] 저장된 명단 불러오기 없음, 직접 입력·엑셀만',done:'[B안] 친구 연결 안내를 발송 결과보다 위에 배치',tpl:'[B안] 담기 없이 검수 완료 템플릿에서 바로 보내기',report:'[B안] 알림톡으로 늘어난 친구를 맨 위에'}};
+ b:{gallery:'[B안] 반복 없음 가정 — 알림톡 = 친구 만드는 수단. 첫 화면에 "보내기 → 채널 추가 → 광고" 흐름, 내 템플릿·다시 보내기 없음',step1:'[B안] "친구 늘리기": 알림톡 아래 [채널 추가] 버튼 크게(기본 ON). 저장된 명단 불러오기 없음',done:'[B안] 친구 연결 안내를 발송 결과보다 위에 배치',tpl:'[B안] 담기 없이 검수 완료 템플릿에서 바로 보내기',list:'[B안] 알림톡으로 늘어난 친구·광고 추천을 목록보다 위에',report:'[B안] 알림톡으로 늘어난 친구를 맨 위에'}};
 function addMemo(){
  const k0=memoKey(route()), vx=(MEMO_VER[S.ver||'a']||{})[k0], m=MEMO[k0]?(vx?[vx,...MEMO[k0]]:MEMO[k0]):null;
  let f=document.getElementById('memofab'), d=document.getElementById('memodrawer');
