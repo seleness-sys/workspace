@@ -326,7 +326,11 @@ input.input{font-family:inherit;outline:none}
 .mtb th{text-align:left;font-weight:500;color:#777;padding:0 4px 6px;font-size:12px}
 .mtb td{padding:3px 4px}.mtb .input{width:100%;height:36px}
 .mtb td:last-child{width:20px;text-align:center}
-.mtb td:first-child{width:42%}
+.mtb td:first-child{width:34%}
+.btnbox{margin-top:12px;background:#fafafa;border:1px solid #eee;border-radius:8px;padding:12px 14px}
+.brow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.brow .bl{width:64px;flex:none;font-size:13px;color:#555}
+.vc{background:#fff3a8;border-radius:3px;padding:1px 5px;font-family:inherit;font-weight:700;font-size:12px}
 .hidden{display:none!important}
 </style></head>
 <body>
@@ -489,6 +493,7 @@ P['at-send']=()=>{
    <div style="display:flex;gap:14px;margin-top:10px;font-size:13px"><a style="color:#3a6fd8">${ct?ct.name+' 양식':'양식'} 다운로드</a><span style="color:#ddd">|</span><a style="color:#3a6fd8;font-weight:600" onclick="S.picker='recent';render()">저장된 명단 불러오기</a></div>`}
   </div>
   ${vars}
+  ${btnLinkHTML(ct)}
 `;
  }
  if(st===2){
@@ -521,11 +526,21 @@ const HIST=[{tpl:'t1',file:'학부모명단_2610',cnt:300,d:'10.13',ok:296},{tpl
 function again(i){const h=HIST[i];Object.assign(S,{tpl:h.tpl,cat:catOf(h.tpl),uploaded:true,fromList:'최근 알림톡',fileName:h.file,fileCnt:h.cnt,step:2,again:true,sent:false,saved:false});go('at-send');render()}
 function manualHTML(ct){
  if(!S.rows) S.rows=[{phone:''}];
- const pv=ct?perVars(ct):['이름'];
+ const pv=(ct?perVars(ct):['이름']).concat(S.linkPer&&ct&&ct.btn?['링크']:[]);
  return `<table class="mtb"><tr><th>전화번호</th>${pv.map(k=>`<th>${k}</th>`).join('')}<th></th></tr>
   ${S.rows.map((r,i)=>`<tr><td><input class="input" placeholder="010-0000-0000" value="${r.phone||''}" oninput="mRow(${i},'phone',this.value)"></td>${pv.map(k=>`<td><input class="input" placeholder="${{'이름':'김민지','금액':'280,000','일시':'10월 20일 19:00','인원':'4','날짜':'10월 18일','시간':'오후 2시','장소':'본관 3층','시각':'15:02','상품':'사과 5kg','송장번호':'','만료일':'10월 31일','픽업시간':'12시 30분','객실':'201호'}[k]||''}" value="${r[k]||''}" oninput="mRow(${i},'${k}',this.value)"></td>`).join('')}<td>${S.rows.length>1?`<a style="color:#aaa" onclick="S.rows.splice(${i},1);render()">✕</a>`:''}</td></tr>`).join('')}</table>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px"><a style="color:#3a6fd8;font-weight:600" onclick="S.rows.push({phone:''});render()">+ 한 명 더</a><span>받는 사람 <b id="mcount">${manualN()}명</b></span></div>
   <div class="help">10명 이상이면 엑셀·명단이 편해요. 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.</div>`;
+}
+
+function btnLinkHTML(ct){
+ if(!ct||!ct.btn) return '';
+ const pm=S.linkPer;
+ return `<div class="fsec"><div class="lab">버튼 링크 <span style="font-weight:400;color:#888;font-size:13px">[${ct.btn}] 버튼을 누르면 열리는 주소</span></div>
+  ${pm?`<div class="help" style="margin-top:0">받는 분마다 다른 링크를 ${S.recvMode==='manual'?'위 표의 "링크" 칸':'엑셀의 "링크" 열'}에 넣어주세요.</div>`
+  :`<input class="input" style="width:100%" placeholder="https://  예: 결제 페이지, 예약 확인 페이지" value="${S.linkUrl||''}" oninput="S.linkUrl=this.value">`}
+  <label class="chk ${pm?'on':''}" onclick="S.linkPer=!S.linkPer;render()"><i></i><span>받는 분마다 링크가 달라요<small>개인별 결제·예약 링크일 때</small></span></label>
+  <div class="help">링크가 없다면 템플릿을 복사해 버튼을 [채널 채팅]으로 바꿔 쓸 수 있어요.</div></div>`;
 }
 function commonVarsHTML(ct){
  const cv=tvars(ct).filter(k=>!perVars(ct).includes(k)); if(!cv.length) return '';
@@ -722,7 +737,7 @@ const WHEN2T={'예약·방문 안내':['t4','t5','t6'],'결제·납부 안내':[
 const ADW=['할인','이벤트','쿠폰','무료','특가','세일','오픈 기념','신메뉴','신상품','혜택','증정','프로모션','%'];
 const VCHIP=['이름','일시','금액','상품','가게명'];
 function newTpl(copyId,name){
- S.c={step:2,when:null,to:null,name:name||'',body:'',btn:'none',btnName:'',submitted:false};
+ S.c={step:2,when:null,to:null,name:name||'',body:'',btn:'none',btnName:'',linkMode:'send',submitted:false};
  if(copyId){const t=findT(copyId);S.c.name=t.name+' (수정)';S.c.body=t.body;S.c.btn=t.btn?'link':'none';S.c.btnName=t.btn;S.c.from=t.name;S.c.when=Object.keys(WHEN2T).find(k=>WHEN2T[k].includes(copyId))||'기타';}
  go('at-new');render();
 }
@@ -730,7 +745,7 @@ function adHits(b){return ADW.filter(w=>b.includes(w))}
 function previewHTML(){
  const b=(S.c.body||'').replace(/[<>]/g,'');
  const body=b?b.replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>'):'<span style="color:#aaa">내용을 입력하면 여기에 보여요</span>';
- return `<div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>${S.c.btn!=='none'?`<div class="bt">${S.c.btnName||(S.c.btn==='ch'?'채널 추가':'버튼 이름')}</div>`:''}<div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div></div>`;
+ return `<div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>${S.c.btn!=='none'?`<div class="bt">${S.c.btnName||'버튼 이름'}${S.c.btn==='link'?' ↗':''}</div>`:''}<div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div></div>`;
 }
 function onBody(el){S.c.body=el.value;if(S.c.ai){S.c.ai=null;const b=document.getElementById('aibox');if(b)b.innerHTML=aiBoxHTML()}document.getElementById('cnt').textContent=el.value.length+'/1000자';document.getElementById('pv').innerHTML=previewHTML();drawWarn()}
 function drawWarn(){
@@ -759,7 +774,7 @@ function aiApply(i){const x=S.c.ai.it[i];S.c.body=x.f(S.c.body);S.c.ai=aiAnalyze
 function aiPolish(){S.c.body=S.c.ai.polished;S.c.ai=aiAnalyze(S.c.body);render()}
 function aiBoxHTML(){
  const a=S.c.ai;
- if(!a) return `<div class="aibox"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b>✨ AI 문구 조언</b><div class="help" style="margin:2px 0 0">검수 전에 반려될 표현, 자리표시로 바꿀 부분을 알려드려요.</div></div><button class="btn y sm" ${S.c.body.trim()?'':'disabled style="opacity:.4"'} onclick="aiRun()">조언 받기</button></div></div>`;
+ if(!a) return `<div class="aibox"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b>✨ AI 문구 조언</b><div class="help" style="margin:2px 0 0">검수 전에 반려될 표현, 자리표시로 바꿀 부분을 알려드려요.</div></div><button class="btn y sm" style="white-space:nowrap;flex:none;${S.c.body.trim()?'':'opacity:.4'}" ${S.c.body.trim()?'':'disabled'} onclick="aiRun()">조언 받기</button></div></div>`;
  const col={'높음':'#1d8a4e','보통':'#a87400','낮음':'#c73a2b'}[a.lvl];
  return `<div class="aibox"><div style="display:flex;justify-content:space-between;align-items:center"><b>✨ AI 문구 조언</b><span style="font-size:13px">검수 통과 가능성 <b style="color:${col}">${a.lvl}</b> <a style="color:#3a6fd8;margin-left:8px" onclick="aiRun()">다시 보기</a></span></div>
   ${a.it.length?a.it.map((x,i)=>`<div class="aiit ${x.k}"><span class="ailab">${x.lab}</span><div style="flex:1;min-width:0">${x.msg}${x.f?`<div><a class="aifix" onclick="aiApply(${i})">${x.fix} ›</a></div>`:''}</div></div>`).join(''):'<div class="aiit tip"><span class="ailab">좋아요</span><div style="flex:1">바로 검수 신청해도 될 것 같아요.</div></div>'}
@@ -768,7 +783,7 @@ function aiBoxHTML(){
 }
 
 P['at-new']=()=>{
- if(!S.c) S.c={step:1,body:'',name:'',btn:'none'};
+ if(!S.c) S.c={step:2,when:null,to:null,body:'',name:'',btn:'none',btnName:'',linkMode:'send',submitted:false};
  const c=S.c;
  const head=`<div class="crumb"><a onclick="go('at-tpl')">템플릿</a> › 직접 만들기</div>`;
  const stepper=`<div class="stepper"><div class="on">1 문구 작성</div><div>2 검수 신청</div></div>`;
@@ -802,8 +817,16 @@ P['at-new']=()=>{
   <textarea id="ta" class="ta" placeholder="예) #{이름} 학부모님, 오늘 수업에서 배운 내용을 안내드려요." oninput="onBody(this)">${c.body}</textarea>
   <div style="display:flex;justify-content:space-between" class="help"><span>#{이름}처럼 넣은 자리는 보낼 때 엑셀 값으로 바뀌어요.</span><span id="cnt">${c.body.length}/1000자</span></div>
   <div id="adwarn"></div><div id="aibox">${aiBoxHTML()}</div></div>
- <div class="fsec"><div class="lab">버튼</div><span class="radio ${c.btn==='none'?'on':''}" onclick="S.c.btn='none';render()"><i></i>없음</span><span class="radio ${c.btn==='link'?'on':''}" onclick="S.c.btn='link';render()"><i></i>웹 링크</span><span class="radio ${c.btn==='ch'?'on':''}" onclick="S.c.btn='ch';S.c.btnName='채널 추가';render()"><i></i>채널 추가</span>
-  ${c.btn==='link'?`<div style="display:flex;gap:8px;margin-top:12px"><input class="input" style="width:180px" placeholder="버튼 이름" value="${c.btnName||''}" oninput="S.c.btnName=this.value;document.getElementById('pv').innerHTML=previewHTML()"><input class="input" style="flex:1" placeholder="https://"></div>`:''}</div>`;
+ <div class="fsec"><div class="lab">버튼</div>
+  ${[['none','없음'],['link','웹 링크'],['chat','채널 채팅'],['ch','채널 추가']].map(([k,l])=>`<span class="radio ${c.btn===k?'on':''}" onclick="S.c.btn='${k}';S.c.btnName=${k==='chat'?"'채팅으로 문의'":k==='ch'?"'채널 추가'":'S.c.btnName'};render()"><i></i>${l}</span>`).join('')}
+  ${c.btn==='link'?`<div class="btnbox">
+   <div class="brow"><span class="bl">버튼 이름</span><input class="input" style="flex:1" placeholder="예: 납부 안내 보기" value="${c.btnName||''}" oninput="S.c.btnName=this.value;document.getElementById('pv').innerHTML=previewHTML()"></div>
+   <div class="brow"><span class="bl">링크 주소</span><div style="flex:1">
+    <span class="radio ${c.linkMode!=='fixed'?'on':''}" onclick="S.c.linkMode='send';render()"><i></i>보낼 때 입력 <span class="badge b-at" style="margin-left:2px">추천</span></span>
+    <span class="radio ${c.linkMode==='fixed'?'on':''}" onclick="S.c.linkMode='fixed';render()"><i></i>고정 주소</span></div></div>
+   ${c.linkMode==='fixed'?`<div class="brow"><span class="bl"></span><input class="input" style="flex:1" placeholder="https://"></div><div class="help">모든 알림에 같은 주소가 들어가요. 주소를 바꾸려면 템플릿을 다시 검수받아야 해요.</div>`
+   :`<div class="brow"><span class="bl"></span><div class="input ro" style="flex:1">https:// <code class="vc">#{버튼링크}</code></div></div><div class="help">알림톡을 보낼 때마다 링크를 넣어요. 주소가 바뀌어도 다시 검수받지 않아도 되고, 받는 분마다 다른 링크(결제·예약 확인 등)도 넣을 수 있어요.</div>`}
+  </div>`:c.btn==='chat'?`<div class="help">버튼을 누르면 우리 채널 1:1 채팅방이 열려요. 링크가 없는 가게에 추천해요.</div>`:c.btn==='ch'?`<div class="help">버튼을 누르면 우리 채널을 친구로 추가해요.</div>`:''}</div>`;
  const ok=c.body.trim().length>5&&c.name.trim()&&!adHits(c.body).length;
  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">${head}
  <div class="h1">알림톡 문구 작성</div><div class="desc">직접 쓰고 AI 조언을 받아 다듬은 뒤 검수를 신청하세요. 승인되면 바로 보낼 수 있어요.</div>${stepper}
@@ -884,13 +907,13 @@ const MEMO={
  home:['LNB 알림톡 독립 메뉴 (메시지 ↔ 소식·쿠폰 사이, 10/8 결정)','홈 퀵카드·배너를 보조 진입점으로 활용','써본 사장님은 퀵카드가 "최근 보낸 알림"으로 전환'],
  gallery:['빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
  quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
- step1:['받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
+ step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
  done:['실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 고객 파일 저장 (A안, 사장님이 선택)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
  list:['현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['심사 완료 세트 = 검수 없이 바로 사용','내 템플릿: 검수 중 / 사용 가능 / 반려(사유 + 재신청)'],
- newtpl:['세트에 없으면 상황 고르기 없이 바로 문구 작성','AI 문구 조언: 광고 표현·자리표시·승인 팁 지적 + 다듬은 문구 제안 (9/29 AI 제외 번복)','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
+ newtpl:['세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','AI 문구 조언: 광고 표현·자리표시·승인 팁 지적 + 다듬은 문구 제안 (9/29 AI 제외 번복)','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
  report:['수치는 예시','알림톡 받은 분 → 그중 친구 → 친구 대상 광고 흐름','12/29 통계 개편 시 메시지 통계와 상호 이동 연계'],
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
  compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
@@ -913,7 +936,14 @@ function addMemo(){
  d.innerHTML=m?`<div class="mh"><b>📝 사업 메모</b><a onclick="memoToggle()">✕</a></div><div class="msub">이 화면의 의도와 미정 사항</div><ul>${m.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';
 }
 function setScen(h){Object.assign(S,{hasHistory:h,browse:false,step:0,tpl:null,uploaded:false,sent:false,again:false});document.getElementById('sc0').className=h?'':'on';document.getElementById('sc1').className=h?'on':'';go('at-send');render()}
-function render(){const r=route();document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
+
+const DEEP={
+ 'at-step1':()=>Object.assign(S,{hasHistory:false,browse:false,tpl:'t1',cat:'교육',step:1,sent:false,recvMode:'manual',uploaded:false}),
+ 'at-step2':()=>Object.assign(S,{hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:false,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
+ 'at-done':()=>Object.assign(S,{hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:true,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
+ 'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null})
+};
+function render(){let r=route();if(DEEP[r]){DEEP[r]();history.replaceState(null,'','#at-send');r='at-send';const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
 render();
 </script>
 </body></html>
