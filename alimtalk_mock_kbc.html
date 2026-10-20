@@ -462,10 +462,17 @@ tr.hl td,.tb tr.hl td{background:#fafafa!important}
 
 .aitag{display:inline-block;background:#191919;color:#fff;font-size:10px;font-weight:700;border-radius:3px;padding:1px 5px;margin-right:5px;vertical-align:1px}
 .aidot{font-style:normal;display:inline-block;background:#6b5bd2;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:0 6px;margin-left:4px}
+
+.scen .vl{color:#aaa;margin-right:2px}.scen .sep{width:1px;height:14px;background:#555;margin:0 6px;padding:0!important}
+.recchip{display:inline-block;margin-left:6px;font-size:11px;font-weight:600;color:#1d6fb8;background:#eef4fb;border-radius:4px;padding:1px 6px;vertical-align:1px}
+.recbox{margin-top:12px;background:#f8f8f8;border-radius:8px;padding:12px 14px}
+.remind{max-width:900px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:#f8f8f8;border-radius:8px;padding:14px 18px;margin-top:22px}
+.remind b{display:block;font-size:15px}.remind span{font-size:13px;color:#666}
+.mock{left:360px!important;transform:none!important}
 </style></head>
 <body>
 <div class="mock">가상 화면 · 실제 서비스 아님</div>
-<div class="scen">시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
+<div class="scen"><span class="vl">버전</span><span id="va" onclick="setVer('a')">A 정기 발송형</span><span id="vb" onclick="setVer('b')">B 연결 중심형</span><span class="sep"></span>시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
 <div class="gnb">
   <div class="logo">kakao business<small>파트너센터</small></div>
   <nav><b>파트너</b><span>광고</span><span>판매</span><span>비즈도구</span><span>지원</span></nav>
@@ -491,11 +498,12 @@ const I={
 const ico=(k,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 26 26">${I[k]}</svg>`;
 
 /* ---------------- state ---------------- */
-const S={recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
+const S={ver:(new URLSearchParams(location.search).get('ver')==='b')?'b':'a',sendMode:null,recur:null,recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
 const TPL={
  '교육':[
-  {id:'t1',name:'수강료 납부 안내',when:'납부일이 다가올 때',to:'학부모',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'안녕하세요, #{이름} 학부모님.\n#{학원명}입니다.\n\n#{월}월 수강료 납부를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}\n\n문의는 채널 채팅으로 남겨주세요.',btn:'납부 안내 보기'},
+  {id:'t1',rec:'매달',name:'수강료 납부 안내',when:'납부일이 다가올 때',to:'학부모',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'안녕하세요, #{이름} 학부모님.\n#{학원명}입니다.\n\n#{월}월 수강료 납부를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}\n\n문의는 채널 채팅으로 남겨주세요.',btn:'납부 안내 보기'},
   {id:'t2',name:'보강 일정 안내',when:'일정이 바뀌었을 때',to:'반 학부모',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 학부모님, #{학원명}입니다.\n\n#{날짜} 보강 수업 일정을 안내드립니다.\n· 시간: #{시간}\n· 장소: #{장소}',btn:'일정 확인'},
+  {id:'tR1',rec:'매달',name:'학부모 성적표 안내',when:'월말 평가 후',to:'학부모',cols:'이름 · 전화번호 · 성적표 링크',st:'ok',set:true,body:'#{이름} 학부모님, #{학원명}입니다.\n#{월}월 학습 리포트가 나왔어요.\n아래 버튼에서 확인해 주세요.',btn:'성적표 보기'},
   {id:'t7',name:'출결 알림',when:'등원·하원할 때',to:'학부모',cols:'이름 · 전화번호 · 시각',st:'ok',set:true,body:'#{이름} 학생이 #{시각}에 등원했습니다.\n- #{학원명}',btn:''},
   {id:'t3',name:'휴원 공지',when:'휴원할 때',to:'전체 수강생',cols:'이름 · 전화번호',st:'ing',set:false,body:'#{학원명} 휴원 안내\n\n#{기간} 동안 휴원합니다.',btn:''},
  ],
@@ -509,23 +517,27 @@ const TPL={
  ],
  '뷰티':[
   {id:'t6',name:'시술 예약 안내',when:'예약을 받았을 때',to:'예약 고객',cols:'이름 · 전화번호 · 일시',st:'ok',set:true,body:'#{이름}님, #{일시} 예약 안내드려요.\n#{가게명}에서 기다릴게요.',btn:'예약 확인'},
-  {id:'t10',name:'정기권 만료 안내',when:'정기권 만료 7일 전',to:'정기권 고객',cols:'이름 · 전화번호 · 만료일',st:'ok',set:true,body:'#{이름}님, 이용 중인 정기권이 #{만료일}에 만료됩니다.',btn:'잔여 횟수 보기'},
+  {id:'t10',rec:'매달',name:'정기권 만료 안내',when:'정기권 만료 7일 전',to:'정기권 고객',cols:'이름 · 전화번호 · 만료일',st:'ok',set:true,body:'#{이름}님, 이용 중인 정기권이 #{만료일}에 만료됩니다.',btn:'잔여 횟수 보기'},
  ],
  '운동·레저':[
   {id:'t12',name:'PT 예약 리마인드',when:'수업 하루 전',to:'예약 회원',cols:'이름 · 전화번호 · 일시',st:'ok',set:true,body:'#{이름}님, 내일 #{일시} PT 수업이 예약되어 있어요.',btn:'예약 변경'},
-  {id:'t13',name:'회원권 만료 안내',when:'만료 7일 전',to:'회원',cols:'이름 · 전화번호 · 만료일',st:'ok',set:true,body:'#{이름}님, 회원권이 #{만료일}에 만료됩니다.',btn:'잔여 기간 보기'},
+  {id:'t13',rec:'매달',name:'회원권 만료 안내',when:'만료 7일 전',to:'회원',cols:'이름 · 전화번호 · 만료일',st:'ok',set:true,body:'#{이름}님, 회원권이 #{만료일}에 만료됩니다.',btn:'잔여 기간 보기'},
  ],
  '숙박':[
   {id:'t14',name:'숙박 예약 확정',when:'예약을 받았을 때',to:'예약 손님',cols:'이름 · 전화번호 · 일시',st:'ok',set:true,body:'#{이름}님, #{가게명} 예약이 확정되었어요.\n체크인: #{일시}',btn:'오시는 길'},
   {id:'t15',name:'체크인 안내',when:'체크인 당일',to:'예약 손님',cols:'이름 · 전화번호 · 객실',st:'ok',set:true,body:'#{이름}님, 오늘 체크인 안내드려요.\n객실: #{객실}\n입실: 15시부터',btn:'오시는 길'},
  ],
+ '단체·관리':[
+  {id:'tR2',rec:'매달',name:'관리비 납부 안내',when:'매달 청구일',to:'입주자·회원',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'#{이름}님, #{월}월 관리비를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}',btn:'납부 안내 보기'},
+  {id:'tR3',rec:'매달',name:'회비 납부 안내',when:'매달 회비일',to:'회원',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'#{이름}님, #{월}월 회비 납부를 안내드려요.\n· 금액: #{금액}원',btn:''},
+ ],
  '소매·배송':[
   {id:'t11',name:'주문 접수·배송 시작',when:'주문을 받았을 때',to:'주문 고객',cols:'이름 · 전화번호 · 상품 · 송장번호',st:'ok',set:true,body:'#{이름}님, 주문하신 #{상품} 배송을 시작했어요.\n송장번호: #{송장번호}',btn:'배송 조회'},
  ],
 };
-const SC_ORDER=['t1','t4','t5','t11','t2','t6','t7','t10','t9','t8','t12','t13','t14','t15','t3'];
+const SC_ORDER=['tR1','tR2','tR3','t1','t4','t5','t11','t2','t6','t7','t10','t9','t8','t12','t13','t14','t15','t3'];
 const POPULAR=['t4','t5','t1','t11'];
-const CAT_EMOJI={'교육':'📚','음식점':'🍽️','병원·의원':'🏥','뷰티':'💇','운동·레저':'🏋️','숙박':'🏨','소매·배송':'📦'};
+const CAT_EMOJI={'단체·관리':'🏢','교육':'📚','음식점':'🍽️','병원·의원':'🏥','뷰티':'💇','운동·레저':'🏋️','숙박':'🏨','소매·배송':'📦'};
 const VARS={'이름':'엑셀 B열 (이름)','학원명':'대호학원','월':'10','금액':'엑셀 C열 (금액)','기한':'10월 25일','날짜':'10월 18일(토)','시간':'오후 2시','장소':'본관 3층','가게명':'대호','병원명':'대호의원','일시':'10월 20일 19:00','인원':'4','시각':'15:02','픽업시간':'12시 30분','만료일':'10월 31일','상품':'사과 5kg','송장번호':'6789-1234-5555','기간':'10월 3일~5일','객실':'201호'};
 const findT=id=>Object.values(TPL).flat().find(x=>x.id===id);
 const catOf=id=>Object.keys(TPL).find(c=>TPL[c].some(x=>x.id===id));
@@ -600,7 +612,7 @@ P.home=()=>`<div class="wrap">${fullLnb('home')}<main class="main home">
 
 P['at-send']=()=>{
  if(S.sent) return P['at-done']();
- if(S.step===0) return (S.hasHistory&&!S.browse)?P['at-quick']():P['at-gallery']();
+ if(S.step===0) return (S.ver!=='b'&&S.hasHistory&&!S.browse)?P['at-quick']():P['at-gallery']();
  const st=S.step, ct=S.tpl?findT(S.tpl):null;
  const stepper=`<div class="stepper" style="width:auto;max-width:555px"><div class="${st===1?'on':'done'}">1 작성 (알림·받는 사람)</div><div class="${st===2?'on':''}">2 발송 설정</div></div>`;
  let form='';
@@ -619,7 +631,7 @@ P['at-send']=()=>{
    ${S.recvMode==='manual'?manualHTML(ct):S.uploaded?`<div class="filerow"><div class="nm"><span class="xls">${S.fromList?'명단':'XLS'}</span>${S.fileName}</div><a style="color:#888;font-size:13px" onclick="S.uploaded=false;render()">삭제</a></div>
    <div class="stats">${S.fromList?`<div class="stat">불러온 명단<b>${S.fileCnt}명</b></div><div class="stat">발송 대상<b>${S.fileCnt}명</b></div><div class="stat">불러온 곳<b style="font-size:14px;margin-top:5px">${S.fromList}</b></div>`:`<div class="stat">전체 행<b>312</b></div><div class="stat">발송 대상<b>300명</b></div><div class="stat warn">중복·오류 제외<b>12</b></div>`}</div>`
    :`<div class="drop" onclick="S.uploaded=true;S.fromList=null;S.fileName='학부모명단_2610.xlsx';S.fileCnt=300;render()"><b>엑셀 파일을 끌어다 놓거나 클릭해서 올리세요</b><span style="font-size:12px">전화번호 열 필수 · 최대 1만 명 · .xlsx .csv</span></div>
-   <div style="display:flex;gap:14px;margin-top:10px;font-size:13px"><a style="color:#3a6fd8">${ct?ct.name+' 양식':'양식'} 다운로드</a><span style="color:#ddd">|</span><a style="color:#3a6fd8;font-weight:600" onclick="S.picker='recent';render()">저장된 명단 불러오기</a></div>`}
+   <div style="display:flex;gap:14px;margin-top:10px;font-size:13px"><a style="color:#3a6fd8">${ct?ct.name+' 양식':'양식'} 다운로드</a>${S.ver==='b'?'':`<span style="color:#ddd">|</span><a style="color:#3a6fd8;font-weight:600" onclick="S.picker='recent';render()">저장된 명단 불러오기</a>`}</div>`}
   </div>
   ${vars}
   ${btnLinkHTML(ct)}
@@ -629,7 +641,7 @@ P['at-send']=()=>{
   form=`<div class="fsec"><div class="lab">발송 대상</div>
    <div class="summary"><div class="r"><span>보낼 알림</span><span>${ct.name}</span></div><div class="r"><span>받는 사람</span><span>${S.fileName} · <b>${S.fileCnt}명</b></span></div></div>
    <div class="help">친구 여부와 관계없이 전화번호로 발송돼요. <a style="color:#3a6fd8" onclick="S.step=1;render()">수정</a></div></div>
-  <div class="fsec"><div class="lab">발송 날짜/시간 설정</div><span class="radio on"><i></i>즉시 발송</span><span class="radio"><i></i>예약 발송</span><div class="help">정보성 알림톡은 야간에도 발송돼요.</div></div>
+  ${sendTimeHTML(ct)}
   <div class="fsec"><div class="lab">총 발송 비용</div>
    <div class="summary"><div class="r"><span>알림톡</span><span>단가(미정) × ${S.fileCnt}건 + VAT</span></div><div class="r t"><span style="color:#191919">합계</span><span>— 원</span></div></div>
    <div class="costrow"><div><span>현재 캐시</span><b>0 원</b></div><div><span>발송 후 캐시</span><b>0 원</b></div><button class="btn line sm" style="color:#3ba7b5">충전하기</button></div>
@@ -637,7 +649,7 @@ P['at-send']=()=>{
   <div class="fsec"><div class="notice"><b>정보성 메시지만 보낼 수 있어요</b><br>· 할인·이벤트 등 광고 내용이 섞이면 발송이 제한될 수 있어요.<br>· 광고는 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 보내기</a>에서 채널 친구에게 보내세요.</div></div>`;
  }
  const ready=S.tpl&&(S.recvMode==='manual'?manualN()>0:S.uploaded);
- const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="if(S.tpl&&!myIds().includes(S.tpl))S.myTpl.push(S.tpl);S.sent=true;render()">${S.fileCnt}명에게 발송</button></span>`;
+ const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="if(S.tpl&&!myIds().includes(S.tpl))S.myTpl.push(S.tpl);S.recur=(S.sendMode||(S.ver!=='b'&&findT(S.tpl).rec?'recur':'now'))==='recur';S.sent=true;render()">${(S.sendMode||(S.ver!=='b'&&ct&&ct.rec?'recur':'now'))==='recur'?'정기 발송 등록':S.fileCnt+'명에게 발송'}</button></span>`;
  const prev=`<button class="btn line" onclick="${st===1?'S.step=0;S.browse=false':'S.step=1'};render()">이전</button>`;
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
   <div class="h1"><span class="step">Step ${st}.</span>${['알림톡 작성','알림톡 발송 설정'][st-1]}</div>
@@ -662,6 +674,19 @@ function manualHTML(ct){
   <div class="help">10명 이상이면 엑셀·명단이 편해요. 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.</div>`;
 }
 
+
+function sendTimeHTML(ct){
+ const m=S.sendMode||(S.ver!=='b'&&ct&&ct.rec?'recur':'now');
+ const opt=(k,l,extra='')=>`<span class="radio ${m===k?'on':''}" onclick="S.sendMode='${k}';render()"><i></i>${l}${extra}</span>`;
+ return `<div class="fsec"><div class="lab">발송 날짜/시간 설정</div>
+  ${opt('now','즉시 발송')}${opt('later','예약 발송')}${S.ver!=='b'?opt('recur','정기 발송',ct&&ct.rec?' <span class="recchip">추천</span>':''):''}
+  ${m==='recur'?`<div class="recbox">
+    <div class="brow"><span class="bl">반복</span><div style="display:flex;gap:6px;align-items:center;flex:1"><div class="sel">매월</div><div class="sel">25일</div><div class="sel">오전 10시</div></div></div>
+    <div class="brow"><span class="bl">받는 사람</span><div style="flex:1"><span class="radio on"><i></i>이번 명단 그대로</span><span class="radio"><i></i>매번 명단 확인 후 발송</span></div></div>
+    <div class="help" style="margin-top:2px">금액·기한처럼 매달 바뀌는 내용은 발송 3일 전에 카톡으로 확인 요청을 드려요. 확인하지 않으면 지난달 내용으로 보내지 않고 대기해요.</div></div>`
+  :m==='later'?`<div style="display:flex;gap:6px;margin-top:10px"><div class="sel">2026.10.25</div><div class="sel">오전 10시</div></div>`
+  :`<div class="help">정보성 알림톡은 야간에도 발송돼요.</div>`}</div>`;
+}
 function btnLinkHTML(ct){
  if(!ct||!ct.btn) return '';
  const pm=S.linkPer;
@@ -680,6 +705,12 @@ P['at-quick']=()=>{
  const myT=myIds().map(findT);
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
  <div class="h1">알림톡 보내기</div><div class="desc">자주 보내는 알림을 바로 다시 보낼 수 있어요.</div>
+ <div class="remind"><div><b>지난달 10월 13일에 「수강료 납부 안내」를 300명에게 보냈어요</b><span>이번 달도 보낼 때가 됐어요. 매달 보낸다면 정기 발송으로 설정해 두세요.</span></div><div style="display:flex;gap:6px;flex:none"><button class="btn line sm" onclick="again(0)">이번 달 보내기</button><button class="btn y sm" onclick="again(0);S.sendMode='recur';render()">정기 발송 설정</button></div></div>
+ <div class="secT" style="margin-top:28px">정기 발송<small>설정한 날짜에 자동으로 보내요</small></div>
+ <table class="tb" style="max-width:900px"><tr><th>알림</th><th>주기</th><th>받는 사람</th><th>다음 발송</th><th>상태</th><th></th></tr>
+  <tr><td><b>학부모 성적표 안내</b></td><td>매월 말일 오후 6시</td><td>학부모명단 · 300명</td><td>10.31</td><td><span class="badge b-ok">진행 중</span></td><td><a style="color:#3a6fd8">수정</a> · <a style="color:#999">중지</a></td></tr>
+  <tr><td><b>출결 알림</b></td><td>매주 월요일 오전 9시</td><td>출결_전체원생 · 212명</td><td>10.27</td><td><span class="badge b-ok">진행 중</span></td><td><a style="color:#3a6fd8">수정</a> · <a style="color:#999">중지</a></td></tr>
+ </table>
  <div class="secT" style="margin-top:32px">최근 보낸 알림<small>누르면 지난번 명단·내용 그대로 확인 화면으로 가요</small></div>
  <div class="qgrid">${HIST.map((h,i)=>{const t=findT(h.tpl);return `<div class="qrow" onclick="again(${i})">
    <div class="bubble mini qb"><div class="hd">알림톡 도착</div><div class="bd">${t.body.split('\n').filter(Boolean)[0].replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지'}[k]||VARS[k]||m))}</div></div>
@@ -699,24 +730,24 @@ P['at-gallery']=()=>{
  const prev=t=>t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지','금액':'280,000'}[k]||VARS[k]||m));
  const card=(t,rank)=>`<div class="sc ${t.st!=='ok'?'off':''}" onclick="${t.st==='ok'?`S.tpl='${t.id}';S.cat='${catOf(t.id)}';S.step=1;render()`:''}">
    ${rank?`<span class="rank">${rank}</span>`:''}<div class="scbub"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
-   <div class="sctx"><div class="when">${t.when}</div><b>${t.name}</b>${t.st==='ok'?'<span class="badge b-at">바로 사용</span>':'<span class="badge b-ing">검수 필요</span>'}<div class="to">${rank?catOf(t.id)+' · ':''}${t.to}에게</div></div></div>`;
+   <div class="sctx"><div class="when">${t.when}${S.ver!=='b'&&t.rec?'<span class="recchip">정기 '+t.rec+'</span>':''}</div><b>${t.name}</b>${t.st==='ok'?'<span class="badge b-at">바로 사용</span>':'<span class="badge b-ing">검수 필요</span>'}<div class="to">${rank?catOf(t.id)+' · ':''}${t.to}에게</div></div></div>`;
  const nogo=`<div class="nogo"><div><b>이런 건 알림톡으로 보낼 수 없어요</b><span>할인·이벤트 · 신메뉴·신상품 홍보 · 쿠폰 · 재방문 유도</span></div><div style="display:flex;gap:10px;align-items:center"><span style="font-size:13px;color:#666">채널 친구에게 광고로 보내세요</span><button class="btn line sm" onclick="go('msg-new')">메시지 보내기 →</button></div></div>`;
  const addc=`<div class="sc addc" onclick="newTpl()"><div class="plus">+</div><b>찾는 알림이 없나요?</b><span>직접 만들어 검수를 받으면<br>다음부터 바로 쓸 수 있어요</span></div>`;
  let inner;
  if(S.gcat==='전체'){
-  const mine=S.myCat||'교육', mt=TPL[mine].filter(t=>t.st==='ok'), my=myIds().map(findT);
+  const mine=S.myCat||'교육', mt=TPL[mine].filter(t=>t.st==='ok').sort((x,y)=>S.ver==='b'?0:((y.rec?1:0)-(x.rec?1:0))), my=S.ver==='b'?[]:myIds().map(findT);
   const myTop=my.length?`<div class="secT">내 템플릿<small>담아둔 템플릿이에요. 골라서 바로 보내세요.</small></div>
   <div class="scgrid">${my.map(t=>card(t)).join('')}<div class="sc addc" style="min-height:0" onclick="S.tplTab='lib';go('at-tpl');render()"><div class="plus">+</div><b>템플릿 더 가져오기</b><span>업종별 검수 완료 템플릿</span></div></div>
   <div class="secT" style="margin-top:44px">다른 알림 둘러보기<small>마음에 들면 보낸 뒤 내 템플릿에 자동으로 담겨요</small></div>`:'';
   inner=my.length?myTop+`<div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}</div>${nogo}`:`<div class="hero2">
    <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 대호 채널 · ${mine}</div>
     <div class="big">이런 알림을<br><em>카톡으로</em> 보낼 수 있어요</div>
-    <p>손님 휴대폰 번호만 있으면 돼요.<br>채널 친구가 아니어도 카톡으로 도착해요.</p>
+    <p>${S.ver==='b'?'손님 휴대폰 번호만 있으면 돼요.<br>받은 손님이 [채널 추가]를 누르면 우리 채널 친구가 돼요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 <b>정기 발송</b>으로 한 번만 설정하세요.'}</p>
     <div class="catsw">업종이 다른가요? ${Object.keys(TPL).filter(c=>c!==mine).map(c=>`<a onclick="S.myCat='${c}';render()">${c}</a>`).join('')}</div></div>
    <div class="hr">${mt.slice(0,3).map(t=>`<div class="hb" onclick="S.tpl='${t.id}';S.cat='${mine}';S.step=1;render()">
      <div class="who"><span class="avatar" style="width:22px;height:22px"></span>대호</div>
      <div class="bubble mini"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
-     <div class="hbname">${t.when}<br><b>${t.name}</b></div><div class="go">이걸로 보내기 ›</div></div>`).join('')}</div>
+     <div class="hbname">${t.when}${S.ver!=='b'&&t.rec?' · 정기':''}<br><b>${t.name}</b></div><div class="go">이걸로 보내기 ›</div></div>`).join('')}</div>
   </div>
   <div class="secT" style="margin-top:40px">업종별로 준비돼 있어요<small>업종을 고르면 바로 쓸 수 있는 알림을 보여드려요</small></div>
   <div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}
@@ -732,7 +763,7 @@ P['at-gallery']=()=>{
   <div class="scgrid">${list.map(t=>card(t)).join('')}${addc}</div>${nogo}`;
  }
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
- ${S.hasHistory?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}<div class="h1">${myIds().length&&S.gcat==='전체'?'어떤 알림을 보낼까요?':'무엇을 알려드릴까요?'}</div>
+ ${S.hasHistory&&S.ver!=='b'?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}<div class="h1">${S.ver!=='b'&&myIds().length&&S.gcat==='전체'?'어떤 알림을 보낼까요?':'무엇을 알려드릴까요?'}</div>
  <div class="desc">손님에게 꼭 전해야 하는 안내를 전화번호로 보내요. 채널 친구가 아니어도 받을 수 있어요. <u>알림톡 이용 가이드</u></div>
  <div style="margin-top:32px">${inner}</div>
  </main></div>`;
@@ -806,6 +837,7 @@ P['at-report']=()=>{
  <div class="h1">알림톡 리포트</div><div class="desc">보낸 알림이 잘 도착했는지, 어떤 효과가 있었는지 확인하세요. <span class="badge b-gr">수치는 예시</span></div>
  <div class="tabs" style="margin-top:22px">${[['30d','최근 30일'],['3m','최근 3개월'],['6m','최근 6개월']].map(([k,l])=>`<span class="chip ${per===k?'on':''}" onclick="S.rper='${k}';render()">${l}</span>`).join('')}</div>
  <div class="rsum">최근 30일 동안 <b>${tot[1].toLocaleString()}명</b>이 알림톡을 받았고, 그중 <b>${tot[2]}명</b>이 채널 친구가 됐어요.${fail?` <span>${fail}명은 받지 못했어요.</span>`:''}</div>
+ ${S.ver==='b'?`<div class="rq"><div class="rqh"><span class="rqn">★</span>알림톡으로 늘어난 친구</div><div class="rqg"><div class="rk"><span>알림톡 보고 친구가 된 분</span><b>+${tot[2]}명</b><em>내 채널 친구 180명</em></div><div class="rk"><span>이 친구들에게 보낸 광고</span><b>1건</b><em>받은 친구 50 · 클릭 12</em></div></div></div>`:''}
  <div class="rq"><div class="rqh"><span class="rqn">1</span>잘 도착했나요?</div>
   <div class="rqg">
    <div class="rk"><span>받은 분</span><b>${tot[1].toLocaleString()}명</b><em>발송 ${tot[0].toLocaleString()}건 중 ${(tot[1]/tot[0]*100).toFixed(1)}%</em></div>
@@ -835,10 +867,11 @@ P['at-report']=()=>{
  </main></div>`;
 };
 
-P['at-done']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done">
- <div class="donebox"><div class="ok">✓</div><h3>${S.fromList==='직접 입력'?S.fileCnt:300}명에게 알림톡을 보냈어요</h3><p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
+P['at-done']=()=>{const html=P['at-done0']();if(S.ver!=='b')return html;const d=document.createElement('div');d.innerHTML=html;const br=d.querySelector('.bridge'),done=d.querySelector('.done');if(br&&done){done.prepend(br);br.style.marginTop='0';br.style.marginBottom='16px'}return d.innerHTML};
+P['at-done0']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done">
+ <div class="donebox"><div class="ok">✓</div><h3>${S.recur?'정기 발송을 등록했어요':(S.fromList==='직접 입력'?S.fileCnt:300)+'명에게 알림톡을 보냈어요'}</h3>${S.recur?`<p style="margin-bottom:6px">매월 25일 오전 10시 · ${findT(S.tpl||'t1').name} · ${S.fileCnt}명<br>첫 발송은 오늘 바로 나갔어요. 다음 발송 11월 25일</p>`:''}<p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
   <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.rows=null;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
- ${S.fromList==='직접 입력'?'':S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
+ ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 내 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">광고 메시지 보내기</button><button class="btn line sm" onclick="go('msg-file')">고객 파일 보기</button></div></div>`
  :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>이 명단을 고객 파일에 저장해 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.saved=true;render()">고객 파일에 저장</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
@@ -881,10 +914,10 @@ function myIds(){if(!S.myTpl)S.myTpl=S.hasHistory?['t1','t2','t7']:[];return S.m
 function addTpl(id){const m=myIds();if(!m.includes(id))m.push(id);S.justAdded=id;render()}
 function rmTpl(id){S.myTpl=myIds().filter(x=>x!==id);render()}
 P['at-tpl']=()=>{
- const tab=S.tplTab==='lib'?'lib':'mine';
- const mine=myIds().map(findT), made=MINE();
+ const tab=S.ver==='b'?(S.tplTab==='mine'?'mine':'lib'):(S.tplTab==='lib'?'lib':'mine');
+ const mine=S.ver==='b'?[]:myIds().map(findT), made=MINE();
  const st={ing:'<span class="badge b-ing">검수 중</span>',ok:'<span class="badge b-ok">바로 사용</span>',no:'<span class="badge b-no">반려</span>'};
- const tabs=`<div class="filters"><span class="chip ${tab==='mine'?'on':''}" onclick="S.tplTab='mine';render()">내 템플릿 <b style="margin-left:4px">${mine.length+made.length}</b></span><span class="chip ${tab==='lib'?'on':''}" onclick="S.tplTab='lib';render()">검수 완료 템플릿 가져오기</span><span style="margin-left:auto"></span><button class="btn line sm" onclick="newTpl()">+ 직접 만들기</button></div>`;
+ const tabs=`<div class="filters">${S.ver==='b'?`<span class="chip ${tab==='lib'?'on':''}" onclick="S.tplTab='lib';render()">검수 완료 템플릿</span><span class="chip ${tab==='mine'?'on':''}" onclick="S.tplTab='mine';render()">직접 만든 템플릿 <b style="margin-left:4px">${made.length}</b></span>`:`<span class="chip ${tab==='mine'?'on':''}" onclick="S.tplTab='mine';render()">내 템플릿 <b style="margin-left:4px">${mine.length+made.length}</b></span><span class="chip ${tab==='lib'?'on':''}" onclick="S.tplTab='lib';render()">검수 완료 템플릿 가져오기</span>`}<span style="margin-left:auto"></span><button class="btn line sm" onclick="newTpl()">+ 직접 만들기</button></div>`;
  const mineT=`<table class="tb"><tr><th>템플릿명</th><th>내용</th><th>출처</th><th>상태</th><th></th></tr>
   ${mine.map(t=>`<tr class="${S.justAdded===t.id?'hl':''}"><td><b>${t.name}</b></td><td style="color:#777;white-space:normal;min-width:220px">${t.body.split('\n').filter(Boolean)[0]}</td><td><span class="badge b-at">가져옴</span></td><td>${st.ok}</td><td><a style="color:#3a6fd8" onclick="S.cat='${catOf(t.id)}';S.tpl='${t.id}';S.step=1;go('at-send');render()">보내기</a> · <a style="color:#999" onclick="rmTpl('${t.id}')">빼기</a></td></tr>`).join('')}
   ${made.map(t=>`<tr class="${t.fresh?'hl':''}"><td><b>${t.name}</b></td><td style="color:#777;white-space:normal;min-width:220px">${t.body.split('\n')[0]}${t.reason?`<div style="color:#c73a2b;font-size:12px;margin-top:4px">반려 사유: ${t.reason}</div>`:''}</td><td><span class="badge b-gr">직접 만듦</span></td><td>${st[t.st]}</td><td>${t.st==='ok'?`<a style="color:#3a6fd8">보내기</a>`:t.st==='no'?`<a style="color:#3a6fd8" onclick="newTpl(null,'${t.name}')">고쳐서 다시 신청</a>`:'<span style="color:#999">승인되면 카톡으로 알려드려요</span>'}</td></tr>`).join('')}</table>
@@ -894,10 +927,10 @@ P['at-tpl']=()=>{
   <div class="libgrid">${TPL[lc].filter(t=>t.st==='ok').map(t=>{const has=myIds().includes(t.id);return `<div class="libc">
    <div class="scbub" style="margin:14px 14px 18px"><div class="hd">알림톡 도착</div><div class="bd">${t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>')}</div></div>
    <div class="libtx"><div class="when">${t.when}</div><b>${t.name}</b><div class="to">${t.to}에게 · 필요한 정보: ${t.cols}</div>
-   ${has?`<button class="btn line sm" style="margin-top:10px;width:100%;color:#1d8a4e" onclick="rmTpl('${t.id}')">✓ 내 템플릿에 담김</button>`:`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="addTpl('${t.id}')">+ 내 템플릿에 담기</button>`}</div></div>`}).join('')}</div>
+   ${S.ver==='b'?`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="S.cat='${catOf(t.id)}';S.tpl='${t.id}';S.step=1;go('at-send');render()">이 템플릿으로 보내기</button>`:has?`<button class="btn line sm" style="margin-top:10px;width:100%;color:#1d8a4e" onclick="rmTpl('${t.id}')">✓ 내 템플릿에 담김</button>`:`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="addTpl('${t.id}')">+ 내 템플릿에 담기</button>`}</div></div>`}).join('')}</div>
   <div class="help" style="margin-top:14px">원하는 템플릿이 없나요? <a style="color:#3a6fd8" onclick="newTpl()">직접 만들기</a> · 비슷한 템플릿을 담은 뒤 고쳐서 검수 신청할 수도 있어요.</div>`;
  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">
- <div class="h1">템플릿</div><div class="desc">${tab==='mine'?'자주 보내는 알림을 담아두고 바로 보내세요.':'검수가 끝난 템플릿이에요. 담아두면 검수 없이 바로 보낼 수 있어요.'}</div>
+ <div class="h1">템플릿</div><div class="desc">${S.ver==='b'?'검수가 끝난 템플릿은 고르면 바로 보낼 수 있어요.':tab==='mine'?'자주 보내는 알림을 담아두고 바로 보내세요.':'검수가 끝난 템플릿이에요. 담아두면 검수 없이 바로 보낼 수 있어요.'}</div>
  ${tabs}${tab==='mine'?mineT:libT}</main></div>`;
 };
 const MINE=()=>[...(S.c&&S.c.submitted?[{name:S.c.name||'이름 없는 템플릿',body:S.c.body,date:'26.10.14',st:'ing',fresh:true}]:[]),
@@ -1107,8 +1140,10 @@ function memoKey(r){
  return {'at-list':'list','at-detail':'detail','at-tpl':'tpl','at-new':'newtpl','at-report':'report','msg-new':'msgnew','msg-compose':'compose','msg-target':'target','msg-file':'file'}[r];
 }
 function memoToggle(){S.memoOpen=!S.memoOpen;addMemo()}
+const MEMO_VER={a:{gallery:'[A안] 정기형 템플릿(수강료·성적표·관리비 등) 앞 배치 + "정기" 표시',step2:'[A안] 정기 발송(매월 N일) — 매달 바뀌는 금액·기한은 발송 3일 전 카톡 확인 요청',quick:'[A안] 지난달 발송 리마인드 + 정기 발송 목록',done:'[A안] 정기 발송 등록 완료 안내'},
+ b:{gallery:'[B안] 반복 없음 가정 — 항상 예시 갤러리, 내 템플릿·다시 보내기 없음',step1:'[B안] 저장된 명단 불러오기 없음, 직접 입력·엑셀만',done:'[B안] 친구 연결 안내를 발송 결과보다 위에 배치',tpl:'[B안] 담기 없이 검수 완료 템플릿에서 바로 보내기',report:'[B안] 알림톡으로 늘어난 친구를 맨 위에'}};
 function addMemo(){
- const m=MEMO[memoKey(route())];
+ const k0=memoKey(route()), vx=(MEMO_VER[S.ver||'a']||{})[k0], m=MEMO[k0]?(vx?[vx,...MEMO[k0]]:MEMO[k0]):null;
  let f=document.getElementById('memofab'), d=document.getElementById('memodrawer');
  if(!f){f=document.createElement('button');f.id='memofab';f.onclick=memoToggle;document.body.appendChild(f);
   d=document.createElement('div');d.id='memodrawer';document.body.appendChild(d)}
@@ -1116,6 +1151,8 @@ function addMemo(){
  d.className=(S.memoOpen&&m)?'open':'';
  d.innerHTML=m?`<div class="mh"><b>📝 사업 메모</b><a onclick="memoToggle()">✕</a></div><div class="msub">이 화면의 의도와 미정 사항</div><ul>${m.map(x=>`<li>${x.replace(/^\[(AI[^\]]*)\]/,'<span class="aitag">$1</span>')}</li>`).join('')}</ul>`:'';
 }
+function setVer(v){S.ver=v;try{const u=new URL(location.href);u.searchParams.set('ver',v);history.replaceState(null,'',u.pathname+u.search+location.hash)}catch(e){}Object.assign(S,{step:0,sent:false,recur:null,sendMode:null});syncVer();render()}
+function syncVer(){const a=document.getElementById('va'),b=document.getElementById('vb');if(a){a.className=S.ver==='b'?'':'on';b.className=S.ver==='b'?'on':''}}
 function setScen(h){Object.assign(S,{myTpl:null,hasHistory:h,browse:false,step:0,tpl:null,uploaded:false,sent:false,again:false});document.getElementById('sc0').className=h?'':'on';document.getElementById('sc1').className=h?'on':'';go('at-send');render()}
 
 const DEEP={
@@ -1125,6 +1162,6 @@ const DEEP={
  'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null})
 };
 function render(){let r=route();if(DEEP[r]){DEEP[r]();history.replaceState(null,'','#at-send');r='at-send';const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
-render();
+render();syncVer();
 </script>
 </body></html>
