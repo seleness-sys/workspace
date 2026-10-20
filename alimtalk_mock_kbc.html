@@ -387,6 +387,78 @@ input.input{font-family:inherit;outline:none}
 .rmore{max-width:1000px;margin-top:26px}
 .rmore summary{cursor:pointer;font-size:14px;color:#555;padding:10px 0}
 .hidden{display:none!important}
+
+/* ===== design pass: 색 절제 — 노란색은 주요 버튼·알림톡 헤더에만 ===== */
+.badge{background:#f2f2f2!important;color:#555!important;font-weight:500}
+.b-ok{color:#1d8a4e!important}.b-no{color:#c73a2b!important}.b-ing{color:#a87400!important}
+.tagnew{background:#ff5a2a}
+tr.hl td,.tb tr.hl td{background:#fafafa!important}
+.qc.at{background:#fff}.qc.at span{color:#777!important}
+.bn.at{background:#fff}
+.hero2{background:#fff;border:1px solid #e5e5e5}
+.hero2 .tag{background:#f2f2f2}
+.hero2 .big em{background:none;color:#191919;text-decoration:underline;text-decoration-color:#fee500;text-decoration-thickness:6px;text-underline-offset:-2px}
+.hero2 .catsw{color:#999}
+.hero2 .hr{background:#eef1f4}
+.rank{background:#191919;color:#fff}
+.addc .plus{background:#f2f2f2;color:#555}
+.cat.mine{border:1px solid #191919;padding:18px}
+.donebox .ok{background:#f2f2f2;color:#191919}
+.bridge{border:1px solid #e5e5e5;background:#fff}
+.bridge h4 em{background:none;font-weight:800}
+.bridge.saved{border-color:#e5e5e5;background:#fff}
+.mbanner .l .ic{background:#f2f2f2;color:#555}
+.lhero{background:#fff;border:1px solid #e5e5e5}
+.lh-top .ic{background:#f2f2f2;color:#555}
+.lh-sub{color:#999}
+.lh-nums b{font-size:24px;font-weight:700}
+.lh-f b{font-size:28px;background:none;padding:0;color:#191919}
+.lh-arr{color:#ccc}
+.rsum{border-left:1px solid #e5e5e5}
+.fs.hl{background:#f7f7f7}
+.fb-nums .hl{background:#f7f7f7}.fb-nums em{color:#888}
+.adtag span{background:none;color:#888;font-weight:500}
+.adb{background:#f2f4f6}
+.libcta{background:#fafafa;border-color:#e5e5e5}
+.failbox{border-color:#e5e5e5}
+.aibox{background:#fafafa;border-color:#e5e5e5}
+.ailab{background:#f2f2f2!important;color:#555!important}
+.aiit.ad .ailab{color:#c73a2b!important}
+.aipol{border-color:#ddd}
+.aiload{color:#555}
+.lnb .tagblue,.tagblue{background:#f2f2f2;color:#555}
+.sc:hover,.cat:hover,.ract:hover,.qrow:hover,.nb:hover{border-color:#999}
+.mmsg .who,.adw2{color:#555}
+.v{background:#fff3a8}
+
+/* ===== KBC 톤: 2단 메뉴 화면은 흰 본문, 카드 대신 구분선·연회색 안내 박스 ===== */
+.rail~.sub~.main{background:#fff}
+.rail~.sub~.main .rk,.rail~.sub~.main .rcard,.rail~.sub~.main .fbox,.rail~.sub~.main .kpis div,.rail~.sub~.main .lhero,.rail~.sub~.main .failbox,.rail~.sub~.main .bridge,.rail~.sub~.main .donebox{box-shadow:none}
+.infobox,.notice,.libcta,.mbanner,.rsum,.lhero,.aibox,.nogo{background:#f8f8f8!important;border:none!important;border-radius:6px}
+.mbanner .l .ic,.lh-top .ic{background:#fff}
+.donebox{border:1px solid #e5e5e5}
+.kpis div,.rk,.fb-nums div{background:#fff;border:1px solid #e5e5e5}
+.fb-nums div{border-radius:10px}
+.fbox,.rcard,.failbox{border:1px solid #e5e5e5}
+.summary{background:#f8f8f8}
+.sc,.cat,.libc,.adc,.ract,.qrow,.nb,.tpl{box-shadow:none}
+.hero2{background:#f8f8f8;border:none}
+.hero2 .tag{background:#fff}
+.hero2 .hr{background:#b2c7da}
+.rqh{font-size:16px}
+.secT{font-size:18px}
+
+.scbub{box-shadow:0 0 0 8px #eef1f4}
+.adb{background:none;padding:0}.adbody{background:#f8f8f8;border-radius:8px}.adbtn{background:#f8f8f8;border:none}
+.adc{border-color:#eee}
+.rank{width:22px;height:22px;font-size:12px}
+
+.qc .new{color:#fff!important}
+.bn.at .btn{background:#f5f5f5!important}
+.bridge h4 em{padding:0}
+#memofab{left:auto;right:20px}
+#memodrawer{left:auto;right:20px}
+.guide{bottom:70px}
 </style></head>
 <body>
 <div class="mock">가상 화면 · 실제 서비스 아님</div>
@@ -512,14 +584,14 @@ P.home=()=>`<div class="wrap">${fullLnb('home')}<main class="main home">
  <div class="qcards">
   <div class="qc"><div style="display:flex;gap:10px;align-items:center"><span class="avatar"></span><strong>대호</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;color:#666">비즈월렛<u style="color:#191919">연결하기 ⌄</u></div></div>
   <div class="qc" onclick="go('msg-new')">${ico('msg')}<div><strong>메시지 보내기</strong><span>강력한 마케팅 도구</span></div></div>
-  ${S.hasHistory?`<div class="qc at" onclick="again(0)">${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#8a7a00">최근: 수강료 납부 안내</span></div></div>`:`<div class="qc at" onclick="go('at-send')"><span class="tagnew new">NEW</span>${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#8a7a00">예약·납부 안내를 카톡으로</span></div></div>`}
+  ${S.hasHistory?`<div class="qc at" onclick="again(0)">${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">최근: 수강료 납부 안내</span></div></div>`:`<div class="qc at" onclick="go('at-send')"><span class="tagnew new">NEW</span>${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">예약·납부 안내를 카톡으로</span></div></div>`}
   <div class="qc">${ico('news')}<div><strong>소식 올리기</strong><span>방문자를 위한 공지</span></div></div>
  </div>
  <div class="sech">고객과의 실시간 채팅<small>전체 목록 가기 ›</small></div>
  <div class="card" style="padding:22px 30px;max-width:1190px"><b style="font-size:16px">관리자 추가 인증</b><div style="color:#777;margin-top:4px">개인정보 보호를 위해 채팅 메뉴 접근시 추가 인증이 필요해요.</div></div>
  <div class="sech">비즈니스 성장을 위한 작은 변화</div>
  <div class="banner2">
-  <div class="bn at"><div><div class="k">친구가 아니어도 전화번호로</div><div class="big">첫 알림톡,<br>엑셀만 올리면<br><em style="color:#191919;background:#fee500;padding:0 6px">바로 발송</em>돼요</div></div><div><button class="btn y" onclick="go('at-send')" style="background:#fff">알림톡 시작하기</button></div></div>
+  <div class="bn at"><div><div class="k">친구가 아니어도 전화번호로</div><div class="big">첫 알림톡,<br>엑셀만 올리면<br><em style="color:#191919;font-style:normal">바로 발송</em>돼요</div></div><div><button class="btn y" onclick="go('at-send')" style="background:#fff">알림톡 시작하기</button></div></div>
   <div class="bn"><div><div class="k">첫 인상을 만드는 프로필 이미지</div><div class="big">외식·식음료 업종에서는<br><em>91%</em>가 <em>프로필 이미지</em>를<br>등록했어요</div></div><div><button class="btn g">프로필 이미지 등록하기</button></div></div>
  </div>
 </main></div>`;
@@ -536,7 +608,7 @@ P['at-send']=()=>{
    <div class="tabs">${cats.map(c=>`<span class="chip ${S.cat===c?'on':''}" onclick="S.cat='${c}';render()">${c}</span>`).join('')}</div>
    ${TPL[S.cat].map(t=>`<div class="tpl" onclick="${t.st==='ok'?`S.tpl='${t.id}';render()`:''}" style="${t.st!=='ok'?'opacity:.55;cursor:default':''}"><div style="flex:1"><div class="t">${t.name}${t.set?'<span class="badge b-at">바로 사용</span>':''}${t.st==='ing'?'<span class="badge b-ing">검수 중</span>':''}</div><div class="s">${t.when} · ${t.to}에게</div></div></div>`).join('')}
    <div class="help"><a style="color:#3a6fd8" onclick="S.step=0;S.browse=true;render()">예시 보면서 고르기</a> · <a style="color:#3a6fd8" onclick="newTpl()">직접 만들기</a></div></div>`;
-  const chosen=ct?`<div class="fsec"><div class="lab">보낼 알림</div><div class="filerow" style="background:#fffbe0;border-color:#f3e27a"><div><b>${ct.name}</b><div style="font-size:12px;color:#777;margin-top:3px;line-height:1.6">${ct.when} · ${ct.to}에게<br>필요한 열: ${ct.cols}</div></div><a style="color:#3a6fd8;font-size:13px" onclick="S.tpl=null;render()">바꾸기</a></div></div>`:pickTpl;
+  const chosen=ct?`<div class="fsec"><div class="lab">보낼 알림</div><div class="filerow" style="background:#fafafa;border-color:#e5e5e5"><div><b>${ct.name}</b><div style="font-size:12px;color:#777;margin-top:3px;line-height:1.6">${ct.when} · ${ct.to}에게<br>필요한 열: ${ct.cols}</div></div><a style="color:#3a6fd8;font-size:13px" onclick="S.tpl=null;render()">바꾸기</a></div></div>`:pickTpl;
   const vars=ct&&S.recvMode==='manual'?commonVarsHTML(ct):ct&&S.uploaded?`<div class="fsec"><div class="lab">내용 채우기</div><div class="vars">${(ct.body.match(/#\{(.+?)\}/g)||[]).filter((v,i,a)=>a.indexOf(v)===i).map(v=>{const k=v.slice(2,-1);return `<div class="varrow"><code>${v}</code><span class="arr">→</span><div class="input">${VARS[k]||'직접 입력'}</div></div>`}).join('')}</div>
    <div class="help">엑셀 열 이름이 같으면 자동으로 채워져요. 미리보기에서 확인하세요.</div></div>`:'';
   form=`${chosen}
@@ -909,7 +981,7 @@ P['at-new']=()=>{
   <div class="formwrap"><div class="form">${body}<div class="footbtn"><button class="btn line" onclick="S.step=0;go('at-send')">이전</button>${next}</div></div></div></main></div>`;
  }
  // step 2
- body=`${c.from?`<div class="fsec"><div class="filerow" style="background:#fffbe0;border-color:#f3e27a"><div style="font-size:13px">「<b>${c.from}</b>」 세트를 복사했어요. 필요한 부분만 고치세요.</div></div></div>`:''}
+ body=`${c.from?`<div class="fsec"><div class="filerow" style="background:#fafafa;border-color:#e5e5e5"><div style="font-size:13px">「<b>${c.from}</b>」 세트를 복사했어요. 필요한 부분만 고치세요.</div></div></div>`:''}
  <div class="fsec"><div class="lab">어떤 알림인가요? <span style="font-weight:400;color:#888;font-size:13px">선택 · 검수에 참고돼요</span></div><div class="tabs" style="margin:0">${WHEN.map(w=>`<span class="chip ${c.when===w?'on':''}" onclick="S.c.when='${w}';render()">${w}</span>`).join('')}</div></div>
  <div class="fsec"><div class="lab">템플릿 이름<span class="req">*</span></div><input class="input" style="width:100%" value="${c.name}" placeholder="예: 수업 후 학습 안내" oninput="S.c.name=this.value;drawWarn()"><div class="help">받는 사람에게는 보이지 않아요.</div></div>
  <div class="fsec"><div class="lab">내용<span class="req">*</span></div>
@@ -938,7 +1010,7 @@ P['at-new']=()=>{
 
 P['msg-new']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main class="main">
  <div class="h1">메시지 보내기</div><div class="desc">공지, 혜택, 이벤트 소식을 다양한 형식의 메시지로 작성해 고객과 효과적으로 소통해 보세요. <u>메시지 집행가이드</u></div>
- ${S.saved?`<div class="mbanner" style="border:2px solid #fee500"><div class="l"><span class="ic">명단</span><div><b>알림톡 명단 ‘학부모명단_2610’의 친구 50명</b><small>메시지를 작성한 뒤 받는 대상에서 이 명단을 고르면 50명에게만 보내요.</small></div></div><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">이 명단으로 작성하기</button></div>`:''}
+ ${S.saved?`<div class="mbanner" style="border:1px solid #e5e5e5"><div class="l"><span class="ic">명단</span><div><b>알림톡 명단 ‘학부모명단_2610’의 친구 50명</b><small>메시지를 작성한 뒤 받는 대상에서 이 명단을 고르면 50명에게만 보내요.</small></div></div><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">이 명단으로 작성하기</button></div>`:''}
  <div class="mbanner"><div class="l"><span class="ic">알림</span><div><b>예약·납부 안내처럼 꼭 전해야 하는 소식인가요?</b><small>친구가 아닌 고객에게도 전화번호로 보내는 알림톡을 써보세요.</small></div></div><button class="btn line sm" onclick="go('at-send')">알림톡 보내기 →</button></div>
  <div class="sech" style="margin-top:44px">다양한 유형으로 직접 작성하기</div>
  <div class="typecards">${[['카탈로그형','#상품모아보기','#쇼핑몰'],['기본 텍스트형','#빠른소식전달','#공지및안내'],['와이드 이미지형','#비주얼강조','#클릭유도'],['와이드 리스트형','#주요소식모음','#핵심정보정리']].map(([t,h1,h2])=>`<div class="tc" style="cursor:pointer" onclick="go('msg-compose')"><div class="im"></div><div class="tx"><b>${t}</b><small><span style="white-space:nowrap">${h1}</span> <span style="white-space:nowrap">${h2}</span></small></div></div>`).join('')}</div>
@@ -962,7 +1034,7 @@ P['msg-compose']=()=>{
  <div class="stepper"><div class="on">1 작성</div><div>2 발송 설정</div></div>
  <div class="formwrap"><div class="form">
   <div class="fsec"><div class="lab">메시지 종류</div><span class="radio ${m.kind==='ad'?'on':''}" onclick="S.msg.kind='ad';render()"><i></i>광고성</span><span class="radio ${m.kind==='info'?'on':''}" onclick="S.msg.kind='info';render()"><i></i>정보성</span><div class="help" style="color:#333">광고성 내용이 포함된 경우에 체크해주세요. <span class="q">?</span></div>
-   ${m.kind==='info'?`<div class="adw" style="background:#fffbe0;border-color:#f3e27a"><b style="color:#191919">친구가 아닌 고객에게도 보내야 하나요?</b><br>정보성 안내는 전화번호로 보내는 <a style="color:#3a6fd8" onclick="go('at-send')">알림톡</a>이 더 잘 맞아요.</div>`:''}</div>
+   ${m.kind==='info'?`<div class="adw" style="background:#fafafa;border-color:#e5e5e5"><b style="color:#191919">친구가 아닌 고객에게도 보내야 하나요?</b><br>정보성 안내는 전화번호로 보내는 <a style="color:#3a6fd8" onclick="go('at-send')">알림톡</a>이 더 잘 맞아요.</div>`:''}</div>
   <div class="fsec"><div class="lab">고객센터 연락처<span class="req">*</span></div><div style="display:flex;gap:6px"><div class="input ro" style="flex:1">010-2056-8892</div><button class="btn line sm" style="height:38px">설정</button></div><div class="help">메시지 전송 시 필수로 입력해야 하는 정보입니다.</div></div>
   <div class="fsec"><div class="lab">메시지 꾸미기</div><span class="radio on"><i></i>없음</span><span class="radio"><i></i>기본 이미지</span><span class="radio"><i></i>이미지 업로드</span><span class="radio"><i></i>동영상</span></div>
   <div class="fsec"><div class="lab">내용 (${m.kind==='ad'?'광고':'정보'})<span class="req">*</span></div><textarea class="ta" style="height:140px" placeholder="메시지 내용을 입력해주세요." oninput="S.msg.body=this.value;document.getElementById('mpv').innerHTML=msgPreview();document.getElementById('mcnt').textContent=this.value.length+'/400자'">${m.body}</textarea><div class="help" style="display:flex;justify-content:space-between"><span>수신거부 | 홈 &gt; 채널차단</span><span id="mcnt">${m.body.length}/400자</span></div></div>
