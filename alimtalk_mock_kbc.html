@@ -475,6 +475,18 @@ tr.hl td,.tb tr.hl td{background:#fafafa!important}
 .bflow i{font-style:normal;display:inline-flex;width:18px;height:18px;border-radius:50%;background:#191919;color:#fff;font-size:11px;align-items:center;justify-content:center;margin-right:6px}
 .bflow span{color:#bbb}
 .chboost{margin:0 10px 10px;border-radius:6px;background:#fee500;text-align:center;font-weight:700;font-size:12px;padding:9px}
+.aisearch{max-width:1000px;background:#f8f8f8;border-radius:10px;padding:16px 18px}
+.ais-top b{font-size:15px}.ais-top span{font-size:13px;color:#777;margin-left:8px}
+.ais-row{display:flex;gap:8px;margin-top:10px}.ais-row .input{flex:1;height:44px;font-size:14px}
+.aisex{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.aisex .chip{font-size:12px;height:28px}
+.aisres{margin-top:14px}
+.ais-h{font-size:14px;font-weight:700;margin-bottom:8px}.ais-h span{font-weight:400;color:#1d8a4e;font-size:12px;margin-left:6px}
+.aisi{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.aisi:hover{border-color:#999}
+.aisn{width:22px;height:22px;border-radius:50%;background:#191919;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.aisi b{font-size:15px;margin-right:8px}.aisw{font-size:12px;color:#888;display:inline-block}
+.aisb{font-size:13px;color:#555;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aisdraft{background:#fff;border:1px dashed #ccc;border-radius:8px;padding:12px 14px}
 </style></head>
 <body>
 <div class="mock">가상 화면 · 실제 서비스 아님</div>
@@ -713,10 +725,49 @@ function commonVarsHTML(ct){
  return `<div class="fsec"><div class="lab">공통 내용</div><div class="vars">${cv.map(k=>`<div class="varrow"><code>#{${k}}</code><span class="arr">→</span><div class="input">${VARS[k]||''}</div></div>`).join('')}</div><div class="help">모든 받는 분에게 똑같이 들어가는 내용이에요.</div></div>`;
 }
 
+/* ---------- AI 템플릿 찾기 · 초안 ---------- */
+const AIKW=[[['수강료','학원비','교육비','납부','원비'],['t1']],[['보강','수업 일정','시간 변경','일정 변경'],['t2']],[['출결','등원','하원','출석'],['t7']],[['성적','리포트','평가','성적표'],['tR1']],
+ [['관리비'],['tR2']],[['회비'],['tR3']],[['예약 확정','예약했','예약 손님','예약'],['t4','t5','t6','t14','t12']],[['진료','병원','치과'],['t5','t9']],[['검사'],['t9']],
+ [['배송','택배','송장','주문'],['t11']],[['픽업','포장'],['t8']],[['만료','정기권','회원권','이용권'],['t10','t13']],[['체크인','숙박','객실'],['t15','t14']],[['PT','헬스','필라테스'],['t12','t13']],[['휴원','휴관','휴무','쉬어','휴장'],['t3']]];
+const DRAFTS=[[['휴원','휴관','휴무','쉬어','휴장'],'#{이름}님, #{가게명}입니다.\n#{기간} 동안 휴원합니다.\n수업은 #{재개일}부터 정상 진행돼요.\n\n문의는 채널 채팅으로 남겨주세요.'],
+ [['상담'],'#{이름}님, #{가게명}입니다.\n#{일시} 상담 일정을 안내드려요.\n· 장소: #{장소}\n\n변경이 필요하면 채널 채팅으로 알려주세요.'],
+ [['준비물','숙제','과제'],'#{이름} 학부모님, #{가게명}입니다.\n#{날짜} 수업 준비물을 안내드려요.\n· 준비물: #{준비물}\n\n문의는 채널 채팅으로 남겨주세요.']];
+function aiFind(q){
+ const sc={};
+ AIKW.forEach(([ks,ids])=>{const hit=ks.filter(k=>q.includes(k));if(hit.length)ids.forEach((id,i)=>{sc[id]=(sc[id]||0)+hit.length*10-i})});
+ const all=Object.entries(sc).sort((a,b)=>b[1]-a[1]).map(([id])=>findT(id)).filter(Boolean);
+ return {ok:all.filter(t=>t.st==='ok').slice(0,3), pending:all.filter(t=>t.st!=='ok')};
+}
+function aiDraft(q){const d=DRAFTS.find(([ks])=>ks.some(k=>q.includes(k)));return d?d[1]:'#{이름}님, #{가게명}입니다.\n'+q.replace(/(알려주고 싶어|보내고 싶어|안내하고 싶어|알리고 싶어)[.!]?$/,'').trim()+' 안내드려요.\n· 일시: #{일시}\n\n문의는 채널 채팅으로 남겨주세요.'}
+function aiSearchRun(){const q=(document.getElementById('aiq')||{}).value||'';if(!q.trim())return;S.aiq=q;S.aiRes=null;render();setTimeout(()=>{S.aiRes=aiFind(q);render()},600)}
+function aiSearchHTML(){
+ const q=S.aiq||'', r=S.aiRes;
+ const ex=['다음 주 휴원한다고 학부모님께 알려주고 싶어','이번 달 수강료 납부 안내','내일 예약 손님에게 리마인드'];
+ let res='';
+ if(q&&!r) res='<div class="aiload" style="margin-top:12px">✨ 검수 받은 템플릿에서 찾고 있어요…</div>';
+ if(r){
+  res=r.ok.length?`<div class="aisres"><div class="ais-h">검수 완료 템플릿 중 이게 맞아요 <span>바로 보낼 수 있어요</span></div>
+   ${r.ok.map((t,i)=>`<div class="aisi" onclick="S.tpl='${t.id}';S.cat='${catOf(t.id)}';S.step=1;S.browse=false;render()"><span class="aisn">${i+1}</span><div style="flex:1;min-width:0"><b>${t.name}</b><span class="aisw">${catOf(t.id)} · ${t.when}</span><div class="aisb">${t.body.split('\n').filter(Boolean).slice(0,2).join(' ')}</div></div><span class="btn y sm">이걸로 보내기</span></div>`).join('')}
+   <div class="help">찾는 게 아니면 <a style="color:#3a6fd8" onclick="newTpl(null,null,S.aiq)">AI 초안으로 새 템플릿 만들기 ›</a></div></div>`
+  :`<div class="aisres"><div class="ais-h">검수 받은 템플릿 중 맞는 게 없어요</div>
+   ${r.pending.length?`<div class="help" style="margin-top:0">비슷한 「${r.pending[0].name}」은 아직 검수 중이에요.</div>`:''}
+   <div class="aisdraft"><div class="aisw" style="margin:0 0 6px">AI가 만든 초안</div><div class="aipt">${aiDraft(q).replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>')}</div>
+   <button class="btn y sm" style="margin-top:10px" onclick="newTpl(null,null,S.aiq)">이 초안으로 템플릿 만들기</button></div>
+   <div class="help">검수 후 사용할 수 있어요. 작성 화면에서 AI 문구 조언도 받을 수 있어요.</div></div>`;
+ }
+ return `<div class="aisearch"><div class="ais-top"><b>✨ 어떤 알림을 보내고 싶으세요?</b><span>말하듯 적으면 검수 받은 템플릿을 찾아드려요</span></div>
+  <div class="ais-row"><input id="aiq" class="input" value="${q.replace(/"/g,'&quot;')}" placeholder="예: 다음 주 휴원한다고 학부모님께 알려주고 싶어" onkeydown="if(event.key==='Enter')aiSearchRun()"><button class="btn y" onclick="aiSearchRun()">찾기</button></div>
+  ${!q?`<div class="aisex">${ex.map(e=>`<span class="chip" onclick="document.getElementById('aiq').value='${e}';aiSearchRun()">${e}</span>`).join('')}</div>`:''}
+  ${res}</div>`;
+}
+function aiName(q){const m=[['휴원','휴원 안내'],['휴관','휴관 안내'],['휴무','휴무 안내'],['휴장','휴장 안내'],['상담','상담 일정 안내'],['준비물','준비물 안내'],['숙제','과제 안내']].find(([k])=>q.includes(k));return m?m[1]:q.replace(/\s*(알려주고 싶어|보내고 싶어|안내하고 싶어|알리기|알리고 싶어).*$/,'').slice(0,16)}
+function aiWrite(){const d=(document.getElementById('aidesc')||{}).value||'';if(!d.trim())return;S.c.desc=d;S.c.body=aiDraft(d);if(!S.c.name)S.c.name=aiName(d);S.c.ai=null;render();setTimeout(aiRun,300)}
+
 P['at-quick']=()=>{
  const myT=myIds().map(findT);
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
  <div class="h1">알림톡 보내기</div><div class="desc">자주 보내는 알림을 바로 다시 보낼 수 있어요.</div>
+ <div style="margin-top:20px">${aiSearchHTML()}</div>
  <div class="remind"><div><b>지난달 10월 13일에 「수강료 납부 안내」를 300명에게 보냈어요</b><span>이번 달도 보낼 때가 됐어요. 지난번 명단·내용 그대로 불러와요.</span></div><div style="display:flex;gap:6px;flex:none"><button class="btn y sm" onclick="again(0)">이번 달도 보내기</button></div></div>
 
  <div class="secT" style="margin-top:32px">최근 보낸 알림<small>누르면 지난번 명단·내용 그대로 확인 화면으로 가요</small></div>
@@ -774,7 +825,8 @@ P['at-gallery']=()=>{
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
  ${S.hasHistory&&S.ver!=='b'?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}<div class="h1">${S.ver!=='b'&&myIds().length&&S.gcat==='전체'?'어떤 알림을 보낼까요?':'무엇을 알려드릴까요?'}</div>
  <div class="desc">손님에게 꼭 전해야 하는 안내를 전화번호로 보내요. 채널 친구가 아니어도 받을 수 있어요. <u>알림톡 이용 가이드</u></div>
- <div style="margin-top:32px">${inner}</div>
+ <div style="margin-top:24px">${aiSearchHTML()}</div>
+ <div style="margin-top:28px">${inner}</div>
  </main></div>`;
 };
 
@@ -952,9 +1004,10 @@ const TO=['예약한 고객','결제·주문한 고객','수강생·회원','기
 const WHEN2T={'예약·방문 안내':['t4','t5','t6'],'결제·납부 안내':['t1'],'일정 변경·취소':['t2'],'주문·배송':['t11','t8'],'출결·이용 내역':['t7'],'회원·이용권 만료':['t10'],'기타':['t9']};
 const ADW=['할인','이벤트','쿠폰','무료','특가','세일','오픈 기념','신메뉴','신상품','혜택','증정','프로모션','%'];
 const VCHIP=['이름','일시','금액','상품','가게명'];
-function newTpl(copyId,name){
+function newTpl(copyId,name,desc){
  S.c={step:2,when:null,to:null,name:name||'',body:'',btn:'none',btnName:'',linkMode:'send',submitted:false};
  if(copyId){const t=findT(copyId);S.c.name=t.name+' (수정)';S.c.body=t.body;S.c.btn=t.btn?'link':'none';S.c.btnName=t.btn;S.c.from=t.name;S.c.when=Object.keys(WHEN2T).find(k=>WHEN2T[k].includes(copyId))||'기타';}
+ if(desc){S.c.desc=desc;S.c.body=aiDraft(desc);S.c.name=aiName(desc);setTimeout(aiRun,400)}
  go('at-new');render();
 }
 function adHits(b){return ADW.filter(w=>b.includes(w))}
@@ -1028,6 +1081,9 @@ P['at-new']=()=>{
  body=`${c.from?`<div class="fsec"><div class="filerow" style="background:#fafafa;border-color:#e5e5e5"><div style="font-size:13px">「<b>${c.from}</b>」 세트를 복사했어요. 필요한 부분만 고치세요.</div></div></div>`:''}
  <div class="fsec"><div class="lab">어떤 알림인가요? <span style="font-weight:400;color:#888;font-size:13px">선택 · 검수에 참고돼요</span></div><div class="tabs" style="margin:0">${WHEN.map(w=>`<span class="chip ${c.when===w?'on':''}" onclick="S.c.when='${w}';render()">${w}</span>`).join('')}</div></div>
  <div class="fsec"><div class="lab">템플릿 이름<span class="req">*</span></div><input class="input" style="width:100%" value="${c.name}" placeholder="예: 수업 후 학습 안내" oninput="S.c.name=this.value;drawWarn()"><div class="help">받는 사람에게는 보이지 않아요.</div></div>
+ <div class="fsec"><div class="aisearch" style="margin:0"><div class="ais-top"><b>✨ AI로 초안 만들기</b><span>보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 바꿔드려요</span></div>
+  <div class="ais-row"><input id="aidesc" class="input" value="${(c.desc||'').replace(/"/g,'&quot;')}" placeholder="예: 다음 주 월~수 휴원한다고 학부모님께 알리기" onkeydown="if(event.key==='Enter')aiWrite()"><button class="btn y" onclick="aiWrite()">초안 만들기</button></div>
+  <div class="help" style="margin-bottom:0">초안은 아래 내용 칸에 들어가요. 직접 고친 뒤 AI 문구 조언으로 검수 전 점검하세요.</div></div></div>
  <div class="fsec"><div class="lab">내용<span class="req">*</span></div>
   <div class="vbar"><span style="font-size:12px;color:#777">자리표시 넣기</span>${VCHIP.map(v=>`<span class="vchip" onclick="insVar('${v}')">#{${v}}</span>`).join('')}<span class="vchip" onclick="insVar(prompt('자리표시 이름')||'항목')">+ 직접</span></div>
   <textarea id="ta" class="ta" placeholder="예) #{이름} 학부모님, 오늘 수업에서 배운 내용을 안내드려요." oninput="onBody(this)">${c.body}</textarea>
@@ -1128,7 +1184,7 @@ P['msg-file']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-file')}<main cl
 
 const MEMO={
  home:['LNB 알림톡 독립 메뉴 (메시지 ↔ 소식·쿠폰 사이, 10/8 결정)','홈 퀵카드·배너를 보조 진입점으로 활용','써본 사장님은 퀵카드가 "최근 보낸 알림"으로 전환'],
- gallery:['[AI] 우리 업종 추천: 채널 카테고리가 애매하면 채널명·소개로 추천 (화면엔 AI 표시 없음)','내 템플릿이 있으면 담아둔 템플릿부터, 없으면 예시 갤러리부터 노출','보낸 템플릿은 내 템플릿에 자동으로 담김','빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
+ gallery:['[AI] 템플릿 찾기: 자연어로 입력하면 검수 완료 템플릿 추천, 없으면 AI 초안 → 새 템플릿','[AI] 우리 업종 추천: 채널 카테고리가 애매하면 채널명·소개로 추천 (화면엔 AI 표시 없음)','내 템플릿이 있으면 담아둔 템플릿부터, 없으면 예시 갤러리부터 노출','보낸 템플릿은 내 템플릿에 자동으로 담김','빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
  quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
  step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
@@ -1136,7 +1192,7 @@ const MEMO={
  list:['[AI 후보] 광고 문구 추천: 업종별 반응 상위 메시지(데이터 순위) vs AI 맞춤 추천 미정','하단에 내 채널 친구 수 · 알림톡으로 늘어난 친구 수 + 비슷한 업종 광고 문구 추천 → 메시지로 연결','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
- newtpl:['[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
+ newtpl:['[AI] 초안 만들기: 보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 작성','[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
  report:['사장님 질문 순서: ① 잘 도착했나 ② 효과가 있었나 ③ 다음에 할 일','월별 추세·캐시는 "자세히 보기"로 접음, 발송 건별 결과 중심','버튼 클릭 수 집계 가능 여부 확인 필요','12/29 메시지 통계 개편과 상호 이동 연계'],
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
  compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
