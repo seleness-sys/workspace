@@ -958,9 +958,8 @@ function friendBox(){
  </div>`;
 }
 
-function lvBar(){const L=[['now','지금 화면'],['a','A. 한 줄 배너'],['b','B. 표 안에만']];return `<div style="display:flex;align-items:center;gap:6px;margin:4px 0 14px;font-size:12px;color:#888">비교 보기 ${L.map(([k,l])=>`<span class="chip ${(S.lv||'now')===k?'on':''}" style="font-size:12px;padding:4px 10px" onclick="S.lv='${k}';render()">${l}</span>`).join('')}</div>`}
 function lvBanner(){return `<div style="display:flex;align-items:center;gap:12px;background:#f7f7f7;border-radius:10px;padding:14px 18px;margin:22px 0 4px"><span style="font-size:14px">알림톡을 보고 채널 친구가 된 분 <b>+17명</b> <span style="color:#888;font-size:13px">최근 3개월</span></span><span style="font-size:13px;color:#666">· 친구에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요.</span><a style="margin-left:auto;color:#3a6fd8;font-size:13px;white-space:nowrap;cursor:pointer" onclick="go('msg-new')">친구에게 메시지 보내기 ›</a></div>`}
-P['at-list']=()=>{const lv=S.lv||'now';return `<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">${lvBar()}
+P['at-list']=()=>{const lv='a';return `<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
  <div class="h1">보낸 알림톡</div><div class="desc">지금까지 보낸 알림톡의 결과를 확인해요.${lv==='b'?'':' 실패한 건과 알림톡으로 늘어난 친구도 여기서 볼 수 있어요.'}</div>${lv==='a'?lvBanner():''}
  <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
  <table class="tb"><tr><th>발송일시</th><th>템플릿</th><th>받는 사람</th><th>성공 / 실패</th><th>발송 후 친구 추가</th><th>고객 파일</th><th></th></tr>
@@ -1197,7 +1196,7 @@ const MEMO={
  step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
  done:['실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 고객 파일 저장 (A안, 사장님이 선택)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
- list:['메뉴명 「보낸 알림톡」 = 발송 이력 (앞으로 보낼 문구는 템플릿 메뉴) — 「내 템플릿」과 이름 혼동 방지','[AI 후보] 광고 문구 추천: 업종별 반응 상위 메시지(데이터 순위) vs AI 맞춤 추천 미정','하단에 내 채널 친구 수 · 알림톡으로 늘어난 친구 수 + 비슷한 업종 광고 문구 추천 → 메시지로 연결','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
+ list:['메뉴명 「보낸 알림톡」 = 발송 이력 (앞으로 보낼 문구는 템플릿 메뉴) — 「내 템플릿」과 이름 혼동 방지','광고 연결은 목록 위 한 줄 배너로만 (알림톡 보고 친구가 된 분 +N명 → 친구에게 메시지 보내기). 친구 수 카드·타 업종 광고 예시 박스는 과하다는 의견으로 삭제','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['역할 = 보낼 문구 준비 (찾아서 담기 + 새로 써서 검수 받기). 지금 보낼 걸 고르는 건 알림톡 보내기, 보낸 기록은 보낸 알림톡','[AI] 맨 위에서 원하는 템플릿을 자연어로 적으면 검수 완료 템플릿 추천(담기), 없으면 AI 초안으로 새 템플릿 작성','검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
  newtpl:['[AI] 알림 종류 자동 지정: 문구를 보고 카카오 템플릿 카테고리(회원·구매·예약·서비스이용·리포팅·배송 등)를 AI가 정함, 틀리면 [변경] — 사장님이 먼저 고르지 않음','[AI] 초안 만들기: 보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 작성','[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','검수 통과 가능성 점수는 표시하지 않음 (카카오가 검수 주체라 보장처럼 읽힘, 반려 시 신뢰 훼손) — 고칠 부분 지적만, "승인 팁"→"작성 팁"','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
@@ -1235,9 +1234,7 @@ const DEEP={
  'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
  'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});return 'msg-compose'},
  'msg-target-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});S.msg.target='group';S.msg.group='학부모명단_2610';return 'msg-target'},
- 'msg-file-saved':()=>{S.saved=true;return 'msg-file'},
- 'at-list-a':()=>{S.lv='a';return 'at-list'},
- 'at-list-b':()=>{S.lv='b';return 'at-list'}
+ 'msg-file-saved':()=>{S.saved=true;return 'msg-file'}
 };
 function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
 render();syncVer();
