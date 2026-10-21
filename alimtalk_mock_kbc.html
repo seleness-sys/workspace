@@ -584,7 +584,7 @@ function fullLnb(on){
   <div class="ch"><span class="avatar"></span>대호<span style="margin-left:auto;color:#999">›</span></div>
   ${it('home','홈','home')}${it('ch','채널','-')}${it('chat','채팅','-','<span class="cnt35">35</span><span class="tagblue">업데이트</span>')}
   ${it('msg','메시지','msg-new')}
-  ${it('at','알림톡','at-send','<span class="tagnew">NEW</span>')}
+  ${it('at','알림톡','at-send','<span class="tagblue">NEW</span>')}
   ${it('news','소식 · 쿠폰','-')}${it('store','매장','-')}${it('mem','비즈멤버십','-')}${it('promo','홍보','-')}${it('ins','인사이트','-','<span class="tagblue">채팅 개선</span>')}
   <div style="height:22px"></div>
   <a class="item ext">${ico('ad')}<span>모먼트</span><span style="margin-left:auto;color:#aaa;font-size:12px">↗</span></a>
@@ -630,7 +630,7 @@ P.home=()=>`<div class="wrap">${fullLnb('home')}<main class="main home">
  <div class="qcards">
   <div class="qc"><div style="display:flex;gap:10px;align-items:center"><span class="avatar"></span><strong>대호</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;color:#666">비즈월렛<u style="color:#191919">연결하기 ⌄</u></div></div>
   <div class="qc" onclick="go('msg-new')">${ico('msg')}<div><strong>메시지 보내기</strong><span>강력한 마케팅 도구</span></div></div>
-  ${S.hasHistory?`<div class="qc at" onclick="again(0)">${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">최근: 수강료 납부 안내</span></div></div>`:`<div class="qc at" onclick="go('at-send')"><span class="tagnew new">NEW</span>${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">예약·납부 안내를 카톡으로</span></div></div>`}
+  ${S.hasHistory?`<div class="qc at" onclick="again(0)">${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">최근: 수강료 납부 안내</span></div></div>`:`<div class="qc at" onclick="go('at-send')"><span class="tagblue" style="position:absolute;top:18px;right:18px;margin:0">NEW</span>${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">예약·납부 안내를 카톡으로</span></div></div>`}
   <div class="qc">${ico('news')}<div><strong>소식 올리기</strong><span>방문자를 위한 공지</span></div></div>
  </div>
  <div class="sech">고객과의 실시간 채팅<small>전체 목록 가기 ›</small></div>
