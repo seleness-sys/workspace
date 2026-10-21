@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>알림톡 가상 화면 · 파트너센터</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{word-break:keep-all;overflow-wrap:anywhere;font-family:Pretendard,system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;font-size:14px;color:#191919;background:#f7f7f7;min-width:1000px}
+a{color:inherit;text-decoration:none;cursor:pointer}
+button{font-family:inherit;cursor:pointer;border:0;background:none}
+/* GNB */
+.gnb{height:70px;background:#fff;border-bottom:1px solid #ececec;display:flex;align-items:center;padding:0 30px;position:sticky;top:0;z-index:10}
+.logo{font-size:19px;font-weight:800;letter-spacing:-.5px}
+.logo small{font-size:16px;font-weight:600;color:#949494;margin-left:10px;letter-spacing:0}
+.gnb nav{display:flex;gap:36px;margin-left:80px;font-size:16px}
+.gnb nav b{font-weight:700}
+.gnb nav span::after{content:" ⌄";color:#aaa;font-size:12px}
+.gnb .right{margin-left:auto;display:flex;gap:22px;font-size:15px}
+.nbadge{display:inline-flex;width:16px;height:16px;border-radius:50%;background:#ff5a2a;color:#fff;font-size:10px;font-weight:700;align-items:center;justify-content:center;margin-left:4px;vertical-align:1px}
+/* layout */
+.wrap{display:flex;min-height:calc(100vh - 70px)}
+.lnb{width:247px;background:#fff;border-right:1px solid #ececec;padding:24px 12px;flex:none}
+.lnb .ch{display:flex;align-items:center;gap:12px;padding:8px 12px 20px;border-bottom:1px solid #ececec;margin:0 8px 14px;font-size:15px}
+.avatar{width:28px;height:28px;border-radius:50%;background:#e9e9e9;border:1px solid #ddd;flex:none}
+.lnb a.item{display:flex;align-items:center;gap:16px;height:50px;padding:0 12px;border-radius:6px;font-size:16px;margin-bottom:8px}
+.lnb a.item.on{background:rgba(0,0,0,.06);font-weight:600}
+.lnb a.item:hover{background:rgba(0,0,0,.04)}
+.ico{width:26px;height:26px;flex:none;stroke:#191919;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tagnew{font-size:10px;font-weight:700;color:#fff;background:#ff5a2a;border-radius:9px;padding:2px 6px;margin-left:-8px}
+.tagblue{font-size:11px;color:#3a6fd8;background:#eaf0fc;border-radius:4px;padding:2px 6px;margin-left:-8px}
+.cnt35{font-size:11px;font-weight:700;color:#fff;background:#ff5a2a;border-radius:9px;padding:1px 6px;margin-left:-10px}
+.lnb .ext{background:#f4f4f4}
+/* 2-depth */
+.rail{width:75px;background:#fff;border-right:1px solid #ececec;padding:24px 0;flex:none;display:flex;flex-direction:column;align-items:center;gap:32px}
+.rail a{position:relative}
+.rail a.on .ico{fill:#191919;stroke:#191919}
+.rail a.on .ico.keep{fill:none}
+.rail .dot{position:absolute;top:-6px;right:-10px}
+.sub{width:247px;background:#fff;border-right:1px solid #ececec;padding:40px 12px;flex:none}
+.sub h2{font-size:26px;font-weight:700;padding:0 16px;margin-bottom:38px}
+.sub a{display:flex;align-items:center;height:44px;padding:0 16px;border-radius:6px;font-size:15px;color:#333;margin-bottom:0}
+.sub a.on{background:rgba(0,0,0,.06);font-weight:600}
+.sub a:hover{background:rgba(0,0,0,.04)}
+.sub .sep{height:1px;background:#ececec;margin:14px 16px}
+.sub .xlink{font-size:13px;color:#777;padding:0 16px;line-height:1.5}
+.sub .xlink a{display:inline;height:auto;padding:0;color:#3a6fd8;font-size:13px}
+.main{flex:1;padding:56px 36px 80px;min-width:0}
+.main.home{padding:72px 40px}
+/* common */
+.h1{font-size:32px;font-weight:700;line-height:1.25}
+.h1 .step{color:#949494;margin-right:10px}
+.desc{font-size:14px;color:#666;margin-top:10px}
+.desc u{color:#191919}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 20px;border-radius:6px;font-size:15px;font-weight:700}
+.btn.y{background:#fee500}
+.btn.g{background:#f5f5f5}
+.btn.line{border:1px solid #d6d6d6;background:#fff;font-weight:500}
+.btn.sm{height:36px;font-size:13px;padding:0 14px}
+.btn.dis{background:#f0f0f0;color:#bbb;pointer-events:none}
+.card{background:#fff;border-radius:12px}
+/* form */
+.formwrap{display:flex;gap:28px;align-items:flex-start;margin-top:44px}
+.form{flex:1 1 380px;max-width:555px;min-width:0}
+.fsec{padding:28px 0;border-bottom:1px solid #e5e5e5}
+.fsec:first-child{padding-top:0}
+.fsec .lab{font-size:16px;font-weight:700;color:#333;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.req{color:#ff5a2a}
+.help{font-size:12px;color:#777;line-height:1.6;margin-top:8px}
+.radio{display:inline-flex;align-items:center;gap:7px;margin-right:22px;font-size:14px;cursor:pointer}
+.radio i{width:18px;height:18px;border:1px solid #c6c6c6;border-radius:50%;display:inline-block;position:relative;background:#fff}
+.radio.on i{border-color:#3ba7b5}
+.radio.on i::after{content:"";position:absolute;inset:4px;border-radius:50%;background:#3ba7b5}
+.q{display:inline-flex;width:16px;height:16px;border:1px solid #999;border-radius:50%;font-size:11px;color:#777;align-items:center;justify-content:center}
+.input{height:38px;border:1px solid #d6d6d6;border-radius:4px;padding:0 12px;font-size:14px;display:flex;align-items:center;background:#fff}
+.input.ro{background:#ececec;color:#888}
+.drop{border:1px dashed #c6c6c6;border-radius:6px;background:#fafafa;height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#777;font-size:14px;cursor:pointer}
+.drop:hover{background:#f3f3f3}
+.drop b{color:#191919}
+.filerow{display:flex;align-items:center;justify-content:space-between;border:1px solid #e5e5e5;border-radius:6px;padding:14px 16px;background:#fff}
+.filerow .nm{display:flex;align-items:center;gap:10px;font-weight:600}
+.xls{width:26px;height:26px;border-radius:4px;background:#1f9d55;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.stats{display:flex;gap:8px;margin-top:10px}
+.stat{flex:1;background:#f7f7f7;border-radius:6px;padding:10px 12px;font-size:12px;color:#666}
+.stat b{display:block;font-size:18px;color:#191919;margin-top:2px}
+.stat.warn b{color:#e0442c}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin-top:14px;cursor:pointer}
+.chk i{width:18px;height:18px;border:1px solid #c6c6c6;border-radius:3px;flex:none;margin-top:1px;background:#fff;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-style:normal}
+.chk.on i{background:#3ba7b5;border-color:#3ba7b5}
+.chk.on i::after{content:"✓"}
+.chk span small{display:block;color:#888;font-size:12px;margin-top:2px}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.chip{height:32px;padding:0 14px;border-radius:16px;border:1px solid #d6d6d6;font-size:13px;display:inline-flex;align-items:center;cursor:pointer;background:#fff}
+.chip.on{background:#191919;color:#fff;border-color:#191919}
+.tpl{border:1px solid #e5e5e5;border-radius:8px;padding:14px 16px;margin-bottom:8px;cursor:pointer;background:#fff;display:flex;gap:12px;align-items:flex-start}
+.tpl:hover{border-color:#bbb}
+.tpl.on{border:2px solid #191919;padding:13px 15px}
+.tpl .t{font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+.tpl .s{font-size:12px;color:#777;margin-top:4px;line-height:1.5}
+.badge{white-space:nowrap;font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px}
+.b-ok{background:#e6f6ee;color:#1d8a4e}
+.b-ing{background:#fff4d6;color:#a87400}
+.b-no{background:#fdecea;color:#c73a2b}
+.b-at{background:#fee500;color:#191919}
+.b-gr{background:#efefef;color:#666}
+.vars{margin-top:6px}
+.varrow{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+.varrow code{background:#f1f1f1;border-radius:4px;padding:3px 7px;font-family:inherit;font-weight:600;width:110px}
+.varrow .arr{color:#aaa}
+.varrow .input{flex:1;height:34px}
+.summary{background:#f7f7f7;border-radius:8px;padding:16px 18px}
+.summary .r{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}
+.summary .r.t{border-top:1px solid #e1e1e1;margin-top:6px;padding-top:12px;font-weight:700;font-size:16px}
+.summary .r span:first-child{color:#666}
+.notice{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:14px 16px;font-size:12px;color:#666;line-height:1.7}
+.notice b{color:#191919}
+.footbtn{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #191919;margin-top:40px;padding-top:20px;width:100%}
+/* stepper */
+.stepper{display:flex;gap:0;margin-top:28px;max-width:555px}
+.stepper div{flex:1;font-size:13px;color:#aaa;padding-top:10px;border-top:3px solid #e5e5e5}
+.stepper div.on{color:#191919;font-weight:700;border-color:#191919}
+.stepper div.done{color:#191919;border-color:#191919}
+/* phone */
+.phone{width:250px;flex:none;border:1px solid #d9d9d9;border-radius:36px;background:#fff;padding:12px;position:sticky;top:110px}
+.screen{background:#b2c7da;border-radius:26px;height:500px;padding:14px 10px;overflow:hidden;display:flex;flex-direction:column}
+.screen .top{font-size:12px;color:#333;text-align:center;padding:6px 0 14px;font-weight:600}
+.msg{display:flex;gap:6px}
+.msg>div{flex:1;min-width:0}
+.msg .avatar{width:30px;height:30px;border-radius:12px;flex:none}
+.msg .who{font-size:11px;color:#444;margin-bottom:4px}
+.bubble{background:#fff;border-radius:4px 12px 12px 12px;width:100%;max-width:190px;overflow:hidden;font-size:12px;line-height:1.55}
+.bubble .hd{background:#fee500;font-weight:700;padding:8px 12px;font-size:12px}
+.bubble .bd{padding:12px;white-space:pre-line;color:#191919}
+.bubble .bd .v{background:#fff3a8;border-radius:2px}
+.bubble .bt{margin:0 12px 12px;border-radius:4px;background:#f2f2f2;text-align:center;padding:8px;font-size:12px}
+.bubble .chadd{border-top:1px solid #eee;padding:9px 12px;font-size:11px;color:#555;display:flex;justify-content:space-between}
+.bubble .chadd b{color:#191919}
+.phonecap{font-size:12px;color:#777;text-align:center;margin-top:10px}
+/* tables */
+table.tb{width:100%;border-collapse:collapse;background:#fff;font-size:13px}
+.tb th{background:#fafafa;color:#666;font-weight:500;padding:12px 10px;border-top:1px solid #191919;border-bottom:1px solid #e5e5e5;text-align:left;white-space:nowrap}
+.tb td{white-space:nowrap;padding:14px 10px;border-bottom:1px solid #eee;vertical-align:middle}
+.tb tr.hl td{background:#fffbe0}
+.filters{display:flex;gap:8px;margin:28px 0 14px;align-items:center}
+.sel{height:34px;border:1px solid #d6d6d6;border-radius:4px;padding:0 30px 0 10px;font-size:13px;display:flex;align-items:center;background:#fff;position:relative}
+.sel::after{content:"⌄";position:absolute;right:10px;top:7px;color:#999}
+.infobox{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:18px 20px;margin-top:24px;font-size:13px;line-height:1.75;color:#555}
+.infobox b{color:#191919;font-size:14px}
+/* home */
+.hero{font-size:38px;font-weight:700;line-height:1.3}
+.hero span{color:#949494}
+.qcards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px;max-width:1190px}
+.qc{min-width:0;height:161px;background:#fff;border-radius:14px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;position:relative}
+.qc:hover{box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.qc strong{font-size:19px;font-weight:700;display:block;white-space:nowrap}
+.qc span{font-size:14px;color:#949494;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.qc.at{background:#fff9cc}
+.qc .new{position:absolute;top:18px;right:18px;margin:0;font-size:11px;color:#fff;padding:3px 8px}
+.sech{font-size:24px;font-weight:700;margin:56px 0 18px;display:flex;align-items:center;gap:12px}
+.sech small{font-size:24px;font-weight:400;color:#191919;border-left:1px solid #ccc;padding-left:12px}
+.banner2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:1190px}
+.bn{min-height:270px;gap:20px;border-radius:14px;padding:36px;display:flex;flex-direction:column;justify-content:space-between;background:#fff}
+.bn .k{font-size:16px;color:#666}
+.bn .big{font-size:26px;font-weight:700;line-height:1.35;margin-top:14px}
+.bn .big em{font-style:normal;color:#4a74d9}
+.bn.at{background:#fff6b3}
+/* modal / toast */
+.done{width:555px}
+.donebox{background:#fff;border-radius:12px;padding:36px;text-align:center}
+.donebox .ok{width:56px;height:56px;border-radius:50%;background:#fee500;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 18px}
+.donebox h3{font-size:24px;font-weight:700}
+.donebox p{color:#666;margin-top:8px;line-height:1.6}
+.bridge{margin-top:18px;border:2px solid #fee500;background:#fffdf0;border-radius:12px;padding:22px 24px;text-align:left}
+.bridge h4{font-size:17px;font-weight:700;line-height:1.45}
+.bridge h4 em{font-style:normal;background:#fee500;padding:0 4px}
+.bridge p{font-size:13px;color:#666;margin:8px 0 16px;line-height:1.6}
+.bridge .acts{display:flex;gap:8px}
+.bridge.saved{border-color:#cfe9d9;background:#f3fbf6}
+.crumb{font-size:13px;color:#888;margin-bottom:14px}
+.crumb a{color:#3a6fd8}
+.mbanner{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:16px 20px;margin-top:22px}
+.mbanner .l{display:flex;gap:12px;align-items:center}
+.mbanner .l .ic{width:36px;height:36px;border-radius:10px;background:#fee500;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.mbanner b{font-size:15px}
+.mbanner small{display:block;color:#777;font-size:13px;margin-top:2px}
+.typecards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px}
+.tc{background:#fff;border:1px solid #e5e5e5;border-radius:10px;overflow:hidden}
+.tc .im{height:130px;background:#f2f4f6}
+.tc .tx{padding:16px}
+.tc .tx b{font-size:16px}
+.tc .tx small{display:block;color:#777;margin-top:6px}
+.guide{position:fixed;right:20px;bottom:20px;width:300px;background:#191919;color:#fff;border-radius:12px;padding:16px 18px;font-size:12.5px;line-height:1.6;z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.guide b{color:#fee500}
+.guide .x{position:absolute;top:8px;right:12px;color:#999;cursor:pointer}
+.mock{position:fixed;left:50%;transform:translateX(-50%);top:78px;background:#ff5a2a;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:12px;z-index:20;opacity:.9}
+.scgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:6px;max-width:1190px}
+.sc{background:#fff;border:1px solid #e5e5e5;border-radius:12px;overflow:hidden;cursor:pointer;transition:.15s}
+.sc:hover{border-color:#191919;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.sc.off{opacity:.55;cursor:default}.sc.off:hover{border-color:#e5e5e5;box-shadow:none}
+.scbub{margin:16px 16px 0;background:#fff;border-radius:4px 10px 10px 10px;box-shadow:0 0 0 10px #b2c7da;font-size:11.5px;line-height:1.55;overflow:hidden;height:118px;margin-top:26px;margin-bottom:26px}
+.scbub .hd{background:#fee500;font-weight:700;padding:6px 10px;font-size:11px}
+.scbub .bd{padding:8px 10px;color:#333}
+.sctx{padding:14px 16px 18px;border-top:1px solid #eee}
+.sctx .when{font-size:12px;color:#3a6fd8;font-weight:600;margin-bottom:4px}
+.sctx b{font-size:16px;margin-right:6px}
+.sctx .badge{vertical-align:2px}
+.sctx .to{font-size:12px;color:#888;margin-top:6px}
+.nogo{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px dashed #d0d0d0;border-radius:10px;padding:16px 20px;margin-top:24px;max-width:1190px}
+.nogo b{display:block;font-size:14px}.nogo span{font-size:13px;color:#888}
+.addc{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;border:1px dashed #c6c6c6;background:#fafafa;min-height:260px}
+.addc .plus{width:44px;height:44px;border-radius:50%;background:#fee500;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.addc b{font-size:16px}.addc span{font-size:13px;color:#777;line-height:1.5}
+.ta{width:100%;height:200px;border:1px solid #d6d6d6;border-radius:4px;padding:12px;font-family:inherit;font-size:14px;line-height:1.6;resize:vertical}
+input.input{font-family:inherit;outline:none}
+.vbar{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.vchip{font-size:12px;font-weight:600;background:#f1f1f1;border-radius:4px;padding:4px 8px;cursor:pointer}
+.vchip:hover{background:#e4e4e4}
+.adw{margin-top:10px;background:#fdecea;border:1px solid #f5c2bc;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.6;color:#555}
+.adw b{color:#c73a2b}
+.secT{font-size:20px;font-weight:700;margin-bottom:14px;display:flex;align-items:baseline;gap:10px}
+.secT small{font-size:13px;font-weight:400;color:#888}
+.sc{position:relative}
+.rank{position:absolute;top:10px;left:10px;z-index:2;width:26px;height:26px;border-radius:50%;background:#191919;color:#fee500;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;max-width:1190px}
+.cat{min-width:0;display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:18px;cursor:pointer}
+.cat:hover{border-color:#191919}
+.cat .em{font-size:26px;width:46px;height:46px;border-radius:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex:none}
+.cat b{font-size:16px}.cat .cnt{font-size:12px;color:#3a6fd8;font-weight:600;margin-left:6px}
+.cat .ex{font-size:12px;color:#888;margin-top:4px;line-height:1.6}
+.cat .ex span{white-space:nowrap}
+.cat .arr{color:#bbb;font-size:20px}
+.cat.ghost{border-style:dashed;background:#fafafa}
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40;display:flex;align-items:center;justify-content:center}
+.modal{background:#fff;border-radius:14px;width:680px;padding:28px 30px;max-height:80vh;overflow:auto}
+.modal h3{font-size:20px}
+.hero2{display:flex;gap:28px;background:#fff6b3;border-radius:16px;padding:32px;align-items:stretch;flex-wrap:wrap}
+.hero2 .hl{flex:1 1 260px;display:flex;flex-direction:column}
+.hero2 .tag{display:inline-block;align-self:flex-start;background:#fff;border-radius:14px;padding:5px 12px;font-size:13px;font-weight:600}
+.hero2 .big{font-size:30px;font-weight:800;line-height:1.35;margin-top:16px}
+.hero2 .big em{font-style:normal;background:#fee500;padding:0 4px}
+.hero2 p{font-size:15px;color:#555;line-height:1.6;margin-top:12px}
+.hero2 .catsw{margin-top:auto;padding-top:18px;font-size:12px;color:#777;line-height:1.9}
+.hero2 .catsw a{color:#3a6fd8;margin-left:8px}
+.hero2 .hr{flex:2 1 520px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;background:#b2c7da;border-radius:14px;padding:16px}
+.hb{cursor:pointer;display:flex;flex-direction:column;border-radius:10px;padding:6px;transition:.15s}
+.hb:hover{background:rgba(255,255,255,.25)}
+.hb .who{display:flex;align-items:center;gap:6px;font-size:11px;color:#333;margin-bottom:6px}
+.bubble.mini{width:auto;font-size:11.5px;flex:1}
+.bubble.mini .bd{padding:9px 10px}
+.hbname{font-size:12px;color:#1d2b3a;margin-top:10px;line-height:1.4}
+.hb .go{font-size:12px;font-weight:700;color:#191919;margin-top:4px}
+.cat.mine{border:2px solid #191919;padding:17px}
+.scen{position:fixed;top:78px;right:20px;z-index:21;background:#191919;color:#aaa;font-size:12px;border-radius:16px;padding:4px 6px 4px 12px;display:flex;gap:4px;align-items:center}
+.scen span{padding:3px 10px;border-radius:12px;cursor:pointer;color:#ddd}
+.scen span.on{background:#fee500;color:#191919;font-weight:700}
+.qgrid{display:flex;flex-direction:column;gap:10px;max-width:900px}
+.qrow{display:flex;gap:18px;align-items:center;background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:14px 18px;cursor:pointer}
+.qrow:hover{border-color:#191919}
+.qb{width:210px;flex:none;box-shadow:0 0 0 6px #b2c7da;margin:6px}
+.qb .bd{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.newrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;max-width:900px}
+.nb{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:14px 16px;cursor:pointer}
+.nb:hover{border-color:#191919}
+.nb b{display:block;font-size:15px}.nb span{font-size:12px;color:#888}
+.nb.ghost{border-style:dashed;background:#fafafa}
+.costrow{display:flex;gap:0;align-items:center;margin-top:8px;border:1px solid #e5e5e5;border-radius:6px;background:#fff}
+.costrow div{flex:1;padding:10px 14px;font-size:13px;display:flex;justify-content:space-between;border-right:1px solid #eee}
+.costrow span{color:#777}.costrow .btn{margin:0 8px}
+.mmsg{margin-top:6px}.mmsg .who{font-size:11px;color:#444;margin:0 0 4px 4px}
+.mmsg .mb{background:#fff;border-radius:4px 12px 12px 12px;padding:10px 12px;font-size:12px;line-height:1.55;white-space:pre-line;max-width:100%}
+.mmsg .mf{font-size:10px;color:#556;margin:4px}
+.gsel{margin-left:26px;display:flex;flex-direction:column;gap:6px}
+.gopt{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e5e5e5;border-radius:6px;padding:10px 12px;font-size:13px;cursor:pointer}
+.gopt.on{border:2px solid #191919;padding:9px 11px}
+.tbox{margin-top:14px;background:#fafafa;border:1px solid #e5e5e5;border-radius:6px;padding:12px 16px}
+.tbox .r{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}.tbox .r span{color:#666}
+.failbox{margin-top:14px;background:#fff;border:1px solid #f5c2bc;border-radius:12px;padding:20px 22px}
+.failacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:24px;max-width:900px}
+.kpis div{background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:14px 16px}
+.kpis span{font-size:12px;color:#777;display:block}.kpis b{font-size:24px}
+.kpis .bad b{color:#e0442c}
+.kpis em{display:block;font-style:normal;font-size:12px;color:#888;margin-top:2px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:16px;max-width:1190px}
+.rcard{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:20px 22px}
+.rt{font-size:16px;font-weight:700;margin-bottom:16px}
+.bars{display:flex;align-items:flex-end;gap:14px;height:200px;border-bottom:1px solid #ddd;padding:0 6px}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:default}
+.bcol .bar{width:100%;max-width:34px;background:#3a6fd8;border-radius:4px 4px 0 0}
+.bcol:hover .bar{background:#2a55b0}
+.bcol .bv{font-size:12px;font-weight:700;margin-bottom:4px;color:#191919}
+.bcol .bl{position:relative;top:22px;font-size:12px;color:#777;height:0}
+.rcard .bars{margin-bottom:26px}
+.hrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px}
+.hk{width:110px;flex:none;color:#444}.hv{width:40px;text-align:right;color:#444}
+.htrack{flex:1;height:12px;background:#f2f2f2;border-radius:4px}
+.hbar{height:100%;background:#3a6fd8;border-radius:0 4px 4px 0}
+.hrow:hover .hbar{background:#2a55b0}
+.flow{display:grid;grid-template-columns:1fr 18px 1fr 18px 1fr;align-items:stretch;gap:6px}
+.fs{min-width:0;background:#f7f7f7;border-radius:10px;padding:12px 12px}
+.fs span{display:block;font-size:12px;color:#777}.fs b{font-size:19px;white-space:nowrap}.fs em{display:block;font-style:normal;font-size:12px;color:#3a6fd8}
+.fs.hl{background:#fffbe0}
+.fa{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:16px}
+.aibox{margin-top:14px;border:1px solid #d9cff5;background:#faf8ff;border-radius:10px;padding:14px 16px;font-size:13px}
+.aiit{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid #eee;border-radius:8px;padding:10px 12px;margin-top:8px;line-height:1.5}
+.ailab{flex:none;font-size:11px;font-weight:700;padding:3px 7px;border-radius:4px;background:#eef2fb;color:#3a6fd8}
+.aiit.ad .ailab{background:#fdecea;color:#c73a2b}.aiit.warn .ailab{background:#fff4d6;color:#a87400}.aiit.var .ailab{background:#e6f6ee;color:#1d8a4e}
+.aifix{display:inline-block;margin-top:4px;color:#3a6fd8;font-weight:600;font-size:12px}
+.ailab{margin-top:1px}
+.aipol{margin-top:12px;background:#fff;border:1px dashed #c9bdf0;border-radius:8px;padding:12px 14px}
+.aipt{white-space:pre-line;line-height:1.6}
+.aiload{padding:6px 0;color:#6b5bb5;font-weight:600}
+#memofab{position:fixed;left:16px;bottom:20px;z-index:60;background:#191919;color:#fff;border-radius:20px;padding:9px 14px;font-size:13px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+#memofab span{display:inline-block;background:#fee500;color:#191919;border-radius:9px;padding:0 6px;margin-left:4px;font-size:11px}
+#memofab.on{background:#fee500;color:#191919}#memofab.on span{background:#191919;color:#fee500}
+#memodrawer{position:fixed;left:16px;bottom:66px;width:320px;max-height:60vh;overflow:auto;z-index:59;background:#fffdf0;border:1px solid #f0dd7a;border-radius:12px;padding:16px 18px;font-size:13px;line-height:1.6;box-shadow:0 10px 30px rgba(0,0,0,.15);transform:translateY(12px);opacity:0;pointer-events:none;transition:.18s}
+#memodrawer.open{transform:none;opacity:1;pointer-events:auto}
+#memodrawer .mh{display:flex;justify-content:space-between;align-items:center}
+#memodrawer .mh a{color:#999;cursor:pointer}
+#memodrawer .msub{font-size:12px;color:#8a7a00;margin:2px 0 8px}
+#memodrawer ul{margin:0;padding-left:18px;color:#3d3700}
+#memodrawer li{margin-bottom:4px}
+.seg{display:inline-flex;background:#f1f1f1;border-radius:8px;padding:3px;margin-bottom:12px}
+.seg span{padding:7px 14px;border-radius:6px;font-size:13px;cursor:pointer;color:#666}
+.seg span small{color:#999;margin-left:4px;font-size:11px}
+.seg span.on{background:#fff;color:#191919;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mtb{width:100%;border-collapse:collapse;font-size:13px}
+.mtb th{text-align:left;font-weight:500;color:#777;padding:0 4px 6px;font-size:12px}
+.mtb td{padding:3px 4px}.mtb .input{width:100%;height:36px}
+.mtb td:last-child{width:20px;text-align:center}
+.mtb td:first-child{width:34%}
+.btnbox{margin-top:12px;background:#fafafa;border:1px solid #eee;border-radius:8px;padding:12px 14px}
+.brow{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.brow .bl{width:64px;flex:none;font-size:13px;color:#555}
+.vc{background:#fff3a8;border-radius:3px;padding:1px 5px;font-family:inherit;font-weight:700;font-size:12px}
+.lhero{max-width:900px;background:#fffbe0;border:2px solid #fee500;border-radius:14px;padding:18px 22px;margin-bottom:26px}
+.lh-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lh-top .ic{background:#191919;color:#fee500;font-size:11px;font-weight:700;border-radius:4px;padding:3px 8px}
+.lh-top b{font-size:16px}.lh-sub{font-size:13px;color:#8a7a00}
+.lh-nums{display:flex;align-items:center;gap:18px;margin-top:14px}
+.lh-nums span{display:block;font-size:13px;color:#666}
+.lh-nums b{font-size:30px;font-weight:800;line-height:1.2}
+.lh-arr{font-size:24px;color:#c9b400}
+.lh-f b{font-size:40px;color:#191919;background:#fee500;padding:0 8px;border-radius:6px}
+.lh-note{margin-top:12px;font-size:14px;color:#444}
+.lh-note b{color:#191919}
+.fbox{max-width:1000px;margin-top:24px;background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:20px 22px}
+.fb-h{display:flex;align-items:center;gap:8px;font-size:16px}
+.fb-nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.fb-nums div{background:#f7f7f7;border-radius:10px;padding:14px 16px}
+.fb-nums span{display:block;font-size:12px;color:#777}.fb-nums b{font-size:26px}
+.fb-nums em{display:block;font-style:normal;font-size:12px;color:#8a7a00}
+.fb-nums .hl{background:#fffbe0}.fb-nums .hl b{color:#191919}
+.fb-msg{margin:16px 0 10px;font-size:14px}
+.adgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.adc{border:1px solid #eee;border-radius:10px;padding:12px;display:flex;flex-direction:column}
+.adtag{font-size:12px;font-weight:700;display:flex;justify-content:space-between;margin-bottom:8px}
+.adtag span{font-weight:600;color:#1d8a4e;background:#e6f6ee;border-radius:4px;padding:1px 6px}
+.adb{background:#b2c7da;border-radius:10px;padding:10px;flex:1}
+.adw2{font-size:11px;color:#333;margin-bottom:4px}
+.adbody{background:#fff;border-radius:4px 10px 10px 10px;padding:10px;font-size:12px;line-height:1.55;white-space:pre-line}
+.adbtn{background:#fff;border-radius:6px;text-align:center;font-size:12px;padding:6px;margin-top:6px}
+.aduse{margin-top:10px;font-size:13px;font-weight:700;color:#3a6fd8;cursor:pointer}
+.libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;max-width:1100px}
+.libc{background:#fff;border:1px solid #e5e5e5;border-radius:12px;overflow:hidden}
+.libtx{padding:14px 16px 16px;border-top:1px solid #eee}
+.libtx .when{font-size:12px;color:#3a6fd8;font-weight:600}.libtx b{font-size:16px}
+.libtx .to{font-size:12px;color:#888;margin-top:4px;line-height:1.5}
+.libcta{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fffbe0;border:1px solid #f0dd7a;border-radius:10px;padding:14px 18px;margin-top:18px}
+.libcta b{display:block}.libcta span{font-size:13px;color:#666}
+.rsum{max-width:1000px;margin-top:18px;background:#fff;border:1px solid #e5e5e5;border-left:3px solid #fee500;border-radius:8px;padding:14px 18px;font-size:15px;line-height:1.6;color:#333}
+.rsum b{color:#191919}.rsum span{color:#777}
+.rq{max-width:1000px;margin-top:26px}
+.rqh{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:700;margin-bottom:12px}
+.rqn{width:22px;height:22px;border-radius:50%;background:#eee;color:#555;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.rqg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rk{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px 18px}
+.rk span{display:block;font-size:13px;color:#777}.rk b{font-size:24px;font-weight:700}
+.rk em{display:block;font-style:normal;font-size:13px;color:#888;margin-top:2px}.rk em a{color:#3a6fd8;font-weight:700;cursor:pointer}
+.rk.bad b{color:#c73a2b}.rk.hl{background:#fff}
+.rk.wide{grid-column:1/-1;padding:16px 18px 6px}
+.rk.wide .hg{width:190px;font-size:12px;color:#888;flex:none}
+.racts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ract{position:relative;background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:16px 36px 16px 18px;cursor:pointer}
+.ract:hover{border-color:#191919}
+.ract b{display:block;font-size:15px}.ract span{font-size:13px;color:#777}
+.ract i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;color:#bbb;font-size:20px}
+
+.rmore{max-width:1000px;margin-top:26px}
+.rmore summary{cursor:pointer;font-size:14px;color:#555;padding:10px 0}
+.hidden{display:none!important}
+
+/* ===== design pass: 색 절제 — 노란색은 주요 버튼·알림톡 헤더에만 ===== */
+.badge{background:#f2f2f2!important;color:#555!important;font-weight:500}
+.b-ok{color:#1d8a4e!important}.b-no{color:#c73a2b!important}.b-ing{color:#a87400!important}
+.tagnew{background:#ff5a2a}
+tr.hl td,.tb tr.hl td{background:#fafafa!important}
+.qc.at{background:#fff}.qc.at span{color:#777!important}
+.bn.at{background:#fff}
+.hero2{background:#fff;border:1px solid #e5e5e5}
+.hero2 .tag{background:#f2f2f2}
+.hero2 .big em{background:none;color:#191919;text-decoration:underline;text-decoration-color:#fee500;text-decoration-thickness:6px;text-underline-offset:-2px}
+.hero2 .catsw{color:#999}
+.hero2 .hr{background:#eef1f4}
+.rank{background:#191919;color:#fff}
+.addc .plus{background:#f2f2f2;color:#555}
+.cat.mine{border:1px solid #191919;padding:18px}
+.donebox .ok{background:#f2f2f2;color:#191919}
+.bridge{border:1px solid #e5e5e5;background:#fff}
+.bridge h4 em{background:none;font-weight:800}
+.bridge.saved{border-color:#e5e5e5;background:#fff}
+.mbanner .l .ic{background:#f2f2f2;color:#555}
+.lhero{background:#fff;border:1px solid #e5e5e5}
+.lh-top .ic{background:#f2f2f2;color:#555}
+.lh-sub{color:#999}
+.lh-nums b{font-size:24px;font-weight:700}
+.lh-f b{font-size:28px;background:none;padding:0;color:#191919}
+.lh-arr{color:#ccc}
+.rsum{border-left:1px solid #e5e5e5}
+.fs.hl{background:#f7f7f7}
+.fb-nums .hl{background:#f7f7f7}.fb-nums em{color:#888}
+.adtag span{background:none;color:#888;font-weight:500}
+.adb{background:#f2f4f6}
+.libcta{background:#fafafa;border-color:#e5e5e5}
+.failbox{border-color:#e5e5e5}
+.aibox{background:#fafafa;border-color:#e5e5e5}
+.ailab{background:#f2f2f2!important;color:#555!important}
+.aiit.ad .ailab{color:#c73a2b!important}
+.aipol{border-color:#ddd}
+.aiload{color:#555}
+.lnb .tagblue,.tagblue{background:#f2f2f2;color:#555}
+.sc:hover,.cat:hover,.ract:hover,.qrow:hover,.nb:hover{border-color:#999}
+.mmsg .who,.adw2{color:#555}
+.v{background:#fff3a8}
+
+/* ===== KBC 톤: 2단 메뉴 화면은 흰 본문, 카드 대신 구분선·연회색 안내 박스 ===== */
+.rail~.sub~.main{background:#fff}
+.rail~.sub~.main .rk,.rail~.sub~.main .rcard,.rail~.sub~.main .fbox,.rail~.sub~.main .kpis div,.rail~.sub~.main .lhero,.rail~.sub~.main .failbox,.rail~.sub~.main .bridge,.rail~.sub~.main .donebox{box-shadow:none}
+.infobox,.notice,.libcta,.mbanner,.rsum,.lhero,.aibox,.nogo{background:#f8f8f8!important;border:none!important;border-radius:6px}
+.mbanner .l .ic,.lh-top .ic{background:#fff}
+.donebox{border:1px solid #e5e5e5}
+.kpis div,.rk,.fb-nums div{background:#fff;border:1px solid #e5e5e5}
+.fb-nums div{border-radius:10px}
+.fbox,.rcard,.failbox{border:1px solid #e5e5e5}
+.summary{background:#f8f8f8}
+.sc,.cat,.libc,.adc,.ract,.qrow,.nb,.tpl{box-shadow:none}
+.hero2{background:#f8f8f8;border:none}
+.hero2 .tag{background:#fff}
+.hero2 .hr{background:#b2c7da}
+.rqh{font-size:16px}
+.secT{font-size:18px}
+
+.scbub{box-shadow:0 0 0 8px #eef1f4}
+.adb{background:none;padding:0}.adbody{background:#f8f8f8;border-radius:8px}.adbtn{background:#f8f8f8;border:none}
+.adc{border-color:#eee}
+.rank{width:22px;height:22px;font-size:12px}
+
+.qc .new{color:#fff!important}
+.bn.at .btn{background:#f5f5f5!important}
+.bridge h4 em{padding:0}
+#memofab{left:auto;right:20px}
+#memodrawer{left:auto;right:20px}
+.guide{bottom:70px}
+
+.aitag{display:inline-block;background:#191919;color:#fff;font-size:10px;font-weight:700;border-radius:3px;padding:1px 5px;margin-right:5px;vertical-align:1px}
+.aidot{font-style:normal;display:inline-block;background:#6b5bd2;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:0 6px;margin-left:4px}
+
+.scen .vl{color:#aaa;margin-right:2px}.scen .sep{width:1px;height:14px;background:#555;margin:0 6px;padding:0!important}
+.recchip{display:inline-block;margin-left:6px;font-size:11px;font-weight:600;color:#1d6fb8;background:#eef4fb;border-radius:4px;padding:1px 6px;vertical-align:1px}
+.recbox{margin-top:12px;background:#f8f8f8;border-radius:8px;padding:12px 14px}
+.remind{max-width:900px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:#f8f8f8;border-radius:8px;padding:14px 18px;margin-top:22px}
+.remind b{display:block;font-size:15px}.remind span{font-size:13px;color:#666}
+.mock{left:360px!important;transform:none!important}
+
+.bflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+.bflow div{background:#fff;border-radius:18px;padding:6px 12px;font-size:13px;font-weight:600}
+.bflow i{font-style:normal;display:inline-flex;width:18px;height:18px;border-radius:50%;background:#191919;color:#fff;font-size:11px;align-items:center;justify-content:center;margin-right:6px}
+.bflow span{color:#bbb}
+.chboost{margin:0 10px 10px;border-radius:6px;background:#fee500;text-align:center;font-weight:700;font-size:12px;padding:9px}
+.aisearch{max-width:1000px;background:#f8f8f8;border-radius:10px;padding:16px 18px}
+.ais-top b{font-size:15px}.ais-top span{font-size:13px;color:#777;margin-left:8px}
+.ais-row{display:flex;gap:8px;margin-top:10px}.ais-row .input{flex:1;height:44px;font-size:14px}
+.aisex{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.aisex .chip{font-size:12px;height:28px}
+.aisres{margin-top:14px}
+.ais-h{font-size:14px;font-weight:700;margin-bottom:8px}.ais-h span{font-weight:400;color:#1d8a4e;font-size:12px;margin-left:6px}
+.aisi{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.aisi:hover{border-color:#999}
+.aisn{width:22px;height:22px;border-radius:50%;background:#191919;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.aisi b{font-size:15px;margin-right:8px}.aisw{font-size:12px;color:#888;display:inline-block}
+.aisb{font-size:13px;color:#555;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aisdraft{background:#fff;border:1px dashed #ccc;border-radius:8px;padding:12px 14px}
+</style></head>
+<body>
+<div class="mock">가상 화면 · 실제 서비스 아님</div>
+<div class="scen">시나리오 <span id="sc0" class="on" onclick="setScen(false)">처음 쓰는 사장님</span><span id="sc1" onclick="setScen(true)">써본 사장님</span></div>
+<div class="gnb">
+  <div class="logo">kakao business<small>파트너센터</small></div>
+  <nav><b>파트너</b><span>광고</span><span>판매</span><span>비즈도구</span><span>지원</span></nav>
+  <div class="right"><span>알림<span class="nbadge">N</span></span><span>공지사항<span class="nbadge">N</span></span><span>고객센터</span></div>
+</div>
+<div id="app"></div>
+
+<script>
+const I={
+ home:'<path d="M4 11.5 13 4l9 7.5V22h-6v-6h-6v6H4z"/>',
+ ch:'<circle cx="13" cy="13" r="9.5"/><text x="7.2" y="16.6" font-size="9" font-weight="700" fill="#191919" stroke="none" font-family="Pretendard">Ch</text>',
+ chat:'<path d="M5 19c-1.3-1.6-2-3.5-2-5.5C3 8.8 7.5 5 13 5s10 3.8 10 8.5S18.5 22 13 22c-1.6 0-3.1-.3-4.4-.8L4 22z"/>',
+ msg:'<path d="M4 5h18v13H11l-5 4v-4H4z"/><path d="M13 8.5v6M10 11.5h6"/>',
+ at:'<rect x="3.5" y="5" width="19" height="14" rx="2"/><path d="M4 7l9 6 9-6"/>',
+ news:'<path d="M17 4.5l4.5 4.5L12 18.5H7.5V14z"/><path d="M20 13v8H5V6h8"/>',
+ store:'<path d="M4 9l2-5h14l2 5c0 1.7-1.3 3-3 3s-3-1.3-3-3c0 1.7-1.3 3-3 3s-3-1.3-3-3c0 1.7-1.3 3-3 3s-3-1.3-3-3z"/><path d="M5.5 12v9h15v-9"/>',
+ mem:'<path d="M8 4h10l4 6-9 12L4 10z"/><path d="M4 10h18M10 4l3 18 3-18"/>',
+ promo:'<path d="M4 10v6h4l8 5V5L8 10z"/><path d="M8 16v4"/>',
+ ins:'<path d="M5 21V12M11 21V6M17 21v-7M3 21h20"/>',
+ ad:'<rect x="3" y="5" width="20" height="16" rx="2"/><text x="6.3" y="16.6" font-size="8.5" font-weight="700" fill="#191919" stroke="none">Ad</text>',
+ cart:'<path d="M3 4h3l2.5 12h11L22 8H7"/><circle cx="10" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/>'
+};
+const ico=(k,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 26 26">${I[k]}</svg>`;
+
+/* ---------------- state ---------------- */
+const S={ver:'a',sendMode:null,recur:null,recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'학부모명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'교육',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
+const TPL={
+ '교육':[
+  {id:'t1',rec:'매달',name:'수강료 납부 안내',when:'납부일이 다가올 때',to:'학부모',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'안녕하세요, #{이름} 학부모님.\n#{학원명}입니다.\n\n#{월}월 수강료 납부를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}\n\n문의는 채널 채팅으로 남겨주세요.',btn:'납부 안내 보기'},
+  {id:'t2',name:'보강 일정 안내',when:'일정이 바뀌었을 때',to:'반 학부모',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 학부모님, #{학원명}입니다.\n\n#{날짜} 보강 수업 일정을 안내드립니다.\n· 시간: #{시간}\n· 장소: #{장소}',btn:'일정 확인'},
+  {id:'tR1',rec:'매달',name:'학부모 성적표 안내',when:'월말 평가 후',to:'학부모',cols:'이름 · 전화번호 · 성적표 링크',st:'ok',set:true,body:'#{이름} 학부모님, #{학원명}입니다.\n#{월}월 학습 리포트가 나왔어요.\n아래 버튼에서 확인해 주세요.',btn:'성적표 보기'},
+  {id:'t7',name:'출결 알림',when:'등원·하원할 때',to:'학부모',cols:'이름 · 전화번호 · 시각',st:'ok',set:true,body:'#{이름} 학생이 #{시각}에 등원했습니다.\n- #{학원명}',btn:''},
+  {id:'t3',name:'휴원 공지',when:'휴원할 때',to:'전체 수강생',cols:'이름 · 전화번호',st:'ing',set:false,body:'#{학원명} 휴원 안내\n\n#{기간} 동안 휴원합니다.',btn:''},
+ ],
+ '음식점':[
+  {id:'t4',name:'예약 확정 안내',when:'예약을 받았을 때',to:'예약 손님',cols:'이름 · 전화번호 · 일시 · 인원',st:'ok',set:true,body:'#{이름}님, #{가게명} 예약이 확정되었어요.\n· 일시: #{일시}\n· 인원: #{인원}명',btn:'예약 확인'},
+  {id:'t8',name:'단체 주문 픽업 안내',when:'음식이 준비됐을 때',to:'주문 손님',cols:'이름 · 전화번호 · 픽업시간',st:'ok',set:true,body:'#{이름}님, 주문하신 음식이 #{픽업시간}에 준비됩니다.\n#{가게명}에서 찾아가 주세요.',btn:'가게 위치'},
+ ],
+ '병원·의원':[
+  {id:'t5',name:'진료 예약 리마인드',when:'진료 하루 전',to:'예약 환자',cols:'이름 · 전화번호 · 시간',st:'ok',set:true,body:'#{이름}님, 내일 #{시간} #{병원명} 진료 예약이 있습니다.\n변경이 필요하면 아래 버튼을 눌러주세요.',btn:'예약 변경'},
+  {id:'t9',name:'검사 결과 안내',when:'검사 결과가 나왔을 때',to:'검사 환자',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름}님, 검사 결과가 나왔습니다.\n내원 또는 전화로 확인해 주세요.',btn:'예약하기'},
+ ],
+ '뷰티':[
+  {id:'t6',name:'시술 예약 안내',when:'예약을 받았을 때',to:'예약 고객',cols:'이름 · 전화번호 · 일시',st:'ok',set:true,body:'#{이름}님, #{일시} 예약 안내드려요.\n#{가게명}에서 기다릴게요.',btn:'예약 확인'},
+  {id:'t10',rec:'매달',name:'정기권 만료 안내',when:'정기권 만료 7일 전',to:'정기권 고객',cols:'이름 · 전화번호 · 만료일',st:'ok',set:true,body:'#{이름}님, 이용 중인 정기권이 #{만료일}에 만료됩니다.',btn:'잔여 횟수 보기'},
+ ],
+ '운동·레저':[
+  {id:'t12',name:'PT 예약 리마인드',when:'수업 하루 전',to:'예약 회원',cols:'이름 · 전화번호 · 일시',st:'ok',set:true,body:'#{이름}님, 내일 #{일시} PT 수업이 예약되어 있어요.',btn:'예약 변경'},
+  {id:'t13',rec:'매달',name:'회원권 만료 안내',when:'만료 7일 전',to:'회원',cols:'이름 · 전화번호 · 만료일',st:'ok',set:true,body:'#{이름}님, 회원권이 #{만료일}에 만료됩니다.',btn:'잔여 기간 보기'},
+ ],
+ '숙박':[
+  {id:'t14',name:'숙박 예약 확정',when:'예약을 받았을 때',to:'예약 손님',cols:'이름 · 전화번호 · 일시',st:'ok',set:true,body:'#{이름}님, #{가게명} 예약이 확정되었어요.\n체크인: #{일시}',btn:'오시는 길'},
+  {id:'t15',name:'체크인 안내',when:'체크인 당일',to:'예약 손님',cols:'이름 · 전화번호 · 객실',st:'ok',set:true,body:'#{이름}님, 오늘 체크인 안내드려요.\n객실: #{객실}\n입실: 15시부터',btn:'오시는 길'},
+ ],
+ '단체·관리':[
+  {id:'tR2',rec:'매달',name:'관리비 납부 안내',when:'매달 청구일',to:'입주자·회원',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'#{이름}님, #{월}월 관리비를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}',btn:'납부 안내 보기'},
+  {id:'tR3',rec:'매달',name:'회비 납부 안내',when:'매달 회비일',to:'회원',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'#{이름}님, #{월}월 회비 납부를 안내드려요.\n· 금액: #{금액}원',btn:''},
+ ],
+ '소매·배송':[
+  {id:'t11',name:'주문 접수·배송 시작',when:'주문을 받았을 때',to:'주문 고객',cols:'이름 · 전화번호 · 상품 · 송장번호',st:'ok',set:true,body:'#{이름}님, 주문하신 #{상품} 배송을 시작했어요.\n송장번호: #{송장번호}',btn:'배송 조회'},
+ ],
+};
+const SC_ORDER=['tR1','tR2','tR3','t1','t4','t5','t11','t2','t6','t7','t10','t9','t8','t12','t13','t14','t15','t3'];
+const POPULAR=['t4','t5','t1','t11'];
+const CAT_EMOJI={'단체·관리':'🏢','교육':'📚','음식점':'🍽️','병원·의원':'🏥','뷰티':'💇','운동·레저':'🏋️','숙박':'🏨','소매·배송':'📦'};
+const VARS={'이름':'엑셀 B열 (이름)','학원명':'대호학원','월':'10','금액':'엑셀 C열 (금액)','기한':'10월 25일','날짜':'10월 18일(토)','시간':'오후 2시','장소':'본관 3층','가게명':'대호','병원명':'대호의원','일시':'10월 20일 19:00','인원':'4','시각':'15:02','픽업시간':'12시 30분','만료일':'10월 31일','상품':'사과 5kg','송장번호':'6789-1234-5555','기간':'10월 3일~5일','객실':'201호'};
+const findT=id=>Object.values(TPL).flat().find(x=>x.id===id);
+const catOf=id=>Object.keys(TPL).find(c=>TPL[c].some(x=>x.id===id));
+const route=()=>location.hash.slice(1)||'home';
+window.addEventListener('hashchange',render);
+const go=h=>{location.hash=h};
+
+/* ---------------- layout pieces ---------------- */
+function fullLnb(on){
+ const it=(k,label,h,extra='')=>`<a class="item ${on===h?'on':''}" onclick="go('${h}')">${ico(k)}<span>${label}</span>${extra}</a>`;
+ return `<aside class="lnb">
+  <div class="ch"><span class="avatar"></span>대호<span style="margin-left:auto;color:#999">›</span></div>
+  ${it('home','홈','home')}${it('ch','채널','-')}${it('chat','채팅','-','<span class="cnt35">35</span><span class="tagblue">업데이트</span>')}
+  ${it('msg','메시지','msg-new')}
+  ${it('at','알림톡','at-send','<span class="tagnew">NEW</span>')}
+  ${it('news','소식 · 쿠폰','-')}${it('store','매장','-')}${it('mem','비즈멤버십','-')}${it('promo','홍보','-')}${it('ins','인사이트','-','<span class="tagblue">채팅 개선</span>')}
+  <div style="height:22px"></div>
+  <a class="item ext">${ico('ad')}<span>모먼트</span><span style="margin-left:auto;color:#aaa;font-size:12px">↗</span></a>
+  <a class="item ext">${ico('cart')}<span>카카오톡 스토어</span><span style="margin-left:auto;color:#aaa;font-size:12px">↗</span></a>
+ </aside>`;
+}
+function rail(on){
+ const r=(k,h)=>`<a class="${on===k?'on':''}" onclick="go('${h}')">${ico(k,k==='at'?'keep':'')}${k==='at'?'<span class="dot tagnew" style="margin:0">N</span>':''}${k==='chat'?'<span class="dot cnt35" style="margin:0">35</span>':''}</a>`;
+ return `<div class="rail"><span class="avatar" style="width:28px;height:28px;margin-bottom:10px"></span>${r('home','home')}${r('ch','home')}${r('chat','home')}${r('msg','msg-new')}${r('at','at-send')}${r('news','home')}${r('store','home')}${r('mem','home')}${r('promo','home')}${r('ins','home')}</div>`;
+}
+function subAt(on){
+ const a=(h,l)=>`<a class="${on===h?'on':''}" onclick="go('${h}')">${l}</a>`;
+ return `<div class="sub"><h2>알림톡</h2>${a('at-send','알림톡 보내기')}${a('at-list','보낸 알림톡')}${a('at-tpl','템플릿')}${a('at-report','리포트')}
+ <div class="sep"></div><div class="xlink">친구에게 광고·이벤트를 보내려면<br><a onclick="go('msg-new')">메시지 보내기 →</a></div></div>`;
+}
+function subMsg(on){
+ const a=(h,l)=>`<a class="${on===h?'on':''}" onclick="go('${h}')">${l}</a>`;
+ return `<div class="sub"><h2>메시지</h2>${a('msg-new','메시지 보내기')}${a('msg-list','내 메시지')}<a>메시지 활용예시</a><a>웰컴메시지</a><a>친구 그룹</a>${a('msg-file','고객 파일')}
+ <div class="sep"></div><div class="xlink">예약·납부 등 정보성 안내는<br><a onclick="go('at-send')">알림톡 보내기 →</a></div></div>`;
+}
+
+/* ---------------- phone preview ---------------- */
+function phone(){
+ const t=S.tpl?Object.values(TPL).flat().find(x=>x.id===S.tpl):null;
+ let body='템플릿을 선택하면<br>미리보기가 표시돼요.';
+ if(t){
+  body=t.body.replace(/#\{(.+?)\}/g,(m,k)=>{const v=VARS[k]||m;const mr=(S.recvMode==='manual'&&S.rows&&S.rows[0])?S.rows[0][k]:null;const sample=mr||{'이름':'김민지','금액':'280,000'}[k];return `<span class="v">${sample||(/엑셀/.test(v)?m:v)}</span>`});
+ }
+ return `<div><div class="phone"><div class="screen">
+  <div class="top">대호</div>
+  <div class="msg"><span class="avatar"></span><div><div class="who">대호</div>
+   <div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>
+   ${t&&t.btn?`<div class="bt">${t.btn}</div>`:''}
+   ${S.ver==='b'&&S.chBoost!==false?`<div class="chboost">+ 채널 추가하고 소식 받기</div>`:`<div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div>`}</div>
+  </div></div>
+ </div></div><div class="phonecap">받는 사람 화면 미리보기 (첫 번째 행 기준)</div></div>`;
+}
+
+/* ---------------- pages ---------------- */
+const P={};
+P.home=()=>`<div class="wrap">${fullLnb('home')}<main class="main home">
+ <div class="hero">최근 3주 동안 소식이 없어요.<br><span>고객에게 새로운 소식을 전해보세요.</span></div>
+ <div class="qcards">
+  <div class="qc"><div style="display:flex;gap:10px;align-items:center"><span class="avatar"></span><strong>대호</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;color:#666">비즈월렛<u style="color:#191919">연결하기 ⌄</u></div></div>
+  <div class="qc" onclick="go('msg-new')">${ico('msg')}<div><strong>메시지 보내기</strong><span>강력한 마케팅 도구</span></div></div>
+  ${S.hasHistory?`<div class="qc at" onclick="again(0)">${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">최근: 수강료 납부 안내</span></div></div>`:`<div class="qc at" onclick="go('at-send')"><span class="tagnew new">NEW</span>${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">예약·납부 안내를 카톡으로</span></div></div>`}
+  <div class="qc">${ico('news')}<div><strong>소식 올리기</strong><span>방문자를 위한 공지</span></div></div>
+ </div>
+ <div class="sech">고객과의 실시간 채팅<small>전체 목록 가기 ›</small></div>
+ <div class="card" style="padding:22px 30px;max-width:1190px"><b style="font-size:16px">관리자 추가 인증</b><div style="color:#777;margin-top:4px">개인정보 보호를 위해 채팅 메뉴 접근시 추가 인증이 필요해요.</div></div>
+ <div class="sech">비즈니스 성장을 위한 작은 변화</div>
+ <div class="banner2">
+  <div class="bn at"><div><div class="k">친구가 아니어도 전화번호로</div><div class="big">첫 알림톡,<br>엑셀만 올리면<br><em style="color:#191919;font-style:normal">바로 발송</em>돼요</div></div><div><button class="btn y" onclick="go('at-send')" style="background:#fff">알림톡 시작하기</button></div></div>
+  <div class="bn"><div><div class="k">첫 인상을 만드는 프로필 이미지</div><div class="big">외식·식음료 업종에서는<br><em>91%</em>가 <em>프로필 이미지</em>를<br>등록했어요</div></div><div><button class="btn g">프로필 이미지 등록하기</button></div></div>
+ </div>
+</main></div>`;
+
+P['at-send']=()=>{
+ if(S.sent) return P['at-done']();
+ if(S.step===0) return (S.ver!=='b'&&S.hasHistory&&!S.browse)?P['at-quick']():P['at-gallery']();
+ const st=S.step, ct=S.tpl?findT(S.tpl):null;
+ const stepper=`<div class="stepper" style="width:auto;max-width:555px"><div class="${st===1?'on':'done'}">1 작성 (알림·받는 사람)</div><div class="${st===2?'on':''}">2 발송 설정</div></div>`;
+ let form='';
+ if(st===1){
+  const cats=Object.keys(TPL);
+  const pickTpl=`<div class="fsec"><div class="lab">보낼 알림<span class="req">*</span></div>
+   <div class="tabs">${cats.map(c=>`<span class="chip ${S.cat===c?'on':''}" onclick="S.cat='${c}';render()">${c}</span>`).join('')}</div>
+   ${TPL[S.cat].map(t=>`<div class="tpl" onclick="${t.st==='ok'?`S.tpl='${t.id}';render()`:''}" style="${t.st!=='ok'?'opacity:.55;cursor:default':''}"><div style="flex:1"><div class="t">${t.name}${t.set?'<span class="badge b-at">바로 사용</span>':''}${t.st==='ing'?'<span class="badge b-ing">검수 중</span>':''}</div><div class="s">${t.when} · ${t.to}에게</div></div></div>`).join('')}
+   <div class="help"><a style="color:#3a6fd8" onclick="S.step=0;S.browse=true;render()">예시 보면서 고르기</a> · <a style="color:#3a6fd8" onclick="newTpl()">직접 만들기</a></div></div>`;
+  const chosen=ct?`<div class="fsec"><div class="lab">보낼 알림</div><div class="filerow" style="background:#fafafa;border-color:#e5e5e5"><div><b>${ct.name}</b><div style="font-size:12px;color:#777;margin-top:3px;line-height:1.6">${ct.when} · ${ct.to}에게<br>필요한 열: ${ct.cols}</div></div><a style="color:#3a6fd8;font-size:13px" onclick="S.tpl=null;render()">바꾸기</a></div></div>`:pickTpl;
+  const vars=ct&&S.recvMode==='manual'?commonVarsHTML(ct):ct&&S.uploaded?`<div class="fsec"><div class="lab">내용 채우기</div><div class="vars">${(ct.body.match(/#\{(.+?)\}/g)||[]).filter((v,i,a)=>a.indexOf(v)===i).map(v=>{const k=v.slice(2,-1);return `<div class="varrow"><code>${v}</code><span class="arr">→</span><div class="input">${VARS[k]||'직접 입력'}</div></div>`}).join('')}</div>
+   <div class="help">엑셀 열 이름이 같으면 자동으로 채워져요. 미리보기에서 확인하세요.</div></div>`:'';
+  form=`${chosen}
+  <div class="fsec"><div class="lab">받는 사람<span class="req">*</span></div>
+   <div class="seg"><span class="${S.recvMode==='manual'?'on':''}" onclick="S.recvMode='manual';render()">직접 입력 <small>몇 명일 때</small></span><span class="${S.recvMode!=='manual'?'on':''}" onclick="S.recvMode='excel';render()">엑셀·명단 <small>여러 명일 때</small></span></div>
+   ${S.recvMode==='manual'?manualHTML(ct):S.uploaded?`<div class="filerow"><div class="nm"><span class="xls">${S.fromList?'명단':'XLS'}</span>${S.fileName}</div><a style="color:#888;font-size:13px" onclick="S.uploaded=false;render()">삭제</a></div>
+   <div class="stats">${S.fromList?`<div class="stat">불러온 명단<b>${S.fileCnt}명</b></div><div class="stat">발송 대상<b>${S.fileCnt}명</b></div><div class="stat">불러온 곳<b style="font-size:14px;margin-top:5px">${S.fromList}</b></div>`:`<div class="stat">전체 행<b>312</b></div><div class="stat">발송 대상<b>300명</b></div><div class="stat warn">중복·오류 제외<b>12</b></div>`}</div>`
+   :`<div class="drop" onclick="S.uploaded=true;S.fromList=null;S.fileName='학부모명단_2610.xlsx';S.fileCnt=300;render()"><b>엑셀 파일을 끌어다 놓거나 클릭해서 올리세요</b><span style="font-size:12px">전화번호 열 필수 · 최대 1만 명 · .xlsx .csv</span></div>
+   <div style="display:flex;gap:14px;margin-top:10px;font-size:13px"><a style="color:#3a6fd8">${ct?ct.name+' 양식':'양식'} 다운로드</a>${S.ver==='b'?'':`<span style="color:#ddd">|</span><a style="color:#3a6fd8;font-weight:600" onclick="S.picker='recent';render()">저장된 명단 불러오기</a>`}</div>`}
+  </div>
+  ${vars}
+  ${btnLinkHTML(ct)}
+  ${S.ver==='b'?boostHTML():''}
+`;
+ }
+ if(st===2){
+  form=`<div class="fsec"><div class="lab">발송 대상</div>
+   <div class="summary"><div class="r"><span>보낼 알림</span><span>${ct.name}</span></div><div class="r"><span>받는 사람</span><span>${S.fileName} · <b>${S.fileCnt}명</b></span></div></div>
+   <div class="help">친구 여부와 관계없이 전화번호로 발송돼요. <a style="color:#3a6fd8" onclick="S.step=1;render()">수정</a></div></div>
+  ${sendTimeHTML(ct)}
+  <div class="fsec"><div class="lab">총 발송 비용</div>
+   <div class="summary"><div class="r"><span>알림톡</span><span>단가(미정) × ${S.fileCnt}건 + VAT</span></div><div class="r t"><span style="color:#191919">합계</span><span>— 원</span></div></div>
+   <div class="costrow"><div><span>현재 캐시</span><b>0 원</b></div><div><span>발송 후 캐시</span><b>0 원</b></div><button class="btn line sm" style="color:#3ba7b5">충전하기</button></div>
+   <div class="help">메시지와 같은 비즈월렛 캐시에서 차감돼요. 받지 못한 분(카톡 미사용 등)은 비용이 차감되지 않고, 발송 후 명단을 확인할 수 있어요.</div></div>
+  <div class="fsec"><div class="notice"><b>정보성 메시지만 보낼 수 있어요</b><br>· 할인·이벤트 등 광고 내용이 섞이면 발송이 제한될 수 있어요.<br>· 광고는 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 보내기</a>에서 채널 친구에게 보내세요.</div></div>`;
+ }
+ const ready=S.tpl&&(S.recvMode==='manual'?manualN()>0:S.uploaded);
+ const next=st===1?`<button id="nextbtn" class="btn ${ready?'y':'dis'}" onclick="if(S.recvMode==='manual'){S.fileCnt=manualN();S.fileName='직접 입력';S.fromList='직접 입력'}S.step=2;render()">다음</button>`:`<span style="display:flex;gap:6px"><button class="btn line">테스트발송</button><button class="btn y" onclick="if(S.tpl&&!myIds().includes(S.tpl))S.myTpl.push(S.tpl);S.recur=false;S.sent=true;render()">${false?'정기 발송 등록':S.fileCnt+'명에게 발송'}</button></span>`;
+ const prev=`<button class="btn line" onclick="${st===1?'S.step=0;S.browse=false':'S.step=1'};render()">이전</button>`;
+ return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
+  <div class="h1"><span class="step">Step ${st}.</span>${['알림톡 작성','알림톡 발송 설정'][st-1]}</div>
+  <div class="desc">${S.again?'지난번 알림을 그대로 불러왔어요. 확인 후 바로 보내세요.':st===2?'메시지 발송 설정과 같은 순서예요. 대상 → 시간 → 비용 확인 후 발송하세요.':'예약·납부·일정처럼 꼭 전해야 하는 안내를 전화번호로 보내요.'} <u>알림톡 이용 가이드</u></div>
+  ${stepper}
+  <div class="formwrap"><div class="form">${form}<div class="footbtn">${prev}${next}</div></div>${phone()}</div>
+ </main></div>${pickerHTML()}`;
+};
+const SHOPV=['학원명','가게명','병원명'];
+function tvars(t){return (t.body.match(/#\{(.+?)\}/g)||[]).map(v=>v.slice(2,-1)).filter((v,i,a)=>a.indexOf(v)===i)}
+function perVars(t){return tvars(t).filter(k=>!SHOPV.includes(k)&&!['월','기한'].includes(k))}
+function manualN(){return (S.rows||[]).filter(r=>(r.phone||'').replace(/\D/g,'').length>=10).length}
+function mRow(i,k,v){S.rows[i][k]=v;const n=manualN();const c=document.getElementById('mcount');if(c)c.textContent=n+'명';const nb=document.getElementById('nextbtn');if(nb)nb.className='btn '+(n&&S.tpl?'y':'dis');if(i===0){const pv=document.querySelector('.phone');if(pv)pv.parentElement.outerHTML=phone()}}
+const HIST=[{tpl:'t1',file:'학부모명단_2610',cnt:300,d:'10.13',ok:296},{tpl:'t2',file:'보강반_1002',cnt:84,d:'10.02',ok:84},{tpl:'t7',file:'출결_전체원생',cnt:212,d:'09.30',ok:210}];
+function again(i){const h=HIST[i];Object.assign(S,{tpl:h.tpl,cat:catOf(h.tpl),uploaded:true,fromList:'최근 알림톡',fileName:h.file,fileCnt:h.cnt,step:2,again:true,sent:false,saved:false});go('at-send');render()}
+function manualHTML(ct){
+ if(!S.rows) S.rows=[{phone:''}];
+ const pv=(ct?perVars(ct):['이름']).concat(S.linkPer&&ct&&ct.btn?['링크']:[]);
+ return `<table class="mtb"><tr><th>전화번호</th>${pv.map(k=>`<th>${k}</th>`).join('')}<th></th></tr>
+  ${S.rows.map((r,i)=>`<tr><td><input class="input" placeholder="010-0000-0000" value="${r.phone||''}" oninput="mRow(${i},'phone',this.value)"></td>${pv.map(k=>`<td><input class="input" placeholder="${{'이름':'김민지','금액':'280,000','일시':'10월 20일 19:00','인원':'4','날짜':'10월 18일','시간':'오후 2시','장소':'본관 3층','시각':'15:02','상품':'사과 5kg','송장번호':'','만료일':'10월 31일','픽업시간':'12시 30분','객실':'201호'}[k]||''}" value="${r[k]||''}" oninput="mRow(${i},'${k}',this.value)"></td>`).join('')}<td>${S.rows.length>1?`<a style="color:#aaa" onclick="S.rows.splice(${i},1);render()">✕</a>`:''}</td></tr>`).join('')}</table>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px"><a style="color:#3a6fd8;font-weight:600" onclick="S.rows.push({phone:''});render()">+ 한 명 더</a><span>받는 사람 <b id="mcount">${manualN()}명</b></span></div>
+  <div class="help">10명 이상이면 엑셀·명단이 편해요.${S.ver==='b'?'':` 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.`}</div>`;
+}
+
+
+function sendTimeHTML(ct){
+ const m=S.sendMode==='later'?'later':'now';
+ const opt=(k,l,extra='')=>`<span class="radio ${m===k?'on':''}" onclick="S.sendMode='${k}';render()"><i></i>${l}${extra}</span>`;
+ return `<div class="fsec"><div class="lab">발송 날짜/시간 설정</div>
+  ${opt('now','즉시 발송')}${opt('later','예약 발송')}
+  ${m==='recur'?`<div class="recbox">
+    <div class="brow"><span class="bl">반복</span><div style="display:flex;gap:6px;align-items:center;flex:1"><div class="sel">매월</div><div class="sel">25일</div><div class="sel">오전 10시</div></div></div>
+    <div class="brow"><span class="bl">받는 사람</span><div style="flex:1"><span class="radio on"><i></i>이번 명단 그대로</span><span class="radio"><i></i>매번 명단 확인 후 발송</span></div></div>
+    <div class="help" style="margin-top:2px">금액·기한처럼 매달 바뀌는 내용은 발송 3일 전에 카톡으로 확인 요청을 드려요. 확인하지 않으면 지난달 내용으로 보내지 않고 대기해요.</div></div>`
+  :m==='later'?`<div style="display:flex;gap:6px;margin-top:10px"><div class="sel">2026.10.25</div><div class="sel">오전 10시</div></div>`
+  :`<div class="help">정보성 알림톡은 야간에도 발송돼요.</div>`}</div>`;
+}
+
+function boostHTML(){const on=S.chBoost!==false;
+ return `<div class="fsec"><div class="lab">친구 늘리기</div>
+  <label class="chk ${on?'on':''}" onclick="S.chBoost=!(S.chBoost!==false);render()"><i></i><span>알림톡 아래 [채널 추가] 버튼을 크게 보여주기 <span class="recchip">추천</span><small>받은 손님이 한 번에 친구가 될 수 있어요. 친구에게는 다음에 이벤트·할인 메시지를 보낼 수 있어요.</small></span></label>
+  <div class="help">비슷한 업종에서는 받은 손님 100명 중 평균 3~5명이 친구가 돼요 (예시 수치)</div></div>`}
+function btnLinkHTML(ct){
+ if(!ct||!ct.btn) return '';
+ const pm=S.linkPer;
+ return `<div class="fsec"><div class="lab">버튼 링크 <span style="font-weight:400;color:#888;font-size:13px">[${ct.btn}] 버튼을 누르면 열리는 주소</span></div>
+  ${pm?`<div class="help" style="margin-top:0">받는 분마다 다른 링크를 ${S.recvMode==='manual'?'위 표의 "링크" 칸':'엑셀의 "링크" 열'}에 넣어주세요.</div>`
+  :`<input class="input" style="width:100%" placeholder="https://  예: 결제 페이지, 예약 확인 페이지" value="${S.linkUrl||''}" oninput="S.linkUrl=this.value">`}
+  <label class="chk ${pm?'on':''}" onclick="S.linkPer=!S.linkPer;render()"><i></i><span>받는 분마다 링크가 달라요<small>개인별 결제·예약 링크일 때</small></span></label>
+  <div class="help">링크가 없다면 템플릿을 복사해 버튼을 [채널 채팅]으로 바꿔 쓸 수 있어요.</div></div>`;
+}
+function commonVarsHTML(ct){
+ const cv=tvars(ct).filter(k=>!perVars(ct).includes(k)); if(!cv.length) return '';
+ return `<div class="fsec"><div class="lab">공통 내용</div><div class="vars">${cv.map(k=>`<div class="varrow"><code>#{${k}}</code><span class="arr">→</span><div class="input">${VARS[k]||''}</div></div>`).join('')}</div><div class="help">모든 받는 분에게 똑같이 들어가는 내용이에요.</div></div>`;
+}
+
+/* ---------- AI 템플릿 찾기 · 초안 ---------- */
+const AIKW=[[['수강료','학원비','교육비','납부','원비'],['t1']],[['보강','수업 일정','시간 변경','일정 변경'],['t2']],[['출결','등원','하원','출석'],['t7']],[['성적','리포트','평가','성적표'],['tR1']],
+ [['관리비'],['tR2']],[['회비'],['tR3']],[['예약 확정','예약했','예약 손님','예약'],['t4','t5','t6','t14','t12']],[['진료','병원','치과'],['t5','t9']],[['검사'],['t9']],
+ [['배송','택배','송장','주문'],['t11']],[['픽업','포장'],['t8']],[['만료','정기권','회원권','이용권'],['t10','t13']],[['체크인','숙박','객실'],['t15','t14']],[['PT','헬스','필라테스'],['t12','t13']],[['휴원','휴관','휴무','쉬어','휴장'],['t3']]];
+const DRAFTS=[[['휴원','휴관','휴무','쉬어','휴장'],'#{이름}님, #{가게명}입니다.\n#{기간} 동안 휴원합니다.\n수업은 #{재개일}부터 정상 진행돼요.\n\n문의는 채널 채팅으로 남겨주세요.'],
+ [['상담'],'#{이름}님, #{가게명}입니다.\n#{일시} 상담 일정을 안내드려요.\n· 장소: #{장소}\n\n변경이 필요하면 채널 채팅으로 알려주세요.'],
+ [['준비물','숙제','과제'],'#{이름} 학부모님, #{가게명}입니다.\n#{날짜} 수업 준비물을 안내드려요.\n· 준비물: #{준비물}\n\n문의는 채널 채팅으로 남겨주세요.']];
+function aiFind(q){
+ const sc={};
+ AIKW.forEach(([ks,ids])=>{const hit=ks.filter(k=>q.includes(k));if(hit.length)ids.forEach((id,i)=>{sc[id]=(sc[id]||0)+hit.length*10-i})});
+ const all=Object.entries(sc).sort((a,b)=>b[1]-a[1]).map(([id])=>findT(id)).filter(Boolean);
+ return {ok:all.filter(t=>t.st==='ok').slice(0,3), pending:all.filter(t=>t.st!=='ok')};
+}
+function aiDraft(q){const d=DRAFTS.find(([ks])=>ks.some(k=>q.includes(k)));return d?d[1]:'#{이름}님, #{가게명}입니다.\n'+q.replace(/(알려주고 싶어|보내고 싶어|안내하고 싶어|알리고 싶어)[.!]?$/,'').trim()+' 안내드려요.\n· 일시: #{일시}\n\n문의는 채널 채팅으로 남겨주세요.'}
+function aiSearchRun(){const q=(document.getElementById('aiq')||{}).value||'';if(!q.trim())return;S.aiq=q;S.aiRes=null;render();setTimeout(()=>{S.aiRes=aiFind(q);render()},600)}
+function aiSearchHTML(ctx){
+ const T=ctx==='tpl', q=S.aiq||'', r=S.aiRes;
+ const ex=['다음 주 휴원한다고 학부모님께 알려주고 싶어','이번 달 수강료 납부 안내','내일 예약 손님에게 리마인드'];
+ let res='';
+ if(q&&!r) res='<div class="aiload" style="margin-top:12px">✨ 검수 받은 템플릿에서 찾고 있어요…</div>';
+ if(r){
+  res=r.ok.length?`<div class="aisres"><div class="ais-h">검수 완료 템플릿 중 이게 맞아요 <span>바로 보낼 수 있어요</span></div>
+   ${r.ok.map((t,i)=>`<div class="aisi" onclick="S.tpl='${t.id}';S.cat='${catOf(t.id)}';S.step=1;S.browse=false;render()"><span class="aisn">${i+1}</span><div style="flex:1;min-width:0"><b>${t.name}</b><span class="aisw">${catOf(t.id)} · ${t.when}</span><div class="aisb">${t.body.split('\n').filter(Boolean).slice(0,2).join(' ')}</div></div>${T?(myIds().includes(t.id)?'<span class="btn line sm" style="color:#1d8a4e">✓ 담김</span>':`<span class="btn y sm" onclick="event.stopPropagation();addTpl('${t.id}')">내 템플릿에 담기</span>`):'<span class="btn y sm">이걸로 보내기</span>'}</div>`).join('')}
+   <div class="help">찾는 게 아니면 <a style="color:#3a6fd8" onclick="newTpl(null,null,S.aiq)">AI 초안으로 새 템플릿 만들기 ›</a></div></div>`
+  :`<div class="aisres"><div class="ais-h">검수 받은 템플릿 중 맞는 게 없어요</div>
+   ${r.pending.length?`<div class="help" style="margin-top:0">비슷한 「${r.pending[0].name}」은 아직 검수 중이에요.</div>`:''}
+   <div class="aisdraft"><div class="aisw" style="margin:0 0 6px">AI가 만든 초안</div><div class="aipt">${aiDraft(q).replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>')}</div>
+   <button class="btn y sm" style="margin-top:10px" onclick="newTpl(null,null,S.aiq)">이 초안으로 템플릿 만들기</button></div>
+   <div class="help">검수 후 사용할 수 있어요. 작성 화면에서 AI 문구 조언도 받을 수 있어요.</div></div>`;
+ }
+ return `<div class="aisearch"><div class="ais-top"><b>✨ ${T?'원하는 템플릿을 적어보세요':'어떤 알림을 보내고 싶으세요?'}</b><span>${T?'검수 받은 템플릿이 있으면 찾아드리고, 없으면 AI가 새 템플릿 초안을 써드려요':'말하듯 적으면 검수 받은 템플릿을 찾아드려요'}</span></div>
+  <div class="ais-row"><input id="aiq" class="input" value="${q.replace(/"/g,'&quot;')}" placeholder="예: 다음 주 휴원한다고 학부모님께 알려주고 싶어" onkeydown="if(event.key==='Enter')aiSearchRun()"><button class="btn y" onclick="aiSearchRun()">${T?'템플릿 찾기':'찾기'}</button></div>
+  ${!q?`<div class="aisex">${ex.map(e=>`<span class="chip" onclick="document.getElementById('aiq').value='${e}';aiSearchRun()">${e}</span>`).join('')}</div>`:''}
+  ${res}</div>`;
+}
+function aiName(q){const m=[['휴원','휴원 안내'],['휴관','휴관 안내'],['휴무','휴무 안내'],['휴장','휴장 안내'],['상담','상담 일정 안내'],['준비물','준비물 안내'],['숙제','과제 안내']].find(([k])=>q.includes(k));return m?m[1]:q.replace(/\s*(알려주고 싶어|보내고 싶어|안내하고 싶어|알리기|알리고 싶어).*$/,'').slice(0,16)}
+function aiWrite(){const d=(document.getElementById('aidesc')||{}).value||'';if(!d.trim())return;S.c.desc=d;S.c.body=aiDraft(d);if(!S.c.name)S.c.name=aiName(d);S.c.ai=null;render();setTimeout(aiRun,300)}
+
+P['at-quick']=()=>{
+ const myT=myIds().map(findT);
+ return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
+ <div class="h1">알림톡 보내기</div><div class="desc">자주 보내는 알림을 바로 다시 보낼 수 있어요.</div>
+ <div class="remind"><div><b>지난달 10월 13일에 「수강료 납부 안내」를 300명에게 보냈어요</b><span>이번 달도 보낼 때가 됐어요. 지난번 명단·내용 그대로 불러와요.</span></div><div style="display:flex;gap:6px;flex:none"><button class="btn y sm" onclick="again(0)">이번 달도 보내기</button></div></div>
+
+ <div class="secT" style="margin-top:32px">최근 보낸 알림<small>누르면 지난번 명단·내용 그대로 확인 화면으로 가요</small></div>
+ <div class="qgrid">${HIST.map((h,i)=>{const t=findT(h.tpl);return `<div class="qrow" onclick="again(${i})">
+   <div class="bubble mini qb"><div class="hd">알림톡 도착</div><div class="bd">${t.body.split('\n').filter(Boolean)[0].replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지'}[k]||VARS[k]||m))}</div></div>
+   <div style="flex:1;min-width:0"><b style="font-size:16px">${t.name}</b><div style="font-size:13px;color:#777;margin-top:4px">${h.file} · ${h.cnt}명<br>${h.d} 발송</div></div>
+   <button class="btn y sm">다시 보내기</button></div>`}).join('')}</div>
+ <div class="secT" style="margin-top:40px">내 템플릿으로 보내기 <small><a style="color:#3a6fd8" onclick="S.tplTab='lib';go('at-tpl');render()">템플릿 더 가져오기 ›</a></small></div>
+ <div class="newrow">
+  ${myT.filter(t=>t.st==='ok').map(t=>`<div class="nb" onclick="Object.assign(S,{tpl:'${t.id}',cat:'${catOf(t.id)}',uploaded:false,step:1,again:false});render()"><b>${t.name}</b><span>${t.when}</span></div>`).join('')}
+  <div class="nb ghost" onclick="S.browse=true;S.step=0;render()"><b>다른 알림 고르기 ›</b><span>업종별 예시 보기</span></div>
+  <div class="nb ghost" onclick="newTpl()"><b>+ 직접 만들기</b><span>검수 후 사용</span></div>
+ </div>
+ </main></div>`;
+};
+
+
+P['at-gallery']=()=>{
+ const prev=t=>t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지','금액':'280,000'}[k]||VARS[k]||m));
+ const card=(t,rank)=>`<div class="sc ${t.st!=='ok'?'off':''}" onclick="${t.st==='ok'?`S.tpl='${t.id}';S.cat='${catOf(t.id)}';S.step=1;render()`:''}">
+   ${rank?`<span class="rank">${rank}</span>`:''}<div class="scbub"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
+   <div class="sctx"><div class="when">${t.when}${S.ver!=='b'&&t.rec?'<span class="recchip">'+t.rec+' 보내는 알림</span>':''}</div><b>${t.name}</b>${t.st==='ok'?'<span class="badge b-at">바로 사용</span>':'<span class="badge b-ing">검수 필요</span>'}<div class="to">${rank?catOf(t.id)+' · ':''}${t.to}에게</div></div></div>`;
+ const nogo=`<div class="nogo"><div><b>이런 건 알림톡으로 보낼 수 없어요</b><span>할인·이벤트 · 신메뉴·신상품 홍보 · 쿠폰 · 재방문 유도</span></div><div style="display:flex;gap:10px;align-items:center"><span style="font-size:13px;color:#666">채널 친구에게 광고로 보내세요</span><button class="btn line sm" onclick="go('msg-new')">메시지 보내기 →</button></div></div>`;
+ const addc=`<div class="sc addc" onclick="newTpl()"><div class="plus">+</div><b>찾는 알림이 없나요?</b><span>직접 만들어 검수를 받으면<br>다음부터 바로 쓸 수 있어요</span></div>`;
+ let inner;
+ if(S.gcat==='전체'){
+  const mine=S.myCat||'교육', mt=TPL[mine].filter(t=>t.st==='ok').sort((x,y)=>S.ver==='b'?0:((y.rec?1:0)-(x.rec?1:0))), my=S.ver==='b'?[]:myIds().map(findT);
+  const myTop=my.length?`<div class="secT">내 템플릿<small>담아둔 템플릿이에요. 골라서 바로 보내세요.</small></div>
+  <div class="scgrid">${my.map(t=>card(t)).join('')}<div class="sc addc" style="min-height:0" onclick="S.tplTab='lib';go('at-tpl');render()"><div class="plus">+</div><b>템플릿 더 가져오기</b><span>업종별 검수 완료 템플릿</span></div></div>
+  <div class="secT" style="margin-top:44px">다른 알림 둘러보기<small>마음에 들면 보낸 뒤 내 템플릿에 자동으로 담겨요</small></div>`:'';
+  inner=my.length?myTop+`<div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}</div>${nogo}`:`<div class="hero2">
+   <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 대호 채널 · ${mine}</div>
+    <div class="big">${S.ver==='b'?'알림톡 한 번으로<br><em>단골 손님</em>을 만드세요':'이런 알림을<br><em>카톡으로</em> 보낼 수 있어요'}</div>
+    ${S.ver==='b'?`<div class="bflow"><div><i>1</i>알림톡 보내기</div><span>→</span><div><i>2</i>손님이 [채널 추가]</div><span>→</span><div><i>3</i>친구에게 이벤트·할인 메시지</div></div>`:''}
+    <p>${S.ver==='b'?'예약·납부 안내를 받은 손님이 [채널 추가]를 누르면<br>우리 채널 친구가 되고, 다음엔 광고도 보낼 수 있어요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 다음 달에 <b>다시 보내기</b>로 바로 보낼 수 있어요.'}</p>
+    <div class="catsw">업종이 다른가요? ${Object.keys(TPL).filter(c=>c!==mine).map(c=>`<a onclick="S.myCat='${c}';render()">${c}</a>`).join('')}</div></div>
+   <div class="hr">${mt.slice(0,3).map(t=>`<div class="hb" onclick="S.tpl='${t.id}';S.cat='${mine}';S.step=1;render()">
+     <div class="who"><span class="avatar" style="width:22px;height:22px"></span>대호</div>
+     <div class="bubble mini"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
+     <div class="hbname">${t.when}${S.ver!=='b'&&t.rec?' · 매달':''}<br><b>${t.name}</b></div><div class="go">이걸로 보내기 ›</div></div>`).join('')}</div>
+  </div>
+  <div class="secT" style="margin-top:40px">업종별로 준비돼 있어요<small>업종을 고르면 바로 쓸 수 있는 알림을 보여드려요</small></div>
+  <div class="catgrid">${Object.entries(TPL).map(([c,ts])=>{const ok=ts.filter(t=>t.st==='ok');return `<div class="cat ${c===mine?'mine':''}" onclick="S.gcat='${c}';render()"><div class="em">${CAT_EMOJI[c]||'•'}</div><div style="flex:1;min-width:0"><b>${c}</b><span class="cnt">${ok.length}개</span>${c===mine?'<span class="badge b-at" style="margin-left:6px">우리 업종</span>':''}<div class="ex">${ok.slice(0,3).map(t=>`<span>${t.name}</span>`).join(' · ')}</div></div><span class="arr">›</span></div>`}).join('')}
+   <div class="cat ghost" onclick="newTpl()"><div class="em">✏️</div><div style="flex:1"><b>우리 업종이 없어요</b><div class="ex">직접 만들어 검수 받기</div></div><span class="arr">›</span></div></div>
+  <div class="secT" style="margin-top:44px">다른 가게들이 많이 보내는 알림톡<small>인기 순위 (예시)</small></div>
+  <div class="scgrid">${POPULAR.map((id,i)=>card(findT(id),i+1)).join('')}</div>
+  ${nogo}`;
+ }else{
+  const list=TPL[S.gcat];
+  inner=`<div class="crumb" style="margin:0 0 14px"><a onclick="S.gcat='전체';render()">‹ 전체 업종</a></div>
+  <div class="secT">${CAT_EMOJI[S.gcat]||''} ${S.gcat}<small>${list.filter(t=>t.st==='ok').length}개 바로 사용 가능</small></div>
+  <div class="tabs" style="margin-bottom:16px">${Object.keys(TPL).map(c=>`<span class="chip ${S.gcat===c?'on':''}" onclick="S.gcat='${c}';render()">${c}</span>`).join('')}</div>
+  <div class="scgrid">${list.map(t=>card(t)).join('')}${addc}</div>${nogo}`;
+ }
+ return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
+ ${S.hasHistory&&S.ver!=='b'?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}<div class="h1">${S.ver!=='b'&&myIds().length&&S.gcat==='전체'?'어떤 알림을 보낼까요?':'무엇을 알려드릴까요?'}</div>
+ <div class="desc">손님에게 꼭 전해야 하는 안내를 전화번호로 보내요. 채널 친구가 아니어도 받을 수 있어요. <u>알림톡 이용 가이드</u></div>
+ <div style="margin-top:28px">${inner}</div>
+ </main></div>`;
+};
+
+const RECENT=[{n:'학부모명단_2610',d:'26.10.13',t:'수강료 납부 안내',c:300},{n:'보강반_1002',d:'26.10.02',t:'보강 일정 안내',c:84},{n:'학부모명단_2609',d:'26.09.25',t:'수강료 납부 안내',c:291}];
+const CFILES=[{n:'학부모명단_2610',src:'알림톡',c:300,f:50},{n:'학부모명단_2609',src:'알림톡',c:291,f:47},{n:'VIP고객_8월',src:'직접 업로드',c:90,f:32}];
+function pickList(n,c,src){S.uploaded=true;S.fromList=src;S.fileName=n;S.fileCnt=c;S.picker=null;render()}
+function pickerHTML(){
+ if(!S.picker) return '';
+ const tab=S.picker;
+ const body=tab==='recent'
+  ?`<table class="tb"><tr><th>명단</th><th>마지막 발송</th><th>보낸 알림</th><th>인원</th><th></th></tr>${RECENT.map(r=>`<tr><td><b>${r.n}</b></td><td>${r.d}</td><td>${r.t}</td><td>${r.c}명</td><td><button class="btn y sm" onclick="pickList('${r.n}',${r.c},'최근 알림톡')">선택</button></td></tr>`).join('')}</table>
+    <div class="help">알림톡으로 보냈던 명단을 그대로 다시 쓸 수 있어요. 매달 같은 분들께 보낼 때 편해요.</div>`
+  :`<table class="tb"><tr><th>파일명</th><th>출처</th><th>등록수</th><th></th></tr>${CFILES.filter(r=>r.src==='알림톡').map(r=>`<tr><td><b>${r.n}</b></td><td><span class="badge ${r.src==='알림톡'?'b-at':'b-gr'}">${r.src}</span></td><td>${r.c}명</td><td><button class="btn ${r.src==='알림톡'?'y':'line'} sm" onclick="pickList('${r.n}',${r.c},'고객 파일')">선택</button></td></tr>`).join('')}</table>
+    <div class="help">알림톡으로 보낸 명단만 불러올 수 있어요. 광고용으로 직접 올린 고객 파일은 알림톡에 쓸 수 없어요.</div>`;
+ return `<div class="ovl" onclick="if(event.target===this){S.picker=null;render()}"><div class="modal">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h3>저장된 명단 불러오기</h3><a style="font-size:20px;color:#999" onclick="S.picker=null;render()">✕</a></div>
+  <div class="tabs" style="margin:18px 0 14px"><span class="chip ${tab==='recent'?'on':''}" onclick="S.picker='recent';render()">최근 알림톡 명단</span><span class="chip ${tab==='file'?'on':''}" onclick="S.picker='file';render()">고객 파일</span></div>
+  ${body}</div></div>`;
+}
+
+const FAILS=[{n:'김*수',p:'010-****-1234',r:'카카오톡 미사용',k:'sms'},{n:'이*진',p:'010-****-5678',r:'알림톡 수신 차단',k:'sms'},{n:'박*영',p:'010-****-9012',r:'일시적 오류',k:'retry'},{n:'최*호',p:'010-****-3456',r:'일시적 오류',k:'retry'}];
+function failPanel(){
+ const list=S.retried?FAILS.filter(f=>f.k!=='retry'):FAILS;
+ const nRetry=list.filter(f=>f.k==='retry').length, nSms=list.filter(f=>f.k==='sms').length;
+ return `<div class="failbox">
+  <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">받지 못한 분 ${list.length}명</b>${S.retried?'<span class="badge b-ok">일시 오류 2건 다시 보냈어요 · 성공 2</span>':''}</div>
+  <table class="tb" style="margin-top:12px"><tr><th>이름</th><th>전화번호</th><th>사유</th><th>어떻게 하면 되나요</th></tr>
+  ${list.map(f=>`<tr><td>${f.n}</td><td>${f.p}</td><td>${f.r}</td><td style="color:#666;white-space:normal">${f.k==='retry'?'다시 보내기':'문자·전화로 알려주세요'}</td></tr>`).join('')}</table>
+  <div class="failacts">
+   ${nRetry?`<button class="btn y sm" onclick="S.retried=true;render()">일시 오류 ${nRetry}건 다시 보내기</button>`:''}
+   <button class="btn line sm">받지 못한 명단 내려받기 (엑셀)</button>
+   ${nSms?`<button class="btn line sm" onclick="this.textContent='복사했어요 ✓'">문자용 내용 복사</button>`:''}
+  </div>
+  <div class="help">문자 자동 발송(대체발송)은 지원하지 않아요. 명단과 내용을 내려받아 사장님 휴대폰이나 쓰시던 문자 서비스로 보내세요. 실패 건은 비용이 차감되지 않아요.</div>
+ </div>`;
+}
+
+const SENDS={a:{tpl:'수강료 납부 안내',d:'26.10.13 17:40',file:'학부모명단_2610',n:300,ok:296,fail:4,fr:6,fc:50,saved:()=>S.saved},b:{tpl:'수강료 납부 안내',d:'26.09.25 09:00',file:'학부모명단_2609',n:291,ok:288,fail:3,fr:11,fc:47,saved:()=>true}};
+function openDetail(k){S.detail=k;S.dTab='fail';go('at-detail');render()}
+P['at-detail']=()=>{
+ const d=SENDS[S.detail||'a'], tab=S.dTab||'fail';
+ const failN=d.fail-(S.retried&&S.detail!=='b'?2:0), okN=d.n-failN;
+ const fails=(S.detail==='b'?FAILS.slice(0,3):(S.retried?FAILS.filter(f=>f.k!=='retry'):FAILS));
+ const nRetry=fails.filter(f=>f.k==='retry').length;
+ const body=tab==='fail'?`<table class="tb"><tr><th>이름</th><th>전화번호</th><th>사유</th><th>어떻게 하면 되나요</th></tr>${fails.map(f=>`<tr><td>${f.n}</td><td>${f.p}</td><td>${f.r}</td><td style="color:#666">${f.k==='retry'?'다시 보내기':'문자·전화로 알려주세요'}</td></tr>`).join('')}</table>
+   <div class="failacts">${nRetry?`<button class="btn y sm" onclick="S.retried=true;render()">일시 오류 ${nRetry}건 다시 보내기</button>`:''}<button class="btn line sm">받지 못한 명단 내려받기 (엑셀)</button><button class="btn line sm" onclick="this.textContent='복사했어요 ✓'">문자용 내용 복사</button></div>
+   <div class="help">문자 자동 발송(대체발송)은 지원하지 않아요. 명단과 내용을 내려받아 휴대폰이나 쓰시던 문자 서비스로 보내세요. 받지 못한 건은 비용이 차감되지 않아요.</div>`
+  :`<table class="tb"><tr><th>이름</th><th>전화번호</th><th>결과</th><th>채널 친구</th></tr>${[['김*지','1111','친구'],['정*우','2222','-'],['한*나','3333','친구 추가']].map(r=>`<tr><td>${r[0]}</td><td>010-****-${r[1]}</td><td><span class="badge b-ok">받음</span></td><td>${r[2]}</td></tr>`).join('')}<tr><td colspan="4" style="color:#999;text-align:center">… 외 ${okN-3}명</td></tr></table>`;
+ return `<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
+ <div class="crumb"><a onclick="go('at-list')">‹ 보낸 알림톡</a></div>
+ <div class="h1">발송 결과</div><div class="desc">${d.tpl} · ${d.d} 발송 · ${d.file}</div>
+ <div class="kpis"><div><span>보낸 사람</span><b>${d.n}</b></div><div><span>받음</span><b>${okN}</b></div><div class="${failN?'bad':''}"><span>받지 못함</span><b>${failN}</b></div><div><span>발송 후 친구 추가</span><b>+${d.fr}</b></div></div>
+ <div class="tabs" style="margin:26px 0 12px"><span class="chip ${tab==='fail'?'on':''}" onclick="S.dTab='fail';render()">받지 못함 ${failN}</span><span class="chip ${tab==='ok'?'on':''}" onclick="S.dTab='ok';render()">받음 ${okN}</span></div>
+ <div style="max-width:900px">${body}</div>
+ <div class="mbanner" style="max-width:900px;margin-top:28px"><div class="l"><span class="ic">명단</span><div><b>이 명단 중 채널 친구 ${d.fc}명</b><small>${d.saved()?'고객 파일에 저장돼 있어요. 친구에게 광고 메시지를 보낼 수 있어요.':'고객 파일에 저장하면 친구에게만 광고 메시지를 보낼 수 있어요.'}</small></div></div>
+  ${d.saved()?`<button class="btn y sm" onclick="S.msgGroup='${d.file}';S.saved=true;go('msg-compose');render()">친구에게 광고 →</button>`:`<button class="btn y sm" onclick="S.saved=true;render()">고객 파일에 저장</button>`}</div>
+ </main></div>`;
+};
+
+P['at-report']=()=>{
+ const per=S.rper||'30d';
+ const M=[['5월',612],['6월',688],['7월',903],['8월',1012],['9월',1176],['10월',1284]];
+ const mx=Math.max(...M.map(x=>x[1]));
+ const R=[['카카오톡 미사용',9,'문자·전화로 알려주세요'],['알림톡 수신 차단',5,'문자·전화로 알려주세요'],['일시적 오류',3,'다시 보내면 받을 수 있어요'],['번호 오류',1,'번호를 확인해 주세요']];
+ const SD=[['10.13','수강료 납부 안내',300,296,6,48],['10.09','출결 알림',212,210,0,0],['10.02','보강 일정 안내',84,84,2,21],['10.01','출결 알림',688,676,35,0]];
+ const tot=SD.reduce((a,r)=>[a[0]+r[2],a[1]+r[3],a[2]+r[4],a[3]+r[5]],[0,0,0,0]);
+ const fail=tot[0]-tot[1];
+ return `<div class="wrap">${rail('at')}${subAt('at-report')}<main class="main">
+ <div class="h1">알림톡 리포트</div><div class="desc">보낸 알림이 잘 도착했는지, 어떤 효과가 있었는지 확인하세요. <span class="badge b-gr">수치는 예시</span></div>
+ <div class="tabs" style="margin-top:22px">${[['30d','최근 30일'],['3m','최근 3개월'],['6m','최근 6개월']].map(([k,l])=>`<span class="chip ${per===k?'on':''}" onclick="S.rper='${k}';render()">${l}</span>`).join('')}</div>
+ <div class="rsum">최근 30일 동안 <b>${tot[1].toLocaleString()}명</b>이 알림톡을 받았고, 그중 <b>${tot[2]}명</b>이 채널 친구가 됐어요.${fail?` <span>${fail}명은 받지 못했어요.</span>`:''}</div>
+ ${S.ver==='b'?`<div class="rq"><div class="rqh"><span class="rqn">★</span>알림톡으로 늘어난 친구</div><div class="rqg"><div class="rk"><span>알림톡 보고 친구가 된 분</span><b>+${tot[2]}명</b><em>내 채널 친구 180명</em></div><div class="rk"><span>이 친구들에게 보낸 광고</span><b>1건</b><em>받은 친구 50 · 클릭 12</em></div></div></div>`:''}
+ <div class="rq"><div class="rqh"><span class="rqn">1</span>잘 도착했나요?</div>
+  <div class="rqg">
+   <div class="rk"><span>받은 분</span><b>${tot[1].toLocaleString()}명</b><em>발송 ${tot[0].toLocaleString()}건 중 ${(tot[1]/tot[0]*100).toFixed(1)}%</em></div>
+   <div class="rk bad"><span>받지 못한 분</span><b>${fail}명</b><em><a onclick="openDetail('a')">명단 보기 ›</a></em></div>
+   <div class="rk wide">${R.map(([k,v,g])=>`<div class="hrow" title="${k} ${v}명"><span class="hk">${k}</span><div class="htrack"><div class="hbar" style="width:${Math.round(v/R[0][1]*100)}%"></div></div><span class="hv">${v}명</span><span class="hg">${g}</span></div>`).join('')}</div>
+  </div></div>
+ <div class="rq"><div class="rqh"><span class="rqn">2</span>효과가 있었나요?</div>
+  <div class="rqg">
+   <div class="rk hl"><span>알림톡 보고 친구가 된 분</span><b>+${tot[2]}명</b><em>내 채널 친구 180명</em></div>
+   <div class="rk"><span>버튼을 누른 분</span><b>${tot[3]}명</b><em>납부 안내 보기 · 일정 확인 등</em></div>
+  </div></div>
+ <div class="rq"><div class="rqh"><span class="rqn">3</span>다음에 할 일</div>
+  <div class="racts">
+   <div class="ract" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose');render()"><b>친구가 된 ${tot[2]}명에게 광고 보내기</b><span>이벤트·특강 소식을 메시지로</span><i>›</i></div>
+   <div class="ract" onclick="again(0)"><b>수강료 납부 안내 다시 보내기</b><span>지난번 명단·내용 그대로</span><i>›</i></div>
+   <div class="ract" onclick="openDetail('a')"><b>받지 못한 ${fail}명 확인하기</b><span>명단 내려받아 문자·전화로</span><i>›</i></div>
+  </div></div>
+ <div class="rq"><div class="rqh"><span class="rqn" style="background:#999">·</span>발송 건별 결과</div>
+  <table class="tb"><tr><th>발송일</th><th>알림</th><th>발송</th><th>받음</th><th>친구 추가</th><th>버튼 누름</th><th></th></tr>
+  ${SD.map((r,i)=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2].toLocaleString()}건</td><td>${r[3].toLocaleString()}명</td><td>+${r[4]}명</td><td>${r[5]?r[5]+'명':'-'}</td><td><a style="color:#3a6fd8" onclick="openDetail('a')">자세히</a></td></tr>`).join('')}
+  <tr style="font-weight:700"><td>합계</td><td></td><td>${tot[0].toLocaleString()}건</td><td>${tot[1].toLocaleString()}명</td><td>+${tot[2]}명</td><td>${tot[3]}명</td><td></td></tr></table></div>
+ <details class="rmore"><summary>자세히 보기 · 월별 발송 건수, 사용 캐시</summary>
+  <div class="rgrid" style="margin-top:14px">
+   <div class="rcard"><div class="rt">월별 발송 건수</div><div class="bars">${M.map(([m,v])=>`<div class="bcol" title="${m} ${v.toLocaleString()}건"><div class="bv">${m==='10월'?v.toLocaleString():''}</div><div class="bar" style="height:${Math.round(v/mx*150)}px"></div><div class="bl">${m}</div></div>`).join('')}</div></div>
+   <div class="rcard"><div class="rt">사용 캐시</div><div style="font-size:28px;font-weight:800">— 원</div><div class="help">비즈월렛 캐시에서 차감 · 받지 못한 건은 차감되지 않아요</div></div>
+  </div></details>
+ </main></div>`;
+};
+
+P['at-done']=()=>{const html=P['at-done0']();if(S.ver!=='b')return html;const d=document.createElement('div');d.innerHTML=html;const br=d.querySelector('.bridge'),done=d.querySelector('.done');if(br&&done){done.prepend(br);br.style.marginTop='0';br.style.marginBottom='16px'}return d.innerHTML};
+P['at-done0']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done">
+ <div class="donebox"><div class="ok">✓</div><h3>${S.recur?'정기 발송을 등록했어요':(S.fromList==='직접 입력'?S.fileCnt:300)+'명에게 알림톡을 보냈어요'}</h3>${S.recur?`<p style="margin-bottom:6px">매월 25일 오전 10시 · ${findT(S.tpl||'t1').name} · ${S.fileCnt}명<br>첫 발송은 오늘 바로 나갔어요. 다음 발송 11월 25일</p>`:''}<p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.rows=null;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
+ ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 보낸 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
+   <div class="acts"><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">광고 메시지 보내기</button><button class="btn line sm" onclick="go('msg-file')">고객 파일 보기</button></div></div>`
+ :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>이 명단을 고객 파일에 저장해 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
+   <div class="acts"><button class="btn y sm" onclick="S.saved=true;render()">고객 파일에 저장</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
+</div></main></div>`;
+
+const ADEX=[
+ {tag:'교육 · 수학학원',body:'[겨울방학 특강 모집]\n중등 내신 대비 특강을 열어요.\n친구 등록하신 학부모님께 첫 달 교재비를 지원해 드려요.',btn:'특강 신청하기',ctr:'클릭률 높음'},
+ {tag:'교육 · 영어학원',body:'[친구 추천 이벤트]\n함께 등록하면 두 분 모두 한 달 수강료 10% 할인!\n이번 달 말까지만 진행돼요.',btn:'자세히 보기',ctr:'반응 많음'},
+ {tag:'운동 · 필라테스',body:'[신규 클래스 오픈]\n평일 저녁 7시 소그룹 클래스가 새로 열렸어요.\n채널 친구에게만 1회 무료 체험을 드려요.',btn:'체험 예약하기',ctr:'예약 전환 높음'}
+];
+function useAd(i){const a=ADEX[i];S.msg=S.msg||{};S.msg.kind='ad';S.msg.body=a.body;S.msgGroup=null;go('msg-compose');render()}
+function friendBox(){
+ const total=180, byAt=6+11;
+ return `<div class="fbox">
+  <div class="fb-h"><b>알림톡으로 늘어난 친구</b><span class="badge b-gr">수치는 예시</span></div>
+  <div class="fb-nums">
+   <div><span>내 채널 전체 친구</span><b>${total}명</b></div>
+   <div class="hl"><span>알림톡 보고 친구가 된 분</span><b>+${byAt}명</b><em>최근 3개월</em></div>
+  </div>
+  <div class="fb-msg">친구가 된 고객에게는 <b>메시지로 광고·이벤트</b>를 보낼 수 있어요. 다른 가게들은 이렇게 보내고 있어요.</div>
+  <div class="adgrid">${ADEX.map((a,i)=>`<div class="adc"><div class="adtag">${a.tag}<span>${a.ctr}</span></div>
+    <div class="adb"><div class="adw2">(광고) 대호</div><div class="adbody">${a.body}</div><div class="adbtn">${a.btn}</div></div>
+    <a class="aduse" onclick="useAd(${i})">이 문구로 메시지 쓰기 ›</a></div>`).join('')}</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px"><span class="help" style="margin:0">추천 문구는 비슷한 업종 채널에서 반응이 좋았던 메시지를 바탕으로 해요.</span><button class="btn y sm" onclick="S.msgGroup=null;go('msg-compose');render()">친구 ${total}명에게 메시지 보내기</button></div>
+ </div>`;
+}
+
+function lvBanner(){return `<div style="display:flex;align-items:center;gap:12px;background:#f7f7f7;border-radius:10px;padding:14px 18px;margin:22px 0 4px"><span style="font-size:14px">알림톡을 보고 채널 친구가 된 분 <b>+17명</b> <span style="color:#888;font-size:13px">최근 3개월</span></span><span style="font-size:13px;color:#666">· 친구에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요.</span><a style="margin-left:auto;color:#3a6fd8;font-size:13px;white-space:nowrap;cursor:pointer" onclick="go('msg-new')">친구에게 메시지 보내기 ›</a></div>`}
+P['at-list']=()=>{const lv='a';return `<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
+ <div class="h1">보낸 알림톡</div><div class="desc">지금까지 보낸 알림톡의 결과를 확인해요.${lv==='b'?'':' 실패한 건과 알림톡으로 늘어난 친구도 여기서 볼 수 있어요.'}</div>${lv==='a'?lvBanner():''}
+ <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
+ <table class="tb"><tr><th>발송일시</th><th>템플릿</th><th>받는 사람</th><th>성공 / 실패</th><th>발송 후 친구 추가</th><th>고객 파일</th><th></th></tr>
+ ${S.sent?`<tr class="hl"><td>26.10.13 17:40</td><td>수강료 납부 안내</td><td>300</td><td>${S.retried?'298 / 2':'296 / 4'} <a style="color:#e0442c;margin-left:4px" onclick="openDetail('a')">실패 보기</a></td><td>+6</td><td>${S.saved?'<span class="badge b-ok">저장됨</span>':'<a style="color:#3a6fd8" onclick="S.saved=true;render()">저장하기</a>'}</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>`:''}
+ <tr><td>26.10.02 10:15</td><td>보강 일정 안내</td><td>84</td><td>84 / 0</td><td>+2</td><td><span class="badge b-gr">미저장</span></td><td></td></tr>
+ <tr><td>26.09.25 09:00</td><td>수강료 납부 안내</td><td>291</td><td>288 / 3 <a style="color:#e0442c;margin-left:4px" onclick="openDetail('b')">실패 보기</a></td><td>+11</td><td><span class="badge b-ok">저장됨</span></td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2609';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>
+ </table>
+ ${lv==='now'?friendBox():''}
+</main></div>`};
+
+function myIds(){if(!S.myTpl)S.myTpl=S.hasHistory?['t1','t2','t7']:[];return S.myTpl}
+function addTpl(id){const m=myIds();if(!m.includes(id))m.push(id);S.justAdded=id;render()}
+function rmTpl(id){S.myTpl=myIds().filter(x=>x!==id);render()}
+P['at-tpl']=()=>{
+ const tab=S.ver==='b'?(S.tplTab==='mine'?'mine':'lib'):(S.tplTab==='lib'?'lib':'mine');
+ const mine=S.ver==='b'?[]:myIds().map(findT), made=MINE();
+ const st={ing:'<span class="badge b-ing">검수 중</span>',ok:'<span class="badge b-ok">바로 사용</span>',no:'<span class="badge b-no">반려</span>'};
+ const tabs=`<div class="filters">${S.ver==='b'?`<span class="chip ${tab==='lib'?'on':''}" onclick="S.tplTab='lib';render()">검수 완료 템플릿</span><span class="chip ${tab==='mine'?'on':''}" onclick="S.tplTab='mine';render()">직접 만든 템플릿 <b style="margin-left:4px">${made.length}</b></span>`:`<span class="chip ${tab==='mine'?'on':''}" onclick="S.tplTab='mine';render()">내 템플릿 <b style="margin-left:4px">${mine.length+made.length}</b></span><span class="chip ${tab==='lib'?'on':''}" onclick="S.tplTab='lib';render()">검수 완료 템플릿 가져오기</span>`}<span style="margin-left:auto"></span><button class="btn line sm" onclick="newTpl()">+ 새 템플릿 작성</button></div>`;
+ const mineT=`<table class="tb"><tr><th>템플릿명</th><th>내용</th><th>출처</th><th>상태</th><th></th></tr>
+  ${mine.map(t=>`<tr class="${S.justAdded===t.id?'hl':''}"><td><b>${t.name}</b></td><td style="color:#777;white-space:normal;min-width:220px">${t.body.split('\n').filter(Boolean)[0]}</td><td><span class="badge b-at">가져옴</span></td><td>${st.ok}</td><td><a style="color:#3a6fd8" onclick="S.cat='${catOf(t.id)}';S.tpl='${t.id}';S.step=1;go('at-send');render()">보내기</a> · <a style="color:#999" onclick="rmTpl('${t.id}')">빼기</a></td></tr>`).join('')}
+  ${made.map(t=>`<tr class="${t.fresh?'hl':''}"><td><b>${t.name}</b></td><td style="color:#777;white-space:normal;min-width:220px">${t.body.split('\n')[0]}${t.reason?`<div style="color:#c73a2b;font-size:12px;margin-top:4px">반려 사유: ${t.reason}</div>`:''}</td><td><span class="badge b-gr">직접 만듦</span></td><td>${st[t.st]}</td><td>${t.st==='ok'?`<a style="color:#3a6fd8">보내기</a>`:t.st==='no'?`<a style="color:#3a6fd8" onclick="newTpl(null,'${t.name}')">고쳐서 다시 신청</a>`:'<span style="color:#999">승인되면 카톡으로 알려드려요</span>'}</td></tr>`).join('')}</table>
+  <div class="libcta"><div><b>필요한 템플릿을 미리 담아두세요</b><span>검수가 끝난 업종별 템플릿을 가져오면 바로 보낼 수 있어요.</span></div><button class="btn y sm" onclick="S.tplTab='lib';render()">템플릿 가져오기 ›</button></div>`;
+ const lc=S.libCat||catOf(myIds()[0])||'교육';
+ const libT=`<div class="tabs" style="margin-bottom:14px">${Object.keys(TPL).map(c=>`<span class="chip ${lc===c?'on':''}" onclick="S.libCat='${c}';render()">${CAT_EMOJI[c]||''} ${c}</span>`).join('')}</div>
+  <div class="libgrid">${TPL[lc].filter(t=>t.st==='ok').map(t=>{const has=myIds().includes(t.id);return `<div class="libc">
+   <div class="scbub" style="margin:14px 14px 18px"><div class="hd">알림톡 도착</div><div class="bd">${t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>')}</div></div>
+   <div class="libtx"><div class="when">${t.when}</div><b>${t.name}</b><div class="to">${t.to}에게 · 필요한 정보: ${t.cols}</div>
+   ${S.ver==='b'?`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="S.cat='${catOf(t.id)}';S.tpl='${t.id}';S.step=1;go('at-send');render()">이 템플릿으로 보내기</button>`:has?`<button class="btn line sm" style="margin-top:10px;width:100%;color:#1d8a4e" onclick="rmTpl('${t.id}')">✓ 내 템플릿에 담김</button>`:`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="addTpl('${t.id}')">+ 내 템플릿에 담기</button>`}</div></div>`}).join('')}</div>
+  <div class="help" style="margin-top:14px">원하는 템플릿이 없나요? <a style="color:#3a6fd8" onclick="newTpl()">직접 만들기</a> · 비슷한 템플릿을 담은 뒤 고쳐서 검수 신청할 수도 있어요.</div>`;
+ return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">
+ <div class="h1">템플릿</div><div class="desc">앞으로 보낼 알림톡 문구를 미리 준비해두는 곳이에요. 검수가 끝난 템플릿을 찾아 담거나, 새로 써서 검수를 받을 수 있어요.</div>
+ <div style="margin:22px 0 6px">${aiSearchHTML('tpl')}</div>
+ ${tabs}${tab==='mine'?mineT:libT}</main></div>`;
+};
+const MINE=()=>[...(S.c&&S.c.submitted?[{name:S.c.name||'이름 없는 템플릿',body:S.c.body,date:'26.10.14',st:'ing',fresh:true}]:[]),
+ {name:'상담 예약 확인',body:'#{이름} 학부모님, #{일시} 입학 상담 예약이 확인되었습니다.',date:'26.09.30',st:'ok'},
+ {name:'가을학기 등록 안내',body:'#{이름} 학부모님, 가을학기 등록 시 10% 할인 혜택을 드려요.',date:'26.09.12',st:'no',reason:'광고성 표현(할인 혜택) 포함 — 메시지 광고로 보내주세요'}];
+
+/* ---------------- 직접 만들기 ---------------- */
+const WHEN=['예약·방문 안내','결제·납부 안내','일정 변경·취소','주문·배송','출결·이용 내역','회원·이용권 만료','기타'];
+const TO=['예약한 고객','결제·주문한 고객','수강생·회원','기타'];
+const WHEN2T={'예약·방문 안내':['t4','t5','t6'],'결제·납부 안내':['t1'],'일정 변경·취소':['t2'],'주문·배송':['t11','t8'],'출결·이용 내역':['t7'],'회원·이용권 만료':['t10'],'기타':['t9']};
+const ADW=['할인','이벤트','쿠폰','무료','특가','세일','오픈 기념','신메뉴','신상품','혜택','증정','프로모션','%'];
+const VCHIP=['이름','일시','금액','상품','가게명'];
+function newTpl(copyId,name,desc){
+ S.c={step:2,when:null,to:null,name:name||'',body:'',btn:'none',btnName:'',linkMode:'send',submitted:false};
+ if(copyId){const t=findT(copyId);S.c.name=t.name+' (수정)';S.c.body=t.body;S.c.btn=t.btn?'link':'none';S.c.btnName=t.btn;S.c.from=t.name;S.c.when=Object.keys(WHEN2T).find(k=>WHEN2T[k].includes(copyId))||'기타';}
+ if(desc){S.c.desc=desc;S.c.body=aiDraft(desc);S.c.name=aiName(desc);setTimeout(aiRun,400)}
+ go('at-new');render();
+}
+const TCAT=[['회원','가입·이용권 만료 등'],['구매','결제·납부·청구'],['예약','예약·방문·상담'],['서비스이용','휴무·일정 변경·이용 안내'],['리포팅','성적·출결·이용 내역'],['배송','발송·배송'],['법적고지','약관·정책 변경'],['업무알림','업무 처리 결과'],['쿠폰/포인트','적립·소멸 안내'],['기타','']];
+const CATKW=[['쿠폰/포인트',['쿠폰','포인트','적립']],['배송',['배송','택배','출고']],['구매',['납부','청구','결제','수강료','관리비','입금','금액','영수']],['예약',['예약','방문','상담','진료','레슨']],['리포팅',['성적','출결','출석','리포트','내역','결과']],['회원',['가입','회원','만료','이용권']],['법적고지',['약관','개인정보','정책']],['서비스이용',['휴원','휴무','휴관','휴장','변경','취소','안내','일정']]];
+function autoCat(b){if(!b||b.trim().length<6)return null;const f=CATKW.find(([,ks])=>ks.some(k=>b.includes(k)));return f?f[0]:'기타'}
+function catHTML(){const c=S.c,ai=autoCat(c.body),cur=c.catOv||ai;
+ if(!cur)return `<div class="help" style="margin:0">문구를 쓰면 AI가 내용을 보고 알림 종류를 정해드려요. 검수 신청에 필요한 항목이에요.</div>`;
+ const d=(TCAT.find(x=>x[0]===cur)||[])[1];
+ if(c.catEdit)return `<div style="display:flex;gap:6px;flex-wrap:wrap">${TCAT.map(([k])=>`<span class="chip ${cur===k?'on':''}" onclick="S.c.catOv='${k}';S.c.catEdit=false;render()">${k}</span>`).join('')}</div>`;
+ return `<div class="filerow" style="background:#fafafa;border-color:#e5e5e5;display:flex;align-items:center;gap:8px"><b>${cur}</b>${d?`<span style="color:#888;font-size:13px">${d}</span>`:''}<span style="font-size:12px;color:#888">· ${c.catOv?'직접 변경함':'✨ 내용 보고 자동 선택'}</span><a style="margin-left:auto;color:#3a6fd8;font-size:13px;cursor:pointer" onclick="S.c.catEdit=true;render()">변경</a></div>`}
+function adHits(b){return ADW.filter(w=>b.includes(w))}
+function previewHTML(){
+ const b=(S.c.body||'').replace(/[<>]/g,'');
+ const body=b?b.replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>'):'<span style="color:#aaa">내용을 입력하면 여기에 보여요</span>';
+ return `<div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>${S.c.btn!=='none'?`<div class="bt">${S.c.btnName||'버튼 이름'}${S.c.btn==='link'?' ↗':''}</div>`:''}<div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div></div>`;
+}
+function onBody(el){S.c.body=el.value;{const ac=document.getElementById('autocat');if(ac)ac.innerHTML=catHTML()}if(S.c.ai){S.c.ai=null;const b=document.getElementById('aibox');if(b)b.innerHTML=aiBoxHTML()}document.getElementById('cnt').textContent=el.value.length+'/1000자';document.getElementById('pv').innerHTML=previewHTML();drawWarn()}
+function drawWarn(){
+ const h=adHits(S.c.body), w=document.getElementById('adwarn'); if(!w)return;
+ w.innerHTML=(h.length&&!S.c.ai)?`<div class="adw"><b>광고성 표현이 있어요: ${h.map(x=>`「${x}」`).join(' ')}</b><br>알림톡은 정보성 내용만 보낼 수 있어서 검수에서 반려돼요. 이 내용은 채널 친구에게 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 광고로 보내기 →</a></div>`:'';
+ const sb=document.getElementById('submitbtn'); if(sb){const ok=S.c.body.trim().length>5&&S.c.name.trim()&&!h.length;sb.className='btn '+(ok?'y':'dis')}
+}
+function insVar(v){const ta=document.getElementById('ta');const p=ta.selectionStart||ta.value.length;ta.value=ta.value.slice(0,p)+'#{'+v+'}'+ta.value.slice(p);ta.focus();onBody(ta)}
+function aiAnalyze(b){
+ const it=[]; const sents=b.split(/(?<=[.!?。\n])\s*/).filter(Boolean);
+ sents.filter(x=>ADW.some(w=>x.includes(w))).forEach(sen=>{const ws=ADW.filter(w=>sen.includes(w));it.push({k:'ad',lab:'광고 표현',msg:`「${sen.trim()}」 — ${ws.map(w=>'「'+w+'」').join(' ')} 때문에 광고로 판단돼요. 이 문장은 빼고 친구에게 메시지로 보내세요.`,fix:'이 문장 빼기',f:x=>x.replace(sen,'').replace(/\s{2,}/g,' ').replace(/\n{3,}/g,'\n\n').trim()})});
+ const dm=b.match(/\d{1,2}월\s?\d{1,2}일(\([^)]+\))?/); if(dm) it.push({k:'var',lab:'자리표시',msg:`「${dm[0]}」은 #{날짜}로 바꾸면 매번 다시 검수받지 않아도 돼요.`,fix:'#{날짜}로 바꾸기',f:x=>x.replace(dm[0],'#{날짜}')});
+ const mm=b.match(/\d{1,3}(,\d{3})+원|\d{4,}원/); if(mm) it.push({k:'var',lab:'자리표시',msg:`금액 「${mm[0]}」은 #{금액}원으로 두면 사람마다 다르게 넣을 수 있어요.`,fix:'#{금액}원으로 바꾸기',f:x=>x.replace(mm[0],'#{금액}원')});
+ const tm=b.match(/(오전|오후)\s?\d{1,2}시(\s?\d{1,2}분)?/); if(tm) it.push({k:'var',lab:'자리표시',msg:`시간 「${tm[0]}」은 #{시간}으로 바꾸는 걸 추천해요.`,fix:'#{시간}으로 바꾸기',f:x=>x.replace(tm[0],'#{시간}')});
+ if(!/#\{이름\}/.test(b)&&b.trim()) it.push({k:'tip',lab:'작성 팁',msg:'#{이름}님으로 시작하면 받는 분 개인에게 보내는 안내로 읽혀요.',fix:'#{이름}님으로 시작하기',f:x=>/^[^,\n]*여러분,?\s*/.test(x)?x.replace(/^[^,\n]*여러분,?\s*/,'#{이름}님, '):'#{이름}님, '+x});
+ if(/모든|전체|여러분|공지/.test(b)) it.push({k:'warn',lab:'반려 주의',msg:'모두에게 보내는 공지로 보이면 반려될 수 있어요. 받는 분의 예약·수강 정보를 넣어주세요.'});
+ if(b.trim()&&!/문의|채팅|연락/.test(b)) it.push({k:'tip',lab:'문구 다듬기',msg:'끝에 문의 방법을 한 줄 넣어주세요.',fix:'문의 문구 넣기',f:x=>x.trim()+'\n\n문의는 채널 채팅으로 남겨주세요.'});
+ if(b.trim().length>0&&b.trim().length<25) it.push({k:'tip',lab:'문구 다듬기',msg:'무엇에 대한 안내인지 한 줄 더 적어주면 검수와 받는 분 모두 이해하기 쉬워요.'});
+ const ad=it.filter(x=>x.k==='ad').length, w=it.filter(x=>x.k==='warn').length, v=it.filter(x=>x.k==='var').length;
+ const score=100-ad*45-w*20-v*8-(/#\{/.test(b)?0:15);
+ let polished=b; it.forEach(x=>{if(x.f&&x.k!=='tip'||x.f&&/이름|문의/.test(x.fix))polished=x.f(polished)});
+ return {it,lvl:score>=75?'높음':score>=45?'보통':'낮음',polished:polished!==b?polished:null};
+}
+function aiRun(){const box=document.getElementById('aibox');if(box)box.innerHTML='<div class="aiload">✨ 문구를 살펴보고 있어요…</div>';setTimeout(()=>{S.c.ai=aiAnalyze(S.c.body);render()},700)}
+function aiApply(i){const x=S.c.ai.it[i];S.c.body=x.f(S.c.body);S.c.ai=aiAnalyze(S.c.body);render()}
+function aiPolish(){S.c.body=S.c.ai.polished;S.c.ai=aiAnalyze(S.c.body);render()}
+function aiBoxHTML(){
+ const a=S.c.ai;
+ if(!a) return `<div class="aibox"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b>✨ AI 문구 조언</b><div class="help" style="margin:2px 0 0">검수 전에 반려될 표현, 자리표시로 바꿀 부분을 알려드려요.</div></div><button class="btn y sm" style="white-space:nowrap;flex:none;${S.c.body.trim()?'':'opacity:.4'}" ${S.c.body.trim()?'':'disabled'} onclick="aiRun()">조언 받기</button></div></div>`;
+ return `<div class="aibox"><div style="display:flex;justify-content:space-between;align-items:center"><b>✨ AI 문구 조언</b><span style="font-size:13px"><a style="color:#3a6fd8" onclick="aiRun()">다시 보기</a></span></div>
+  ${a.it.length?a.it.map((x,i)=>`<div class="aiit ${x.k}"><span class="ailab">${x.lab}</span><div style="flex:1;min-width:0">${x.msg}${x.f?`<div><a class="aifix" onclick="aiApply(${i})">${x.fix} ›</a></div>`:''}</div></div>`).join(''):'<div class="aiit tip"><span class="ailab">점검 완료</span><div style="flex:1">점검한 항목에서는 고칠 부분을 찾지 못했어요.</div></div>'}
+  ${a.polished?`<div class="aipol"><div style="font-size:12px;color:#777;margin-bottom:6px">AI가 다듬은 문구</div><div class="aipt">${a.polished.replace(/[<>]/g,'').replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>')}</div><button class="btn y sm" style="margin-top:10px" onclick="aiPolish()">이 문구로 바꾸기</button></div>`:''}
+  <div class="help" style="margin-top:10px">AI 조언은 참고용이에요. 검수 결과는 담당자 심사로 정해져요.</div></div>`;
+}
+
+P['at-new']=()=>{
+ if(!S.c) S.c={step:2,when:null,to:null,body:'',name:'',btn:'none',btnName:'',linkMode:'send',submitted:false};
+ const c=S.c;
+ const head=`<div class="crumb"><a onclick="go('at-tpl')">템플릿</a> › 직접 만들기</div>`;
+ const stepper=`<div class="stepper"><div class="on">1 문구 작성</div><div>2 검수 신청</div></div>`;
+ let body='';
+ if(c.submitted){
+  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main"><div class="done">
+  <div class="donebox"><div class="ok">✓</div><h3>검수를 신청했어요</h3><p>「${c.name}」<br>보통 <b>N영업일</b> 안에 결과가 나와요. 승인되면 카카오톡으로 알려드리고,<br>알림에서 바로 발송 화면으로 이어져요.</p>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="S.tplTab='mine';go('at-tpl')">내 템플릿 보기</button><button class="btn line sm" onclick="S.step=0;go('at-send')">세트로 먼저 보내기</button></div></div>
+  <div class="bridge saved" style="margin-top:18px"><h4>기다리는 동안</h4><p>급한 안내라면 비슷한 심사 완료 세트로 먼저 보낼 수 있어요.<br>광고·이벤트 소식은 채널 친구에게 메시지로 보내세요.</p><div class="acts"><button class="btn line sm" onclick="go('msg-new')">메시지 보내기</button></div></div>
+  </div></main></div>`;
+ }
+ if(c.step===1){
+  const sug=c.when?(WHEN2T[c.when]||[]).map(findT):[];
+  body=`<div class="fsec"><div class="lab">언제 보내는 알림인가요?<span class="req">*</span></div><div class="tabs">${WHEN.map(w=>`<span class="chip ${c.when===w?'on':''}" onclick="S.c.when='${w}';render()">${w}</span>`).join('')}</div></div>
+  <div class="fsec"><div class="lab">누구에게 보내나요?<span class="req">*</span></div><div class="tabs">${TO.map(w=>`<span class="chip ${c.to===w?'on':''}" onclick="S.c.to='${w}';render()">${w}</span>`).join('')}</div>
+   <div class="help">알림톡은 우리 가게와 거래·예약·등록 등 관계가 있는 고객에게만 보낼 수 있어요.</div></div>
+  ${c.when?`<div class="fsec"><div class="lab">비슷한 세트에서 시작하기 <span style="font-weight:400;color:#888;font-size:13px">추천</span></div>
+   ${sug.map(t=>`<div class="tpl" onclick="newTpl('${t.id}')"><div style="flex:1"><div class="t">${t.name}<span class="badge b-at">심사 완료 세트</span></div><div class="s">${t.body.split('\n')[0]}</div></div><span style="color:#3a6fd8;font-size:13px;white-space:nowrap">복사해서 고치기 ›</span></div>`).join('')}
+   <div class="help">세트를 고쳐 쓰면 처음부터 쓰는 것보다 쉽고, 검수 반려도 적어요.</div></div>`:''}`;
+  const next=c.when&&c.to?`<button class="btn line" onclick="S.c.step=2;render()">빈 칸에서 직접 쓰기</button>`:`<button class="btn dis">빈 칸에서 직접 쓰기</button>`;
+  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">${head}
+  <div class="h1"><span class="step">Step 1.</span>어떤 알림인가요?</div><div class="desc">상황을 고르면 비슷한 세트를 추천해 드려요.</div>${stepper}
+  <div class="formwrap"><div class="form">${body}<div class="footbtn"><button class="btn line" onclick="S.step=0;go('at-send')">이전</button>${next}</div></div></div></main></div>`;
+ }
+ // step 2
+ body=`${c.from?`<div class="fsec"><div class="filerow" style="background:#fafafa;border-color:#e5e5e5"><div style="font-size:13px">「<b>${c.from}</b>」 세트를 복사했어요. 필요한 부분만 고치세요.</div></div></div>`:''}
+ <div class="fsec"><div class="lab">템플릿 이름<span class="req">*</span></div><input class="input" style="width:100%" value="${c.name}" placeholder="예: 수업 후 학습 안내" oninput="S.c.name=this.value;drawWarn()"><div class="help">받는 사람에게는 보이지 않아요.</div></div>
+ <div class="fsec"><div class="aisearch" style="margin:0"><div class="ais-top"><b>✨ AI로 초안 만들기</b><span>보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 바꿔드려요</span></div>
+  <div class="ais-row"><input id="aidesc" class="input" value="${(c.desc||'').replace(/"/g,'&quot;')}" placeholder="예: 다음 주 월~수 휴원한다고 학부모님께 알리기" onkeydown="if(event.key==='Enter')aiWrite()"><button class="btn y" onclick="aiWrite()">초안 만들기</button></div>
+  <div class="help" style="margin-bottom:0">초안은 아래 내용 칸에 들어가요. 직접 고친 뒤 AI 문구 조언으로 검수 전 점검하세요.</div></div></div>
+ <div class="fsec"><div class="lab">내용<span class="req">*</span></div>
+  <div class="vbar"><span style="font-size:12px;color:#777">자리표시 넣기</span>${VCHIP.map(v=>`<span class="vchip" onclick="insVar('${v}')">#{${v}}</span>`).join('')}<span class="vchip" onclick="insVar(prompt('자리표시 이름')||'항목')">+ 직접</span></div>
+  <textarea id="ta" class="ta" placeholder="예) #{이름} 학부모님, 오늘 수업에서 배운 내용을 안내드려요." oninput="onBody(this)">${c.body}</textarea>
+  <div style="display:flex;justify-content:space-between" class="help"><span>#{이름}처럼 넣은 자리는 보낼 때 엑셀 값으로 바뀌어요.</span><span id="cnt">${c.body.length}/1000자</span></div>
+  <div id="adwarn"></div><div id="aibox">${aiBoxHTML()}</div></div>
+ <div class="fsec"><div class="lab">버튼</div>
+  ${[['none','없음'],['link','웹 링크'],['chat','채널 채팅'],['ch','채널 추가']].map(([k,l])=>`<span class="radio ${c.btn===k?'on':''}" onclick="S.c.btn='${k}';S.c.btnName=${k==='chat'?"'채팅으로 문의'":k==='ch'?"'채널 추가'":'S.c.btnName'};render()"><i></i>${l}</span>`).join('')}
+  ${c.btn==='link'?`<div class="btnbox">
+   <div class="brow"><span class="bl">버튼 이름</span><input class="input" style="flex:1" placeholder="예: 납부 안내 보기" value="${c.btnName||''}" oninput="S.c.btnName=this.value;document.getElementById('pv').innerHTML=previewHTML()"></div>
+   <div class="brow"><span class="bl">링크 주소</span><div style="flex:1">
+    <span class="radio ${c.linkMode!=='fixed'?'on':''}" onclick="S.c.linkMode='send';render()"><i></i>보낼 때 입력 <span class="badge b-at" style="margin-left:2px">추천</span></span>
+    <span class="radio ${c.linkMode==='fixed'?'on':''}" onclick="S.c.linkMode='fixed';render()"><i></i>고정 주소</span></div></div>
+   ${c.linkMode==='fixed'?`<div class="brow"><span class="bl"></span><input class="input" style="flex:1" placeholder="https://"></div><div class="help">모든 알림에 같은 주소가 들어가요. 주소를 바꾸려면 템플릿을 다시 검수받아야 해요.</div>`
+   :`<div class="brow"><span class="bl"></span><div class="input ro" style="flex:1">https:// <code class="vc">#{버튼링크}</code></div></div><div class="help">알림톡을 보낼 때마다 링크를 넣어요. 주소가 바뀌어도 다시 검수받지 않아도 되고, 받는 분마다 다른 링크(결제·예약 확인 등)도 넣을 수 있어요.</div>`}
+  </div>`:c.btn==='chat'?`<div class="help">버튼을 누르면 우리 채널 1:1 채팅방이 열려요. 링크가 없는 가게에 추천해요.</div>`:c.btn==='ch'?`<div class="help">버튼을 누르면 우리 채널을 친구로 추가해요.</div>`:''}</div>
+ <div class="fsec"><div class="lab">알림 종류</div><div id="autocat">${catHTML()}</div></div>`;
+ const ok=c.body.trim().length>5&&c.name.trim()&&!adHits(c.body).length;
+ return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">${head}
+ <div class="h1">알림톡 문구 작성</div><div class="desc">직접 쓰고 AI 조언을 받아 다듬은 뒤 검수를 신청하세요. 승인되면 바로 보낼 수 있어요.</div>${stepper}
+ <div class="formwrap"><div class="form">${body}<div class="footbtn"><button class="btn line" onclick="S.step=0;go('at-send')">이전</button><button id="submitbtn" class="btn ${ok?'y':'dis'}" onclick="S.c.submitted=true;render()">검수 신청하기</button></div></div>
+ <div><div class="phone"><div class="screen"><div class="top">대호</div><div class="msg"><span class="avatar"></span><div><div class="who">대호</div><div id="pv">${previewHTML()}</div></div></div></div></div><div class="phonecap">받는 사람 화면 미리보기</div></div></div>
+ </main></div>`;
+};
+
+
+P['msg-new']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main class="main">
+ <div class="h1">메시지 보내기</div><div class="desc">공지, 혜택, 이벤트 소식을 다양한 형식의 메시지로 작성해 고객과 효과적으로 소통해 보세요. <u>메시지 집행가이드</u></div>
+ ${S.saved?`<div class="mbanner" style="border:1px solid #e5e5e5"><div class="l"><span class="ic">명단</span><div><b>알림톡 명단 ‘학부모명단_2610’의 친구 50명</b><small>메시지를 작성한 뒤 받는 대상에서 이 명단을 고르면 50명에게만 보내요.</small></div></div><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">이 명단으로 작성하기</button></div>`:''}
+ <div class="mbanner"><div class="l"><span class="ic">알림</span><div><b>예약·납부 안내처럼 꼭 전해야 하는 소식인가요?</b><small>친구가 아닌 고객에게도 전화번호로 보내는 알림톡을 써보세요.</small></div></div><button class="btn line sm" onclick="go('at-send')">알림톡 보내기 →</button></div>
+ <div class="sech" style="margin-top:44px">다양한 유형으로 직접 작성하기</div>
+ <div class="typecards">${[['카탈로그형','#상품모아보기','#쇼핑몰'],['기본 텍스트형','#빠른소식전달','#공지및안내'],['와이드 이미지형','#비주얼강조','#클릭유도'],['와이드 리스트형','#주요소식모음','#핵심정보정리']].map(([t,h1,h2])=>`<div class="tc" style="cursor:pointer" onclick="go('msg-compose')"><div class="im"></div><div class="tx"><b>${t}</b><small><span style="white-space:nowrap">${h1}</span> <span style="white-space:nowrap">${h2}</span></small></div></div>`).join('')}</div>
+</main></div>`;
+
+S.msg={kind:'ad',body:'',target:'all',group:null};
+function msgPreview(){const b=(S.msg.body||'내용').replace(/[<>]/g,'');return `<div class="mmsg"><div class="who">${S.msg.kind==='ad'?'(광고)':''}대호</div><div class="mb">${b}</div><div class="mf">${S.msg.kind==='ad'?'수신거부 | 홈 &gt; 채널차단':''}</div></div>`}
+function mphone(){return `<div><div class="phone"><div class="screen"><div class="top">대호<br><span style="font-weight:400;color:#666">010-2056-8892</span></div><div id="mpv">${msgPreview()}</div></div></div></div>`}
+const LISTS={'학부모명단_2610':{t:300,f:50,tpl:'수강료 납부 안내',d:'10.13'},'학부모명단_2609':{t:291,f:47,tpl:'수강료 납부 안내',d:'09.25'}};
+function listHero(n,mode){
+ const L=LISTS[n]; if(!L) return '';
+ return `<div class="lhero"><div class="lh-top"><span class="ic">알림톡 명단</span><b>${n}</b><span class="lh-sub">${L.d} ${L.tpl} 발송</span></div>
+  <div class="lh-nums"><div><span>명단 전체</span><b>${L.t.toLocaleString()}명</b></div><div class="lh-arr">→</div><div class="lh-f"><span>그중 채널 친구</span><b>${L.f}명</b></div></div>
+  <div class="lh-note">${mode==='target'?`이 메시지는 <b>${L.f}명</b>에게만 발송돼요.`:`메시지 광고는 이 <b>${L.f}명</b>에게만 보낼 수 있어요.`} 친구가 아닌 ${(L.t-L.f).toLocaleString()}명에게는 보내지지 않아요.</div></div>`;
+}
+
+P['msg-compose']=()=>{
+ const m=S.msg; if(S.msgGroup){m.target='group';m.group=S.msgGroup}
+ return `<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main class="main">
+ ${S.msgGroup?listHero(S.msgGroup,'compose'):''}<div style="display:flex;justify-content:space-between;align-items:flex-start;max-width:900px"><div class="h1"><span class="step">Step 1.</span>기본 텍스트형 작성</div><button class="btn line sm">이전 메시지 불러오기</button></div>
+ <div class="stepper"><div class="on">1 작성</div><div>2 발송 설정</div></div>
+ <div class="formwrap"><div class="form">
+  <div class="fsec"><div class="lab">메시지 종류</div><span class="radio ${m.kind==='ad'?'on':''}" onclick="S.msg.kind='ad';render()"><i></i>광고성</span><span class="radio ${m.kind==='info'?'on':''}" onclick="S.msg.kind='info';render()"><i></i>정보성</span><div class="help" style="color:#333">광고성 내용이 포함된 경우에 체크해주세요. <span class="q">?</span></div>
+   ${m.kind==='info'?`<div class="adw" style="background:#fafafa;border-color:#e5e5e5"><b style="color:#191919">친구가 아닌 고객에게도 보내야 하나요?</b><br>정보성 안내는 전화번호로 보내는 <a style="color:#3a6fd8" onclick="go('at-send')">알림톡</a>이 더 잘 맞아요.</div>`:''}</div>
+  <div class="fsec"><div class="lab">고객센터 연락처<span class="req">*</span></div><div style="display:flex;gap:6px"><div class="input ro" style="flex:1">010-2056-8892</div><button class="btn line sm" style="height:38px">설정</button></div><div class="help">메시지 전송 시 필수로 입력해야 하는 정보입니다.</div></div>
+  <div class="fsec"><div class="lab">메시지 꾸미기</div><span class="radio on"><i></i>없음</span><span class="radio"><i></i>기본 이미지</span><span class="radio"><i></i>이미지 업로드</span><span class="radio"><i></i>동영상</span></div>
+  <div class="fsec"><div class="lab">내용 (${m.kind==='ad'?'광고':'정보'})<span class="req">*</span></div><textarea class="ta" style="height:140px" placeholder="메시지 내용을 입력해주세요." oninput="S.msg.body=this.value;document.getElementById('mpv').innerHTML=msgPreview();document.getElementById('mcnt').textContent=this.value.length+'/400자'">${m.body}</textarea><div class="help" style="display:flex;justify-content:space-between"><span>수신거부 | 홈 &gt; 채널차단</span><span id="mcnt">${m.body.length}/400자</span></div></div>
+  <div class="fsec"><div class="lab">메시지 버튼 1</div><span class="radio on"><i></i>없음</span><span class="radio"><i></i>소식</span><span class="radio"><i></i>쿠폰</span><span class="radio"><i></i>링크</span></div>
+  <div class="fsec"><div class="lab">쿠폰 강조 버튼</div><span class="radio on"><i></i>없음</span><span class="radio"><i></i>채널쿠폰</span><span class="radio"><i></i>직접입력</span></div>
+  <div class="footbtn"><button class="btn line" onclick="go('msg-new')">이전</button><span style="display:flex;gap:6px"><button class="btn line">임시저장</button><button class="btn y" onclick="go('msg-target')">다음</button></span></div>
+ </div>${mphone()}</div></main></div>`;
+};
+const GROUPS=()=>[...(S.saved||S.msgGroup?[{n:'학부모명단_2610',src:'알림톡',f:50}]:[]),{n:'학부모명단_2609',src:'알림톡',f:47},{n:'VIP고객_8월',src:'고객 파일',f:32}];
+P['msg-target']=()=>{
+ const m=S.msg, g=GROUPS().find(x=>x.n===m.group);
+ const cnt=m.target==='all'?180:(g?g.f:0), unit=m.target==='all'?15:20;
+ return `<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main class="main">
+ ${m.target==='group'&&LISTS[m.group]?listHero(m.group,'target'):''}<div class="h1"><span class="step">Step 2.</span>메시지 발송 설정</div>
+ <div class="stepper"><div class="done">1 작성</div><div class="on">2 발송 설정</div></div>
+ <div class="formwrap"><div class="form">
+  <div class="fsec"><div class="lab">연령인증 메시지 <span class="q">?</span></div><span class="radio on"><i></i>선택안함</span><span class="radio"><i></i>선택함</span></div>
+  <div class="fsec"><div class="lab">메시지 타겟 설정</div>
+   <div style="display:flex;flex-direction:column;gap:10px">
+   <span class="radio ${m.target==='all'?'on':''}" onclick="S.msg.target='all';S.msgGroup=null;render()"><i></i>타겟 설정 안함 (전체 친구 대상 발송)</span>
+   <span class="radio ${m.target==='group'?'on':''}" onclick="S.msg.target='group';render()"><i></i>친구그룹 타겟팅</span>
+   ${m.target==='group'?`<div class="gsel">${GROUPS().map(x=>`<div class="gopt ${m.group===x.n?'on':''}" onclick="S.msg.group='${x.n}';render()"><span class="radio ${m.group===x.n?'on':''}" style="margin:0"><i></i></span><b>${x.n}</b><span class="badge ${x.src==='알림톡'?'b-at':'b-gr'}">${x.src}</span><span style="margin-left:auto;color:#666">친구 ${x.f}명</span></div>`).join('')}
+     <div class="help" style="margin-top:6px">알림톡으로 보낸 명단은 저장하면 여기 바로 나타나요. 별도로 친구 그룹을 만들 필요가 없어요.</div></div>`:''}
+   <span class="radio" ><i></i>인구통계 정보 타겟팅 <span class="q" style="margin-left:4px">?</span></span></div>
+   <div class="tbox"><div class="r"><span>대상</span><b>${m.target==='all'?'전체친구':(g?g.n+' (친구그룹)':'선택된 친구 그룹이 없습니다')}</b></div><div class="r"><span>총 예상 발송 대상</span><b style="font-size:18px">${cnt}명</b></div></div></div>
+  <div class="fsec"><div class="lab">발송 날짜/시간 설정</div><div style="display:flex;gap:6px"><div class="input" style="width:150px">2026.10.14</div><div class="input" style="width:90px">14시</div><div class="input" style="width:90px">00분</div></div><div class="help">한국 사용자는 20:55부터 08:00까지는 메시지 수신이 불가하여 익일 오전 08:00 이후에 메시지를 받게 됩니다.</div></div>
+  <div class="fsec"><div class="lab">총 발송 비용</div>
+   <div class="summary"><div class="r"><span>${m.target==='all'?'일반':'타겟'}</span><span>${unit}원 × ${cnt}건 + VAT</span></div><div class="r t"><span style="color:#191919">합계</span><span>${Math.round(unit*cnt*1.1).toLocaleString()}원</span></div></div>
+   <div class="costrow"><div><span>현재 캐시</span><b>0 원</b></div><div><span>발송 후 캐시</span><b>0 원</b></div><button class="btn line sm" style="color:#3ba7b5">충전하기</button></div></div>
+  <div class="footbtn"><button class="btn line" onclick="go('msg-compose')">이전</button><span style="display:flex;gap:6px"><button class="btn line">임시저장</button><button class="btn line">테스트발송</button><button class="btn y ${cnt?'':'dis'}" onclick="alert('가상 화면이라 등록되지 않아요')">등록</button></span></div>
+ </div>${mphone()}</div></main></div>`;
+};
+
+P['msg-list']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-list')}<main class="main"><div class="h1">메시지 목록</div><div class="infobox">현행 화면과 동일 (생략)</div></main></div>`;
+
+P['msg-file']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-file')}<main class="main">
+ <div class="h1">고객파일 목록</div>
+ <div class="infobox" style="margin-top:28px"><b>고객파일, 왜 업로드 해야 하나요?</b><br>· 고객 정보를 조합하여 더 정교한 친구그룹을 만들어 보세요.<br>· <b style="font-size:13px">알림톡에서 저장한 명단</b>도 여기에 모여요. 명단 중 채널 친구에게만 메시지를 보낼 수 있어요.<br>· 고객파일은 최대 30개까지 업로드할 수 있어요.</div>
+ <div class="filters"><span style="font-size:15px;font-weight:700">전체 <span style="color:#3ba7b5">${S.saved?3:2}</span>개</span><span style="margin-left:auto"></span><button class="btn line sm">파일 업로드</button></div>
+ <table class="tb"><tr><th>파일 ID</th><th>파일명</th><th>출처</th><th>친구수 / 등록수</th><th>연결된 친구그룹 수</th><th>등록일</th></tr>
+ ${S.saved?`<tr class="hl"><td>40213</td><td><b>학부모명단_2610</b></td><td><span class="badge b-at">알림톡</span></td><td><b>50</b> / 300</td><td>0 <a style="color:#3a6fd8;margin-left:6px" onclick="go('msg-new')">메시지 보내기 →</a></td><td>26.10.13</td></tr>`:''}
+ <tr><td>39877</td><td>학부모명단_2609</td><td><span class="badge b-at">알림톡</span></td><td>47 / 291</td><td>1</td><td>26.09.25</td></tr>
+ <tr><td>38120</td><td>VIP고객_8월</td><td><span class="badge b-gr">직접 업로드</span></td><td>32 / 90</td><td>1</td><td>26.08.04</td></tr>
+ </table>
+</main></div>`;
+
+
+const MEMO={
+ home:['LNB 알림톡 독립 메뉴 (메시지 ↔ 소식·쿠폰 사이, 10/8 결정)','홈 퀵카드·배너를 보조 진입점으로 활용','써본 사장님은 퀵카드가 "최근 보낸 알림"으로 전환'],
+ gallery:['AI 템플릿 찾기는 보내기 첫 화면엔 두지 않고 템플릿 메뉴에만 둠 (보내기는 예시 보고 고르는 흐름 유지)','[AI] 우리 업종 추천: 채널 카테고리가 애매하면 채널명·소개로 추천 (화면엔 AI 표시 없음)','내 템플릿이 있으면 담아둔 템플릿부터, 없으면 예시 갤러리부터 노출','보낸 템플릿은 내 템플릿에 자동으로 담김','빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
+ quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
+ step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
+ step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
+ done:['실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 고객 파일 저장 (A안, 사장님이 선택)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
+ list:['메뉴명 「보낸 알림톡」 = 발송 이력 (앞으로 보낼 문구는 템플릿 메뉴) — 「내 템플릿」과 이름 혼동 방지','광고 연결은 목록 위 한 줄 배너로만 (알림톡 보고 친구가 된 분 +N명 → 친구에게 메시지 보내기). 친구 수 카드·타 업종 광고 예시 박스는 과하다는 의견으로 삭제','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
+ detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
+ tpl:['역할 = 보낼 문구 준비 (찾아서 담기 + 새로 써서 검수 받기). 지금 보낼 걸 고르는 건 알림톡 보내기, 보낸 기록은 보낸 알림톡','[AI] 맨 위에서 원하는 템플릿을 자연어로 적으면 검수 완료 템플릿 추천(담기), 없으면 AI 초안으로 새 템플릿 작성','검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
+ newtpl:['[AI] 알림 종류 자동 지정: 문구를 보고 카카오 템플릿 카테고리(회원·구매·예약·서비스이용·리포팅·배송 등)를 AI가 정함, 틀리면 [변경] — 사장님이 먼저 고르지 않음','[AI] 초안 만들기: 보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 작성','[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','검수 통과 가능성 점수는 표시하지 않음 (카카오가 검수 주체라 보장처럼 읽힘, 반려 시 신뢰 훼손) — 고칠 부분 지적만, "승인 팁"→"작성 팁"','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
+ report:['사장님 질문 순서: ① 잘 도착했나 ② 효과가 있었나 ③ 다음에 할 일','월별 추세·캐시는 "자세히 보기"로 접음, 발송 건별 결과 중심','버튼 클릭 수 집계 가능 여부 확인 필요','12/29 메시지 통계 개편과 상호 이동 연계'],
+ msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
+ compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
+ target:['현행 발송 설정 재현 (전체 15원 / 타겟 20원)','친구그룹 목록에 알림톡 명단(친구 N명) 바로 노출','미정: 고객 파일 → 친구그룹 자동 생성 여부 (현행은 수동)'],
+ file:['고객 파일에 출처 칸 추가 (알림톡 / 직접 업로드)','현행 친구수 / 등록수 칸 그대로 사용']
+};
+function memoKey(r){
+ if(r==='home')return'home';
+ if(r==='at-send'){if(S.sent)return'done';if(S.step===0)return(S.hasHistory&&!S.browse)?'quick':'gallery';return S.step===1?'step1':'step2'}
+ return {'at-list':'list','at-detail':'detail','at-tpl':'tpl','at-new':'newtpl','at-report':'report','msg-new':'msgnew','msg-compose':'compose','msg-target':'target','msg-file':'file'}[r];
+}
+function memoToggle(){S.memoOpen=!S.memoOpen;addMemo()}
+const MEMO_VER={a:{gallery:'[A안] 매달 보내는 알림(수강료·성적표·관리비 등) 앞 배치 + "매달 보내는 알림" 표시',quick:'[A안] 지난달 발송 리마인드 → 이번 달도 보내기(명단·내용 그대로)'},
+ b:{gallery:'[B안] 반복 없음 가정 — 알림톡 = 친구 만드는 수단. 첫 화면에 "보내기 → 채널 추가 → 광고" 흐름, 내 템플릿·다시 보내기 없음',step1:'[B안] "친구 늘리기": 알림톡 아래 [채널 추가] 버튼 크게(기본 ON). 저장된 명단 불러오기 없음',done:'[B안] 친구 연결 안내를 발송 결과보다 위에 배치',tpl:'[B안] 담기 없이 검수 완료 템플릿에서 바로 보내기',list:'[B안] 알림톡으로 늘어난 친구·광고 추천을 목록보다 위에',report:'[B안] 알림톡으로 늘어난 친구를 맨 위에'}};
+function addMemo(){
+ const k0=memoKey(route()), vx=(MEMO_VER[S.ver||'a']||{})[k0], m=MEMO[k0]?(vx?[vx,...MEMO[k0]]:MEMO[k0]):null;
+ let f=document.getElementById('memofab'), d=document.getElementById('memodrawer');
+ if(!f){f=document.createElement('button');f.id='memofab';f.onclick=memoToggle;document.body.appendChild(f);
+  d=document.createElement('div');d.id='memodrawer';document.body.appendChild(d)}
+ f.style.display=m?'':'none'; f.innerHTML=`📝 사업 메모 <span>${m?m.length:0}</span>${m&&m.some(x=>x.startsWith('[AI'))?'<i class="aidot">AI</i>':''}`; f.className=S.memoOpen?'on':'';
+ d.className=(S.memoOpen&&m)?'open':'';
+ d.innerHTML=m?`<div class="mh"><b>📝 사업 메모</b><a onclick="memoToggle()">✕</a></div><div class="msub">이 화면의 의도와 미정 사항</div><ul>${m.map(x=>`<li>${x.replace(/^\[(AI[^\]]*)\]/,'<span class="aitag">$1</span>')}</li>`).join('')}</ul>`:'';
+}
+function setVer(v){S.ver=v;try{const u=new URL(location.href);u.searchParams.set('ver',v);history.replaceState(null,'',u.pathname+u.search+location.hash)}catch(e){}Object.assign(S,{step:0,sent:false,recur:null,sendMode:null});syncVer();render()}
+function syncVer(){const a=document.getElementById('va'),b=document.getElementById('vb');if(a){a.className=S.ver==='b'?'':'on';b.className=S.ver==='b'?'on':''}}
+function setScen(h){Object.assign(S,{myTpl:null,hasHistory:h,browse:false,step:0,tpl:null,uploaded:false,sent:false,again:false});document.getElementById('sc0').className=h?'':'on';document.getElementById('sc1').className=h?'on':'';go('at-send');render()}
+
+const DEEP={
+ 'at-step1':()=>Object.assign(S,{hasHistory:false,browse:false,tpl:'t1',cat:'교육',step:1,sent:false,recvMode:'manual',uploaded:false}),
+ 'at-step2':()=>Object.assign(S,{hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:false,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
+ 'at-done':()=>Object.assign(S,{hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:true,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
+ 'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
+ 'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});return 'msg-compose'},
+ 'msg-target-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});S.msg.target='group';S.msg.group='학부모명단_2610';return 'msg-target'},
+ 'msg-file-saved':()=>{S.saved=true;return 'msg-file'}
+};
+function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
+render();syncVer();
+</script>
+</body></html>
