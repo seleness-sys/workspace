@@ -958,16 +958,18 @@ function friendBox(){
  </div>`;
 }
 
-P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
- <div class="h1">보낸 알림톡</div><div class="desc">지금까지 보낸 알림톡의 결과를 확인해요. 실패한 건과 알림톡으로 늘어난 친구도 여기서 볼 수 있어요.</div>${S.ver==='b'?'<div style="margin:-10px 0 24px">'+friendBox()+'</div>':''}
+function lvBar(){const L=[['now','지금 화면'],['a','A. 한 줄 배너'],['b','B. 표 안에만']];return `<div style="display:flex;align-items:center;gap:6px;margin:4px 0 14px;font-size:12px;color:#888">비교 보기 ${L.map(([k,l])=>`<span class="chip ${(S.lv||'now')===k?'on':''}" style="font-size:12px;padding:4px 10px" onclick="S.lv='${k}';render()">${l}</span>`).join('')}</div>`}
+function lvBanner(){return `<div style="display:flex;align-items:center;gap:12px;background:#f7f7f7;border-radius:10px;padding:14px 18px;margin:22px 0 4px"><span style="font-size:14px">알림톡을 보고 채널 친구가 된 분 <b>+17명</b> <span style="color:#888;font-size:13px">최근 3개월</span></span><span style="font-size:13px;color:#666">· 친구에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요.</span><a style="margin-left:auto;color:#3a6fd8;font-size:13px;white-space:nowrap;cursor:pointer" onclick="go('msg-new')">친구에게 메시지 보내기 ›</a></div>`}
+P['at-list']=()=>{const lv=S.lv||'now';return `<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">${lvBar()}
+ <div class="h1">보낸 알림톡</div><div class="desc">지금까지 보낸 알림톡의 결과를 확인해요.${lv==='b'?'':' 실패한 건과 알림톡으로 늘어난 친구도 여기서 볼 수 있어요.'}</div>${lv==='a'?lvBanner():''}
  <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
  <table class="tb"><tr><th>발송일시</th><th>템플릿</th><th>받는 사람</th><th>성공 / 실패</th><th>발송 후 친구 추가</th><th>고객 파일</th><th></th></tr>
  ${S.sent?`<tr class="hl"><td>26.10.13 17:40</td><td>수강료 납부 안내</td><td>300</td><td>${S.retried?'298 / 2':'296 / 4'} <a style="color:#e0442c;margin-left:4px" onclick="openDetail('a')">실패 보기</a></td><td>+6</td><td>${S.saved?'<span class="badge b-ok">저장됨</span>':'<a style="color:#3a6fd8" onclick="S.saved=true;render()">저장하기</a>'}</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>`:''}
  <tr><td>26.10.02 10:15</td><td>보강 일정 안내</td><td>84</td><td>84 / 0</td><td>+2</td><td><span class="badge b-gr">미저장</span></td><td></td></tr>
  <tr><td>26.09.25 09:00</td><td>수강료 납부 안내</td><td>291</td><td>288 / 3 <a style="color:#e0442c;margin-left:4px" onclick="openDetail('b')">실패 보기</a></td><td>+11</td><td><span class="badge b-ok">저장됨</span></td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2609';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>
  </table>
- ${S.ver==='b'?'':friendBox()}
-</main></div>`;
+ ${lv==='now'?friendBox():''}
+</main></div>`};
 
 function myIds(){if(!S.myTpl)S.myTpl=S.hasHistory?['t1','t2','t7']:[];return S.myTpl}
 function addTpl(id){const m=myIds();if(!m.includes(id))m.push(id);S.justAdded=id;render()}
@@ -1233,7 +1235,9 @@ const DEEP={
  'at-quick':()=>Object.assign(S,{hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
  'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});return 'msg-compose'},
  'msg-target-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});S.msg.target='group';S.msg.group='학부모명단_2610';return 'msg-target'},
- 'msg-file-saved':()=>{S.saved=true;return 'msg-file'}
+ 'msg-file-saved':()=>{S.saved=true;return 'msg-file'},
+ 'at-list-a':()=>{S.lv='a';return 'at-list'},
+ 'at-list-b':()=>{S.lv='b';return 'at-list'}
 };
 function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){a.className=S.hasHistory?'':'on';b.className=S.hasHistory?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn()}
 render();syncVer();
