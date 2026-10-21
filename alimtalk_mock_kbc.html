@@ -981,7 +981,7 @@ P['at-report']=()=>{
   <div class="rqg">
    <div class="rk"><span>받은 분</span><b>${tot[1].toLocaleString()}명</b><em>발송 ${tot[0].toLocaleString()}건 중 ${(tot[1]/tot[0]*100).toFixed(1)}%</em></div>
    <div class="rk bad"><span>받지 못한 분</span><b>${fail}명</b><em><a onclick="openDetail('a')">명단 보기 ›</a></em></div>
-   <div class="rk wide">${R.map(([k,v,g])=>`<div class="hrow" title="${k} ${v}명"><span class="hk">${k}</span><div class="htrack"><div class="hbar" style="width:${Math.round(v/R[0][1]*100)}%"></div></div><span class="hv">${v}명</span><span class="hg">${g}</span></div>`).join('')}</div>
+   <div class="rk wide"><span style="display:block;margin-bottom:8px">받지 못한 ${fail}명, 이유는 이래요</span>${R.map(([k,v,g])=>`<div class="hrow" title="${k} ${v}명"><span class="hk">${k}</span><div class="htrack"><div class="hbar" style="width:${Math.round(v/R[0][1]*100)}%"></div></div><span class="hv">${v}명</span><span class="hg">${g}</span></div>`).join('')}</div>
   </div></div>
  <div class="rq"><div class="rqh"><span class="rqn">2</span>효과가 있었나요?</div>
   <div class="rqg">
