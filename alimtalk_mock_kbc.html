@@ -583,7 +583,7 @@ function rail(on){
 }
 function subAt(on){
  const a=(h,l)=>`<a class="${on===h?'on':''}" onclick="go('${h}')">${l}</a>`;
- return `<div class="sub"><h2>알림톡</h2>${a('at-send','알림톡 보내기')}${a('at-list','내 알림톡')}${a('at-tpl','템플릿')}${a('at-report','리포트')}
+ return `<div class="sub"><h2>알림톡</h2>${a('at-send','알림톡 보내기')}${a('at-list','보낸 알림톡')}${a('at-tpl','템플릿')}${a('at-report','리포트')}
  <div class="sep"></div><div class="xlink">친구에게 광고·이벤트를 보내려면<br><a onclick="go('msg-new')">메시지 보내기 →</a></div></div>`;
 }
 function subMsg(on){
@@ -874,7 +874,7 @@ P['at-detail']=()=>{
    <div class="help">문자 자동 발송(대체발송)은 지원하지 않아요. 명단과 내용을 내려받아 휴대폰이나 쓰시던 문자 서비스로 보내세요. 받지 못한 건은 비용이 차감되지 않아요.</div>`
   :`<table class="tb"><tr><th>이름</th><th>전화번호</th><th>결과</th><th>채널 친구</th></tr>${[['김*지','1111','친구'],['정*우','2222','-'],['한*나','3333','친구 추가']].map(r=>`<tr><td>${r[0]}</td><td>010-****-${r[1]}</td><td><span class="badge b-ok">받음</span></td><td>${r[2]}</td></tr>`).join('')}<tr><td colspan="4" style="color:#999;text-align:center">… 외 ${okN-3}명</td></tr></table>`;
  return `<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
- <div class="crumb"><a onclick="go('at-list')">‹ 알림톡 목록</a></div>
+ <div class="crumb"><a onclick="go('at-list')">‹ 보낸 알림톡</a></div>
  <div class="h1">발송 결과</div><div class="desc">${d.tpl} · ${d.d} 발송 · ${d.file}</div>
  <div class="kpis"><div><span>보낸 사람</span><b>${d.n}</b></div><div><span>받음</span><b>${okN}</b></div><div class="${failN?'bad':''}"><span>받지 못함</span><b>${failN}</b></div><div><span>발송 후 친구 추가</span><b>+${d.fr}</b></div></div>
  <div class="tabs" style="margin:26px 0 12px"><span class="chip ${tab==='fail'?'on':''}" onclick="S.dTab='fail';render()">받지 못함 ${failN}</span><span class="chip ${tab==='ok'?'on':''}" onclick="S.dTab='ok';render()">받음 ${okN}</span></div>
@@ -930,7 +930,7 @@ P['at-done']=()=>{const html=P['at-done0']();if(S.ver!=='b')return html;const d=
 P['at-done0']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done">
  <div class="donebox"><div class="ok">✓</div><h3>${S.recur?'정기 발송을 등록했어요':(S.fromList==='직접 입력'?S.fileCnt:300)+'명에게 알림톡을 보냈어요'}</h3>${S.recur?`<p style="margin-bottom:6px">매월 25일 오전 10시 · ${findT(S.tpl||'t1').name} · ${S.fileCnt}명<br>첫 발송은 오늘 바로 나갔어요. 다음 발송 11월 25일</p>`:''}<p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
   <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.rows=null;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
- ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 내 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
+ ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 보낸 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">광고 메시지 보내기</button><button class="btn line sm" onclick="go('msg-file')">고객 파일 보기</button></div></div>`
  :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>이 명단을 고객 파일에 저장해 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.saved=true;render()">고객 파일에 저장</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
@@ -959,7 +959,7 @@ function friendBox(){
 }
 
 P['at-list']=()=>`<div class="wrap">${rail('at')}${subAt('at-list')}<main class="main">
- <div class="h1">알림톡 목록</div>${S.ver==='b'?'<div style="margin:-10px 0 24px">'+friendBox()+'</div>':''}
+ <div class="h1">보낸 알림톡</div><div class="desc">지금까지 보낸 알림톡의 결과를 확인해요. 실패한 건과 알림톡으로 늘어난 친구도 여기서 볼 수 있어요.</div>${S.ver==='b'?'<div style="margin:-10px 0 24px">'+friendBox()+'</div>':''}
  <div class="filters"><div class="sel">전체</div><span style="font-size:13px;color:#666">총 ${S.sent?3:2}개</span><span style="margin-left:auto"></span><div class="sel">발송상태 전체</div><div class="sel">최근 3개월</div></div>
  <table class="tb"><tr><th>발송일시</th><th>템플릿</th><th>받는 사람</th><th>성공 / 실패</th><th>발송 후 친구 추가</th><th>고객 파일</th><th></th></tr>
  ${S.sent?`<tr class="hl"><td>26.10.13 17:40</td><td>수강료 납부 안내</td><td>300</td><td>${S.retried?'298 / 2':'296 / 4'} <a style="color:#e0442c;margin-left:4px" onclick="openDetail('a')">실패 보기</a></td><td>+6</td><td>${S.saved?'<span class="badge b-ok">저장됨</span>':'<a style="color:#3a6fd8" onclick="S.saved=true;render()">저장하기</a>'}</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';S.saved=true;go('msg-compose')">친구에게 광고 →</a></td></tr>`:''}
@@ -989,7 +989,7 @@ P['at-tpl']=()=>{
    ${S.ver==='b'?`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="S.cat='${catOf(t.id)}';S.tpl='${t.id}';S.step=1;go('at-send');render()">이 템플릿으로 보내기</button>`:has?`<button class="btn line sm" style="margin-top:10px;width:100%;color:#1d8a4e" onclick="rmTpl('${t.id}')">✓ 내 템플릿에 담김</button>`:`<button class="btn y sm" style="margin-top:10px;width:100%" onclick="addTpl('${t.id}')">+ 내 템플릿에 담기</button>`}</div></div>`}).join('')}</div>
   <div class="help" style="margin-top:14px">원하는 템플릿이 없나요? <a style="color:#3a6fd8" onclick="newTpl()">직접 만들기</a> · 비슷한 템플릿을 담은 뒤 고쳐서 검수 신청할 수도 있어요.</div>`;
  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">
- <div class="h1">템플릿</div><div class="desc" style="display:none">${S.ver==='b'?'검수가 끝난 템플릿은 고르면 바로 보낼 수 있어요.':tab==='mine'?'자주 보내는 알림을 담아두고 바로 보내세요.':'검수가 끝난 템플릿이에요. 담아두면 검수 없이 바로 보낼 수 있어요.'}</div>
+ <div class="h1">템플릿</div><div class="desc">앞으로 보낼 알림톡 문구를 미리 준비해두는 곳이에요. 검수가 끝난 템플릿을 찾아 담거나, 새로 써서 검수를 받을 수 있어요.</div>
  <div style="margin:22px 0 6px">${aiSearchHTML('tpl')}</div>
  ${tabs}${tab==='mine'?mineT:libT}</main></div>`;
 };
@@ -1188,9 +1188,9 @@ const MEMO={
  step1:['버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
  done:['실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 고객 파일 저장 (A안, 사장님이 선택)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
- list:['[AI 후보] 광고 문구 추천: 업종별 반응 상위 메시지(데이터 순위) vs AI 맞춤 추천 미정','하단에 내 채널 친구 수 · 알림톡으로 늘어난 친구 수 + 비슷한 업종 광고 문구 추천 → 메시지로 연결','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
+ list:['메뉴명 「보낸 알림톡」 = 발송 이력 (앞으로 보낼 문구는 템플릿 메뉴) — 「내 템플릿」과 이름 혼동 방지','[AI 후보] 광고 문구 추천: 업종별 반응 상위 메시지(데이터 순위) vs AI 맞춤 추천 미정','하단에 내 채널 친구 수 · 알림톡으로 늘어난 친구 수 + 비슷한 업종 광고 문구 추천 → 메시지로 연결','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
- tpl:['[AI] 맨 위에서 원하는 템플릿을 자연어로 적으면 검수 완료 템플릿 추천(담기), 없으면 AI 초안으로 새 템플릿 작성','검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
+ tpl:['역할 = 보낼 문구 준비 (찾아서 담기 + 새로 써서 검수 받기). 지금 보낼 걸 고르는 건 알림톡 보내기, 보낸 기록은 보낸 알림톡','[AI] 맨 위에서 원하는 템플릿을 자연어로 적으면 검수 완료 템플릿 추천(담기), 없으면 AI 초안으로 새 템플릿 작성','검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
  newtpl:['[AI] 초안 만들기: 보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 작성','[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
  report:['사장님 질문 순서: ① 잘 도착했나 ② 효과가 있었나 ③ 다음에 할 일','월별 추세·캐시는 "자세히 보기"로 접음, 발송 건별 결과 중심','버튼 클릭 수 집계 가능 여부 확인 필요','12/29 메시지 통계 개편과 상호 이동 연계'],
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
