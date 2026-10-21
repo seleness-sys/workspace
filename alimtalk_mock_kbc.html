@@ -164,6 +164,8 @@ table.tb{width:100%;border-collapse:collapse;background:#fff;font-size:13px}
 .bn.at{background:#fff6b3}
 /* modal / toast */
 .done{width:555px}
+.recv .v{background:none!important;padding:0!important;color:inherit!important}
+.recv .phonecap{display:none}
 .donebox{background:#fff;border-radius:12px;padding:36px;text-align:center}
 .donebox .ok{width:56px;height:56px;border-radius:50%;background:#fee500;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 18px}
 .donebox h3{font-size:24px;font-weight:700}
@@ -1007,9 +1009,15 @@ P['at-report']=()=>{
 };
 
 P['at-done']=()=>{const html=P['at-done0']();if(S.ver!=='b')return html;const d=document.createElement('div');d.innerHTML=html;const br=d.querySelector('.bridge'),done=d.querySelector('.done');if(br&&done){done.prepend(br);br.style.marginTop='0';br.style.marginBottom='16px'}return d.innerHTML};
-P['at-done0']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done">
- <div class="donebox"><div class="ok">✓</div><h3>${S.recur?'정기 발송을 등록했어요':(S.fromList==='직접 입력'?S.fileCnt:300)+'명에게 알림톡을 보냈어요'}</h3>${S.recur?`<p style="margin-bottom:6px">매월 25일 오전 10시 · ${findT(S.tpl||'t1').name} · ${S.fileCnt}명<br>첫 발송은 오늘 바로 나갔어요. 다음 발송 11월 25일</p>`:''}<p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
+function doneManualExtra(){
+ const t=findT(S.tpl||'t1'), nm=(S.rows&&S.rows[0]&&S.rows[0]['이름'])||'받은 분';
+ return `<div class="bridge saved" style="margin-top:16px"><h4>✓ 「${t.name}」 템플릿이 내 템플릿에 담겼어요</h4><p>다음에는 알림톡 보내기 첫 화면에서 바로 골라 보낼 수 있어요.</p><div class="acts"><button class="btn line sm" onclick="S.tplTab='mine';go('at-tpl');render()">내 템플릿 보기</button></div></div></div>
+ <div class="recv" style="flex:none"><div style="font-size:14px;font-weight:700;margin:0 0 10px;text-align:center">${nm}님이 받은 화면</div>${phone()}</div></div>`;
+}
+P['at-done0']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main"><div class="done" style="${S.fromList==='직접 입력'?'width:auto;max-width:960px':''}">
+ ${S.fromList==='직접 입력'?'<div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:320px">':''}<div class="donebox"><div class="ok">✓</div><h3>${S.recur?'정기 발송을 등록했어요':(S.fromList==='직접 입력'?S.fileCnt:300)+'명에게 알림톡을 보냈어요'}</h3>${S.recur?`<p style="margin-bottom:6px">매월 25일 오전 10시 · ${findT(S.tpl||'t1').name} · ${S.fileCnt}명<br>첫 발송은 오늘 바로 나갔어요. 다음 발송 11월 25일</p>`:''}<p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
   <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.rows=null;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
+ ${S.fromList==='직접 입력'?doneManualExtra():''}
  ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 보낸 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 고객 파일에 저장했어요</h4><p>메시지 &gt; 고객 파일에 <b>학부모명단_2610</b>으로 저장됐어요. 메시지 보내기에서 이 명단의 채널 친구 50명만 골라 보낼 수 있어요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">광고 메시지 보내기</button><button class="btn line sm" onclick="go('msg-file')">고객 파일 보기</button></div></div>`
  :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>이 명단을 고객 파일에 저장해 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
@@ -1312,6 +1320,7 @@ const DEEP={
  'at-step2':()=>Object.assign(S,{agreed:true,hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:false,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
  'at-done':()=>Object.assign(S,{agreed:true,hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:true,recvMode:'excel',uploaded:true,fromList:null,fileName:'학부모명단_2610.xlsx',fileCnt:300}),
  'at-biz':()=>{Object.assign(S,{biz:'none',waiting:false,bizNoticed:false,agreed:false,hasHistory:false,browse:false,step:0,tpl:null,sent:false});return 'at-send'},
+ 'at-done1':()=>Object.assign(S,{agreed:true,biz:'ok',hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:false,recvMode:'manual',rows:[{phone:'010-1234-5678','이름':'김민지'}],fileCnt:1,fileName:'직접 입력',fromList:'직접 입력'}),
  'at-quick':()=>Object.assign(S,{agreed:true,hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
  'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});return 'msg-compose'},
  'msg-target-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});S.msg.target='group';S.msg.group='학부모명단_2610';return 'msg-target'},
