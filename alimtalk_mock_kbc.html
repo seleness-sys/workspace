@@ -1009,13 +1009,21 @@ function newTpl(copyId,name,desc){
  if(desc){S.c.desc=desc;S.c.body=aiDraft(desc);S.c.name=aiName(desc);setTimeout(aiRun,400)}
  go('at-new');render();
 }
+const TCAT=[['회원','가입·이용권 만료 등'],['구매','결제·납부·청구'],['예약','예약·방문·상담'],['서비스이용','휴무·일정 변경·이용 안내'],['리포팅','성적·출결·이용 내역'],['배송','발송·배송'],['법적고지','약관·정책 변경'],['업무알림','업무 처리 결과'],['쿠폰/포인트','적립·소멸 안내'],['기타','']];
+const CATKW=[['쿠폰/포인트',['쿠폰','포인트','적립']],['배송',['배송','택배','출고']],['구매',['납부','청구','결제','수강료','관리비','입금','금액','영수']],['예약',['예약','방문','상담','진료','레슨']],['리포팅',['성적','출결','출석','리포트','내역','결과']],['회원',['가입','회원','만료','이용권']],['법적고지',['약관','개인정보','정책']],['서비스이용',['휴원','휴무','휴관','휴장','변경','취소','안내','일정']]];
+function autoCat(b){if(!b||b.trim().length<6)return null;const f=CATKW.find(([,ks])=>ks.some(k=>b.includes(k)));return f?f[0]:'기타'}
+function catHTML(){const c=S.c,ai=autoCat(c.body),cur=c.catOv||ai;
+ if(!cur)return `<div class="help" style="margin:0">문구를 쓰면 AI가 내용을 보고 알림 종류를 정해드려요. 검수 신청에 필요한 항목이에요.</div>`;
+ const d=(TCAT.find(x=>x[0]===cur)||[])[1];
+ if(c.catEdit)return `<div style="display:flex;gap:6px;flex-wrap:wrap">${TCAT.map(([k])=>`<span class="chip ${cur===k?'on':''}" onclick="S.c.catOv='${k}';S.c.catEdit=false;render()">${k}</span>`).join('')}</div>`;
+ return `<div class="filerow" style="background:#fafafa;border-color:#e5e5e5;display:flex;align-items:center;gap:8px"><b>${cur}</b>${d?`<span style="color:#888;font-size:13px">${d}</span>`:''}<span style="font-size:12px;color:#888">· ${c.catOv?'직접 변경함':'✨ 내용 보고 자동 선택'}</span><a style="margin-left:auto;color:#3a6fd8;font-size:13px;cursor:pointer" onclick="S.c.catEdit=true;render()">변경</a></div>`}
 function adHits(b){return ADW.filter(w=>b.includes(w))}
 function previewHTML(){
  const b=(S.c.body||'').replace(/[<>]/g,'');
  const body=b?b.replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>'):'<span style="color:#aaa">내용을 입력하면 여기에 보여요</span>';
  return `<div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>${S.c.btn!=='none'?`<div class="bt">${S.c.btnName||'버튼 이름'}${S.c.btn==='link'?' ↗':''}</div>`:''}<div class="chadd"><span>대호 채널</span><b>+ 채널 추가</b></div></div>`;
 }
-function onBody(el){S.c.body=el.value;if(S.c.ai){S.c.ai=null;const b=document.getElementById('aibox');if(b)b.innerHTML=aiBoxHTML()}document.getElementById('cnt').textContent=el.value.length+'/1000자';document.getElementById('pv').innerHTML=previewHTML();drawWarn()}
+function onBody(el){S.c.body=el.value;{const ac=document.getElementById('autocat');if(ac)ac.innerHTML=catHTML()}if(S.c.ai){S.c.ai=null;const b=document.getElementById('aibox');if(b)b.innerHTML=aiBoxHTML()}document.getElementById('cnt').textContent=el.value.length+'/1000자';document.getElementById('pv').innerHTML=previewHTML();drawWarn()}
 function drawWarn(){
  const h=adHits(S.c.body), w=document.getElementById('adwarn'); if(!w)return;
  w.innerHTML=(h.length&&!S.c.ai)?`<div class="adw"><b>광고성 표현이 있어요: ${h.map(x=>`「${x}」`).join(' ')}</b><br>알림톡은 정보성 내용만 보낼 수 있어서 검수에서 반려돼요. 이 내용은 채널 친구에게 <a style="color:#3a6fd8" onclick="go('msg-new')">메시지 광고로 보내기 →</a></div>`:'';
@@ -1078,7 +1086,6 @@ P['at-new']=()=>{
  }
  // step 2
  body=`${c.from?`<div class="fsec"><div class="filerow" style="background:#fafafa;border-color:#e5e5e5"><div style="font-size:13px">「<b>${c.from}</b>」 세트를 복사했어요. 필요한 부분만 고치세요.</div></div></div>`:''}
- <div class="fsec"><div class="lab">어떤 알림인가요? <span style="font-weight:400;color:#888;font-size:13px">선택 · 검수에 참고돼요</span></div><div class="tabs" style="margin:0">${WHEN.map(w=>`<span class="chip ${c.when===w?'on':''}" onclick="S.c.when='${w}';render()">${w}</span>`).join('')}</div></div>
  <div class="fsec"><div class="lab">템플릿 이름<span class="req">*</span></div><input class="input" style="width:100%" value="${c.name}" placeholder="예: 수업 후 학습 안내" oninput="S.c.name=this.value;drawWarn()"><div class="help">받는 사람에게는 보이지 않아요.</div></div>
  <div class="fsec"><div class="aisearch" style="margin:0"><div class="ais-top"><b>✨ AI로 초안 만들기</b><span>보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 바꿔드려요</span></div>
   <div class="ais-row"><input id="aidesc" class="input" value="${(c.desc||'').replace(/"/g,'&quot;')}" placeholder="예: 다음 주 월~수 휴원한다고 학부모님께 알리기" onkeydown="if(event.key==='Enter')aiWrite()"><button class="btn y" onclick="aiWrite()">초안 만들기</button></div>
@@ -1097,7 +1104,8 @@ P['at-new']=()=>{
     <span class="radio ${c.linkMode==='fixed'?'on':''}" onclick="S.c.linkMode='fixed';render()"><i></i>고정 주소</span></div></div>
    ${c.linkMode==='fixed'?`<div class="brow"><span class="bl"></span><input class="input" style="flex:1" placeholder="https://"></div><div class="help">모든 알림에 같은 주소가 들어가요. 주소를 바꾸려면 템플릿을 다시 검수받아야 해요.</div>`
    :`<div class="brow"><span class="bl"></span><div class="input ro" style="flex:1">https:// <code class="vc">#{버튼링크}</code></div></div><div class="help">알림톡을 보낼 때마다 링크를 넣어요. 주소가 바뀌어도 다시 검수받지 않아도 되고, 받는 분마다 다른 링크(결제·예약 확인 등)도 넣을 수 있어요.</div>`}
-  </div>`:c.btn==='chat'?`<div class="help">버튼을 누르면 우리 채널 1:1 채팅방이 열려요. 링크가 없는 가게에 추천해요.</div>`:c.btn==='ch'?`<div class="help">버튼을 누르면 우리 채널을 친구로 추가해요.</div>`:''}</div>`;
+  </div>`:c.btn==='chat'?`<div class="help">버튼을 누르면 우리 채널 1:1 채팅방이 열려요. 링크가 없는 가게에 추천해요.</div>`:c.btn==='ch'?`<div class="help">버튼을 누르면 우리 채널을 친구로 추가해요.</div>`:''}</div>
+ <div class="fsec"><div class="lab">알림 종류</div><div id="autocat">${catHTML()}</div></div>`;
  const ok=c.body.trim().length>5&&c.name.trim()&&!adHits(c.body).length;
  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">${head}
  <div class="h1">알림톡 문구 작성</div><div class="desc">직접 쓰고 AI 조언을 받아 다듬은 뒤 검수를 신청하세요. 승인되면 바로 보낼 수 있어요.</div>${stepper}
@@ -1191,7 +1199,7 @@ const MEMO={
  list:['메뉴명 「보낸 알림톡」 = 발송 이력 (앞으로 보낼 문구는 템플릿 메뉴) — 「내 템플릿」과 이름 혼동 방지','[AI 후보] 광고 문구 추천: 업종별 반응 상위 메시지(데이터 순위) vs AI 맞춤 추천 미정','하단에 내 채널 친구 수 · 알림톡으로 늘어난 친구 수 + 비슷한 업종 광고 문구 추천 → 메시지로 연결','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·고객 파일 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['역할 = 보낼 문구 준비 (찾아서 담기 + 새로 써서 검수 받기). 지금 보낼 걸 고르는 건 알림톡 보내기, 보낸 기록은 보낸 알림톡','[AI] 맨 위에서 원하는 템플릿을 자연어로 적으면 검수 완료 템플릿 추천(담기), 없으면 AI 초안으로 새 템플릿 작성','검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
- newtpl:['[AI] 초안 만들기: 보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 작성','[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
+ newtpl:['[AI] 알림 종류 자동 지정: 문구를 보고 카카오 템플릿 카테고리(회원·구매·예약·서비스이용·리포팅·배송 등)를 AI가 정함, 틀리면 [변경] — 사장님이 먼저 고르지 않음','[AI] 초안 만들기: 보내고 싶은 내용을 말하듯 적으면 템플릿 문구로 작성','[AI] 검수 전 점검(광고 표현·자리표시·반려 위험 지적) + 문구 수정 제안(다듬은 문구) — 법무 확인 필요','세트에 없으면 상황 고르기 없이 바로 문구 작성','버튼 링크는 "보낼 때 입력"(#{버튼링크}) 추천: 주소가 바뀌어도 재검수 불필요, 받는 분별 링크 가능','법무 2차 검토 필요: 카카오(AI) 문구 관여 시 수탁자 논리'],
  report:['사장님 질문 순서: ① 잘 도착했나 ② 효과가 있었나 ③ 다음에 할 일','월별 추세·캐시는 "자세히 보기"로 접음, 발송 건별 결과 중심','버튼 클릭 수 집계 가능 여부 확인 필요','12/29 메시지 통계 개편과 상호 이동 연계'],
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
  compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
