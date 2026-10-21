@@ -853,7 +853,36 @@ function bizBar(){
  if(S.biz==='none')return `<div class="bizbar"><div><b>보내려면 비즈인증이 필요해요.</b> 신청하면 보통 1~3일 걸려요. 그동안 미리 작성해 둘 수 있어요.</div><span class="sp"></span><button class="btn y sm" onclick="bizApply()">비즈인증 신청하기</button></div>`;
  return `<div class="bizbar rv"><div><b>비즈인증 심사 중이에요.</b> 보통 1~3일 걸려요. ${S.waiting?`작성해 둔 「${(findT(S.tpl)||{}).name||'알림'}」 알림은 승인되면 바로 보낼 수 있게 알려드려요.`:'그동안 미리 작성해 둘 수 있어요.'}</div><span class="sp"></span>${S.waiting?`<a style="font-size:12px;color:#3a6fd8;white-space:nowrap;cursor:pointer" onclick="S.biz='ok';S.bizJustOk=true;render()">(가상) 승인 알림 받기 ›</a>`:''}</div>`;
 }
-function bizApply(){S.biz='review';S.bizNoticed=true;render()}
+function bizApply(){S.bizForm=true;S.bizStep=1;S.bizDoc=S.bizDoc||'brn';render()}
+function bizSubmit(){S.biz='review';S.bizNoticed=true;S.bizForm=false;render()}
+function bizFormHTML(){
+ const d=S.bizDoc, st=S.bizStep||1, docName=d==='uid'?'고유번호증':'사업자등록증';
+ const opt=(k,t,sub)=>`<div onclick="S.bizDoc='${k}';render()" style="display:flex;gap:12px;align-items:center;border:1.5px solid ${d===k?'#191919':'#e3e3e3'};background:${d===k?'#fafafa':'#fff'};border-radius:10px;padding:13px 16px;margin-bottom:8px;cursor:pointer"><span style="width:18px;height:18px;border-radius:50%;border:${d===k?'5px solid #191919':'1.5px solid #ccc'};flex:none"></span><div><b style="font-size:14px">${t}</b><div style="font-size:12px;color:#888">${sub}</div></div></div>`;
+ const steps=['서류 확인','번호 입력 · 서류 올리기','심사 (보통 1~3일)','완료 알림 → 알림톡 보내기'];
+ const cur=st===3?3:st;
+ const left=`<div style="width:200px;flex:none;border-right:1px solid #eee;padding:26px 22px;background:#fafafa"><div style="font-weight:700;font-size:15px;margin-bottom:18px">비즈인증 신청</div>${steps.map((t,i)=>`<div style="display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:13px;color:${i+1===cur?'#191919':i+1<cur?'#888':'#bbb'};font-weight:${i+1===cur?700:400}"><span style="width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;background:${i+1<cur?'#191919':i+1===cur?'#fee500':'#eee'};color:${i+1<cur?'#fff':'#191919'}">${i+1<cur?'✓':i+1}</span>${t}</div>`).join('')}</div>`;
+ let body, btns;
+ if(st===1){
+  body=`<h3 style="margin:0 0 6px">어떤 서류가 있나요?</h3><div style="font-size:13px;color:#666;margin-bottom:16px">받는 분이 믿고 볼 수 있도록, 알림톡은 비즈인증을 마친 채널만 보낼 수 있어요.</div>
+  ${opt('brn','사업자등록증','학원·매장·병원·회사 등 사업자')}${opt('uid','고유번호증','교회·성당·사찰, 노조·협회·동호회 등 단체 (세무서 발급)')}${opt('none','둘 다 없어요','채널 친구에게는 메시지 보내기로 안내를 보낼 수 있어요')}`;
+  btns=d==='none'?`<button class="btn line" onclick="S.bizForm=false;render()">취소</button><button class="btn y" onclick="S.bizForm=false;go('msg-new');render()">메시지 보내기로 가기</button>`:`<button class="btn line" onclick="S.bizForm=false;render()">취소</button><button class="btn y" onclick="S.bizStep=2;render()">다음</button>`;
+ }else if(st===2){
+  body=`<h3 style="margin:0 0 16px">${docName} 정보를 입력해 주세요</h3>
+  <div style="font-size:13px;font-weight:700;margin-bottom:6px">${d==='uid'?'고유번호':'사업자등록번호'}</div><input class="input" style="width:100%" placeholder="숫자 10자리" value="123-45-67890">
+  <div style="font-size:13px;font-weight:700;margin:16px 0 6px">대표자명</div><input class="input" style="width:100%" value="김대호">
+  <div style="font-size:13px;font-weight:700;margin:16px 0 6px">${docName} 사본</div><div style="display:flex;align-items:center;gap:10px;border:1px dashed #ccc;border-radius:8px;padding:12px 14px;font-size:13px;color:#555"><span>📎 ${docName}_대호학원.pdf</span><a style="margin-left:auto;color:#3a6fd8;font-size:12px">다시 올리기</a></div>
+  <div class="help" style="margin-top:8px">JPG·PNG·PDF, 10MB 이하. 번호와 서류 내용이 같아야 해요.</div>`;
+  btns=`<button class="btn line" onclick="S.bizStep=1;render()">이전</button><button class="btn y" onclick="S.bizStep=3;render()">심사 신청하기</button>`;
+ }else{
+  body=`<div style="text-align:center;padding:20px 0 6px"><div style="width:52px;height:52px;border-radius:50%;background:#fee500;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:22px">✓</div><h3 style="margin:0 0 10px">비즈인증 심사를 신청했어요</h3><div style="font-size:14px;color:#555;line-height:1.7">보통 <b>1~3일</b> 안에 결과가 나와요.<br>승인되면 카카오톡·파트너센터 알림으로 알려드려요.<br>그동안 알림톡을 미리 작성해 둘 수 있어요.</div></div>`;
+  btns=`<button class="btn y" onclick="bizSubmit()">${S.step>=1?'계속 작성하기':'확인'}</button>`;
+ }
+ return `<div class="ovl"><div class="cmodal" style="width:780px;padding:0;display:flex;overflow:hidden">${left}
+  <div style="flex:1;padding:26px 30px 24px;position:relative;display:flex;flex-direction:column"><a style="position:absolute;right:22px;top:16px;font-size:20px;color:#999;cursor:pointer" onclick="${st===3?'bizSubmit()':'S.bizForm=false;render()'}">✕</a>
+  <div style="flex:1">${body}</div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px">${btns}</div></div>
+ </div></div>`;
+}
 function bizNoticeHTML(){
  return `<div class="ovl"><div class="cmodal" style="width:560px">
   <div style="display:flex;justify-content:space-between;align-items:flex-start"><div></div><a style="font-size:20px;color:#999;cursor:pointer" onclick="S.step=0;S.tpl=null;render()">✕</a></div>
@@ -1242,7 +1271,7 @@ P['msg-file']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-file')}<main cl
 
 const MEMO={
  home:['LNB 알림톡 독립 메뉴 (메시지 ↔ 소식·쿠폰 사이, 10/8 결정)','홈 퀵카드·배너를 보조 진입점으로 활용','써본 사장님은 퀵카드가 "최근 보낸 알림"으로 전환'],
- gallery:['[비즈인증 전] 맨 위에 "보내려면 비즈인증 필요 · 1~3일" 배너 → 다 써놓고 막히는 일 방지. 템플릿 고르면 한 번 더 팝업(신청하고 작성 / 먼저 작성만 / 급하면 메시지)','[비즈인증 전] 발송 버튼 = "저장하고 인증되면 보내기" → 승인 알림에서 [이어서 보내기]로 바로 발송','AI 템플릿 찾기는 보내기 첫 화면엔 두지 않고 템플릿 메뉴에만 둠 (보내기는 예시 보고 고르는 흐름 유지)','[AI] 우리 업종 추천: 채널 카테고리가 애매하면 채널명·소개로 추천 (화면엔 AI 표시 없음)','내 템플릿이 있으면 담아둔 템플릿부터, 없으면 예시 갤러리부터 노출','보낸 템플릿은 내 템플릿에 자동으로 담김','빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
+ gallery:['[비즈인증 전] 맨 위에 "보내려면 비즈인증 필요 · 1~3일" 배너 → 다 써놓고 막히는 일 방지. 템플릿 고르면 한 번 더 팝업(신청하고 작성 / 먼저 작성만 / 급하면 메시지)','[비즈인증 전] [비즈인증 신청하기] → 신청 팝업 3단계(① 서류 확인: 사업자등록증/고유번호증/둘 다 없음→메시지 안내 ② 번호·대표자·사본 업로드 ③ 신청 완료) — 기존 채널 비즈니스 인증 절차 재사용 전제, 실제 입력 항목은 현행 인증 화면 기준으로 맞출 것','[비즈인증 전] 발송 버튼 = "저장하고 인증되면 보내기" → 승인 알림에서 [이어서 보내기]로 바로 발송','AI 템플릿 찾기는 보내기 첫 화면엔 두지 않고 템플릿 메뉴에만 둠 (보내기는 예시 보고 고르는 흐름 유지)','[AI] 우리 업종 추천: 채널 카테고리가 애매하면 채널명·소개로 추천 (화면엔 AI 표시 없음)','내 템플릿이 있으면 담아둔 템플릿부터, 없으면 예시 갤러리부터 노출','보낸 템플릿은 내 템플릿에 자동으로 담김','빈 업로드 칸 대신 "보낼 수 있는 알림" 예시부터 노출 → 첫 발송 막막함 해소','우리 업종 기본값 = 채널 카테고리 규칙 + AI 보정, 사장님이 변경 가능','인기 순위는 예시 (실제는 업종별 발송량 기준 산출 필요)','세트에 없으면 "직접 만들기"로 바로 이동'],
  quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
  step1:['처음 보내는 사장님은 템플릿을 고르는 순간 이용 안내 동의 팝업 (최초 1회, 끝까지 읽어야 체크 가능, 동의 일시·버전 저장) — lite 프로토타입 S2b 차용, 3개 항목 + 책임·제재 하단 고지','동의 3번 "명단은 보관하지 않아요" ↔ 다시 보내기·최근 알림톡 명단 불러오기는 명단 보관 전제 → 둘 중 하나 정리 필요 (보관하면 문구 수정, 안 하면 해당 기능 제외)','버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 팝업에서 최근 알림톡 명단 + 고객 파일 탭 (C안 / A안: 고객 파일만, B안: 최근 알림톡 명단만)','광고용으로 직접 올린 고객 파일은 불러오지 않음 (알림톡 출처 명단만)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
@@ -1289,7 +1318,7 @@ const DEEP={
  'msg-file-saved':()=>{S.saved=true;return 'msg-file'},
  'at-consent':()=>{Object.assign(S,{agreed:false,hasHistory:false,browse:false,tpl:'t1',cat:'교육',step:1,sent:false,recvMode:'manual',uploaded:false});return 'at-send'}
 };
-function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){const c=document.getElementById('sc2'),nb=S.biz&&S.biz!=='ok';a.className=(S.hasHistory||nb)?'':'on';b.className=S.hasHistory&&!nb?'on':'';if(c)c.className=nb?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn();if(r==='at-send'&&S.biz&&S.biz!=='ok'&&!S.bizNoticed&&S.step>=1&&!S.sent){document.getElementById('app').insertAdjacentHTML('beforeend',bizNoticeHTML())}else if(needConsent(r)){document.getElementById('app').insertAdjacentHTML('beforeend',consentHTML());const t=document.getElementById('terms');if(t)termsScroll(t)}}
+function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){const c=document.getElementById('sc2'),nb=S.biz&&S.biz!=='ok';a.className=(S.hasHistory||nb)?'':'on';b.className=S.hasHistory&&!nb?'on':'';if(c)c.className=nb?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn();if(S.bizForm){document.getElementById('app').insertAdjacentHTML('beforeend',bizFormHTML())}else if(r==='at-send'&&S.biz&&S.biz!=='ok'&&!S.bizNoticed&&S.step>=1&&!S.sent){document.getElementById('app').insertAdjacentHTML('beforeend',bizNoticeHTML())}else if(needConsent(r)){document.getElementById('app').insertAdjacentHTML('beforeend',consentHTML());const t=document.getElementById('terms');if(t)termsScroll(t)}}
 render();syncVer();
 </script>
 </body></html>
