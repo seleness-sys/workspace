@@ -1322,7 +1322,7 @@ const DEEP={
  'at-biz':()=>{Object.assign(S,{biz:'none',waiting:false,bizNoticed:false,agreed:false,hasHistory:false,browse:false,step:0,tpl:null,sent:false});return 'at-send'},
  'at-ai-find':()=>{const q='이번 달 수강료 납부 안내 보내고 싶어';Object.assign(S,{agreed:true,aiq:q,aiRes:aiFind(q),tplTab:'mine'});return 'at-tpl'},
  'at-ai-new':()=>{S.agreed=true;S.c={step:2,when:null,to:null,name:'겨울방학 특강 안내',body:'#{이름} 학부모님, 대호학원입니다.\n겨울방학 특강을 12월 22일부터 시작합니다.\n이번 주까지 등록하면 수강료 10% 할인!\n\n문의는 채널 채팅으로 남겨주세요.',btn:'none',btnName:'',linkMode:'send',submitted:false};S.c.ai=aiAnalyze(S.c.body);return 'at-new'},
- 'at-done1':()=>Object.assign(S,{agreed:true,biz:'ok',hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:false,recvMode:'manual',rows:[{phone:'010-1234-5678','이름':'김민지'}],fileCnt:1,fileName:'직접 입력',fromList:'직접 입력'}),
+ 'at-done1':()=>Object.assign(S,{myTpl:['t1'],justAdded:'t1',agreed:true,biz:'ok',hasHistory:false,tpl:'t1',cat:'교육',step:2,sent:true,failOpen:false,recvMode:'manual',rows:[{phone:'010-1234-5678','이름':'김민지'}],fileCnt:1,fileName:'직접 입력',fromList:'직접 입력'}),
  'at-quick':()=>Object.assign(S,{agreed:true,hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
  'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});return 'msg-compose'},
  'msg-target-list':()=>{Object.assign(S,{saved:true,msgGroup:'학부모명단_2610'});S.msg.target='group';S.msg.group='학부모명단_2610';return 'msg-target'},
