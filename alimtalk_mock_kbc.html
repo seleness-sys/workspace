@@ -604,7 +604,7 @@ function subAt(on){
 }
 function subMsg(on){
  const a=(h,l)=>`<a class="${on===h?'on':''}" onclick="go('${h}')">${l}</a>`;
- return `<div class="sub"><h2>메시지</h2>${a('msg-new','메시지 보내기')}${a('msg-list','내 메시지')}<a>메시지 활용예시</a><a>웰컴메시지</a>${a('msg-file','친구 그룹')}<a>고객 파일</a>
+ return `<div class="sub"><h2>메시지</h2>${a('msg-new','메시지 보내기')}${a('msg-list','내 메시지')}<a>메시지 활용예시</a><a>웰컴메시지</a>${a('msg-file','친구 그룹')}${a('msg-cfile','고객 파일')}
  <div class="sep"></div><div class="xlink">예약·납부 등 정보성 안내는<br><a onclick="go('at-send')">알림톡 보내기 →</a></div></div>`;
 }
 
@@ -1273,6 +1273,16 @@ P['msg-file']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-file')}<main cl
  </table>
  <div style="margin-top:14px"><button class="btn line sm">선택 삭제</button></div>
 </main></div>`;
+P['msg-cfile']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-cfile')}<main class="main">
+ <div style="display:flex;align-items:center"><div class="h1" style="margin:0">고객파일 목록</div><span style="margin-left:auto"></span><button class="btn line" style="margin-right:6px">샘플파일 다운로드</button><button class="btn y">고객파일 업로드</button></div>
+ <div class="infobox" style="margin-top:26px;background:#f3f9fa;border:1px solid #cfe3e6"><b>고객파일, 왜 업로드 해야 하나요?</b><br>· 성별, 연령, 지역, 구매금액 등 사이트에서 보유하고 있는 고객 정보를 조합하여 더 정교한 친구그룹을 만들어보세요!<br>· 메시지의 반응 및 타겟팅 효과는 높아지고 비용은 줄어들어 효율적인 마케팅이 가능합니다. <u style="color:#3a6fd8">고객파일 입력 가이드</u><br>· 고객파일을 매번 업로드하는 것이 번거로우시다면 API 연동을 통해 고객정보를 항상 최신으로 유지하세요. <u style="color:#3a6fd8">API 연동 가이드</u><br>· 고객파일은 최대 30개까지만 업로드 가능합니다. 사용하지 않는 고객파일은 미리 삭제해주시는 것을 권장합니다.</div>
+ <div style="margin:26px 0 10px;font-size:16px;font-weight:700">전체 <span style="color:#3ba7b5">1</span>개</div>
+ <table class="tb"><tr><th style="width:36px"><input type="checkbox"></th><th>파일 ID</th><th>파일명</th><th>친구수 / 등록수</th><th>연결된 친구그룹 수</th><th>마지막 수정일시<br>최초 등록일시</th><th>상태</th></tr>
+ <tr><td><input type="checkbox"></td><td>38120</td><td>VIP고객_8월</td><td>32 / 90</td><td>1</td><td style="font-size:12px;color:#666">26.08.04 11:02<br>26.08.04 11:02</td><td>등록 완료</td></tr>
+ </table>
+ <div style="margin-top:14px"><button class="btn line sm">선택 삭제</button></div>
+ <div class="help" style="margin-top:22px">알림톡 명단은 고객파일을 거치지 않아요. 친구 그룹 › 신규그룹 만들기에서 등록 수단 "알림톡 수신자"로 바로 친구그룹을 만들어요.</div>
+</main></div>`;
 function grpModalHTML(){
  const m=S.grpModal||{}, sel=m.src||'at', fromAt=!!m.at;
  const r=(k,l,extra)=>`<div style="margin:10px 0"><label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer" onclick="S.grpModal.src='${k}';render()"><input type="radio" ${sel===k?'checked':''}> ${l}</label>${sel===k&&extra?`<div style="margin:8px 0 0 24px">${extra}</div>`:''}</div>`;
@@ -1307,12 +1317,13 @@ const MEMO={
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
  compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
  target:['현행 발송 설정 재현 (전체 15원 / 타겟 20원)','친구그룹 목록에 알림톡 명단(친구 N명) 바로 노출','알림톡 명단은 친구그룹으로 바로 저장 (현행 고객 파일 → 친구그룹 수동 생성 단계 생략)'],
+ cfile:['현행 고객파일 목록 그대로 (파일 ID, 친구수 / 등록수, 연결된 친구그룹 수, 일시, 상태)','알림톡 명단은 고객파일로 저장하지 않음 → 고객파일은 사장님이 광고 대상용으로 직접 올리는 현행 용도만 유지','고객파일의 목적 = 친구그룹 생성 재료 (10/27 회의) → 알림톡은 친구그룹 등록 수단으로 바로 연결'],
  file:['현행 친구그룹 목록 형식 그대로 (친구수 / 등록수, 업데이트·생성일시, 상태)','현행 신규그룹 만들기 등록 수단에 "알림톡 수신자" 추가 — 기존 "메시지 수신자"(최근 1개월 메시지 수신자로 그룹 생성)와 같은 방식','26-10-15부터 친구그룹 타게팅은 마케팅 목적 개인정보 수집·이용 동의 + 맞춤형 광고 허용 둘 다 한 만 14세 이상만 발송 → 친구수보다 실제 발송 대상이 적을 수 있음']
 };
 function memoKey(r){
  if(r==='home')return'home';
  if(r==='at-send'){if(S.sent)return'done';if(S.step===0)return(S.hasHistory&&!S.browse)?'quick':'gallery';return S.step===1?'step1':'step2'}
- return {'at-list':'list','at-detail':'detail','at-tpl':'tpl','at-new':'newtpl','at-report':'report','msg-new':'msgnew','msg-compose':'compose','msg-target':'target','msg-file':'file'}[r];
+ return {'at-list':'list','at-detail':'detail','at-tpl':'tpl','at-new':'newtpl','at-report':'report','msg-new':'msgnew','msg-compose':'compose','msg-target':'target','msg-file':'file','msg-cfile':'cfile'}[r];
 }
 function memoToggle(){S.memoOpen=!S.memoOpen;addMemo()}
 const MEMO_VER={a:{gallery:'[A안] 매달 보내는 알림(수강료·성적표·관리비 등) 앞 배치 + "매달 보내는 알림" 표시',quick:'[A안] 지난달 발송 리마인드 → 이번 달도 보내기(명단·내용 그대로)'},
