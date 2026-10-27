@@ -573,7 +573,7 @@ const TPL={
 const SC_ORDER=['tU1','tR1','tR2','tR3','t1','t4','t5','t11','t2','t6','t7','t10','t9','t8','t12','t13','t14','t15','t3'];
 const POPULAR=['t1','t2','t7','tR1'];
 const CAT_EMOJI={'단체·관리':'🏢','노동조합':'🤝','음식점':'🍽️','병원·의원':'🏥','뷰티':'💇','운동·레저':'🏋️','숙박':'🏨','소매·배송':'📦'};
-const VARS={'이름':'엑셀 B열 (이름)','조합명':'카카오 노동조합','월':'10','금액':'엑셀 C열 (금액)','기한':'10월 25일','날짜':'10월 18일(토)','시간':'오후 2시','장소':'판교 아지트 3층 대회의실','가게명':'카카오 노동조합','행사명':'신규 조합원 교육','병원명':'카카오 노동조합','일시':'10월 20일 19:00','인원':'4','시각':'15:02','픽업시간':'12시 30분','만료일':'10월 31일','상품':'사과 5kg','송장번호':'6789-1234-5555','기간':'10월 3일~5일','객실':'201호'};
+const VARS={'이름':'엑셀 B열 (이름)','조합명':'카카오노조','월':'10','금액':'엑셀 C열 (금액)','기한':'10월 25일','날짜':'10월 18일(토)','시간':'오후 2시','장소':'판교 아지트 3층 대회의실','가게명':'카카오노조','행사명':'신규 조합원 교육','병원명':'카카오노조','일시':'10월 20일 19:00','인원':'4','시각':'15:02','픽업시간':'12시 30분','만료일':'10월 31일','상품':'사과 5kg','송장번호':'6789-1234-5555','기간':'10월 3일~5일','객실':'201호'};
 const findT=id=>Object.values(TPL).flat().find(x=>x.id===id);
 const catOf=id=>Object.keys(TPL).find(c=>TPL[c].some(x=>x.id===id));
 const route=()=>location.hash.slice(1)||'home';
@@ -584,7 +584,7 @@ const go=h=>{location.hash=h};
 function fullLnb(on){
  const it=(k,label,h,extra='')=>`<a class="item ${on===h?'on':''}" onclick="go('${h}')">${ico(k)}<span>${label}</span>${extra}</a>`;
  return `<aside class="lnb">
-  <div class="ch"><span class="avatar"></span>카카오 노동조합<span style="margin-left:auto;color:#999">›</span></div>
+  <div class="ch"><span class="avatar"></span>카카오노조<span style="margin-left:auto;color:#999">›</span></div>
   ${it('home','홈','home')}${it('ch','채널','-')}${it('chat','채팅','-','<span class="cnt35">35</span><span class="tagblue">업데이트</span>')}
   ${it('msg','메시지','msg-new')}
   ${it('at','알림톡','at-send','<span class="tagblue">NEW</span>')}
@@ -617,11 +617,11 @@ function phone(){
   body=t.body.replace(/#\{(.+?)\}/g,(m,k)=>{const v=VARS[k]||m;const mr=(S.recvMode==='manual'&&S.rows&&S.rows[0])?S.rows[0][k]:null;const sample=mr||{'이름':'김민지','금액':'280,000'}[k];return `<span class="v">${sample||(/엑셀/.test(v)?m:v)}</span>`});
  }
  return `<div><div class="phone"><div class="screen">
-  <div class="top">카카오 노동조합</div>
-  <div class="msg"><span class="avatar"></span><div><div class="who">카카오 노동조합</div>
+  <div class="top">카카오노조</div>
+  <div class="msg"><span class="avatar"></span><div><div class="who">카카오노조</div>
    <div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>
    ${t&&t.btn?`<div class="bt">${t.btn}</div>`:''}
-   ${S.ver==='b'&&S.chBoost!==false?`<div class="chboost">+ 채널 추가하고 소식 받기</div>`:`<div class="chadd"><span>카카오 노동조합 채널</span><b>+ 채널 추가</b></div>`}</div>
+   ${S.ver==='b'&&S.chBoost!==false?`<div class="chboost">+ 채널 추가하고 소식 받기</div>`:`<div class="chadd"><span>카카오노조 채널</span><b>+ 채널 추가</b></div>`}</div>
   </div></div>
  </div></div><div class="phonecap">받는 사람 화면 미리보기 (첫 번째 행 기준)</div></div>`;
 }
@@ -631,7 +631,7 @@ const P={};
 P.home=()=>`<div class="wrap">${fullLnb('home')}<main class="main home">
  <div class="hero">최근 3주 동안 소식이 없어요.<br><span>고객에게 새로운 소식을 전해보세요.</span></div>
  <div class="qcards">
-  <div class="qc"><div style="display:flex;gap:10px;align-items:center"><span class="avatar"></span><strong>카카오 노동조합</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;color:#666">비즈월렛<u style="color:#191919">연결하기 ⌄</u></div></div>
+  <div class="qc"><div style="display:flex;gap:10px;align-items:center"><span class="avatar"></span><strong>카카오노조</strong></div><div style="display:flex;justify-content:space-between;font-size:14px;color:#666">비즈월렛<u style="color:#191919">연결하기 ⌄</u></div></div>
   <div class="qc" onclick="go('msg-new')">${ico('msg')}<div><strong>메시지 보내기</strong><span>강력한 마케팅 도구</span></div></div>
   ${S.hasHistory?`<div class="qc at" onclick="again(0)">${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">최근: 조합비 납부 안내</span></div></div>`:`<div class="qc at" onclick="go('at-send')"><span class="tagblue" style="position:absolute;top:18px;right:18px;margin:0">NEW</span>${ico('at','keep')}<div><strong>알림톡 보내기</strong><span style="color:#777">예약·납부 안내를 카톡으로</span></div></div>`}
   <div class="qc">${ico('news')}<div><strong>소식 올리기</strong><span>방문자를 위한 공지</span></div></div>
@@ -815,13 +815,13 @@ P['at-gallery']=()=>{
   <div class="scgrid">${my.map(t=>card(t)).join('')}<div class="sc addc" style="min-height:0" onclick="S.tplTab='lib';go('at-tpl');render()"><div class="plus">+</div><b>템플릿 더 가져오기</b><span>업종별 검수 완료 템플릿</span></div></div>
   <div class="secT" style="margin-top:44px">다른 알림 둘러보기<small>${mine} 알림 세트 · 보낸 뒤 내 템플릿에 자동으로 담겨요</small></div>`:'';
   inner=my.length?myTop+`<div class="scgrid">${TPL[mine].filter(t=>t.st==='ok'&&!myIds().includes(t.id)).map(t=>card(t)).join('')}<div class="sc addc" onclick="newTpl()"><div class="plus">✏️</div><b>우리 업종이 없어요</b><span>직접 써서 검수 받기</span></div></div>${nogo}`:`<div class="hero2">
-   <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 카카오 노동조합 채널 · ${mine} <span style="color:#999;font-weight:400">비즈인증 업종</span></div>
+   <div class="hl"><div class="tag">${CAT_EMOJI[mine]} 카카오노조 채널 · ${mine} <span style="color:#999;font-weight:400">비즈인증 업종</span></div>
     <div class="big">${S.ver==='b'?'알림톡 한 번으로<br><em>단골 손님</em>을 만드세요':'이런 알림을<br><em>카톡으로</em> 보낼 수 있어요'}</div>
     ${S.ver==='b'?`<div class="bflow"><div><i>1</i>알림톡 보내기</div><span>→</span><div><i>2</i>손님이 [채널 추가]</div><span>→</span><div><i>3</i>친구에게 이벤트·할인 메시지</div></div>`:''}
-    <p>${S.ver==='b'?'예약·납부 안내를 받은 손님이 [채널 추가]를 누르면<br>우리 채널 친구가 되고, 다음엔 광고도 보낼 수 있어요.':'손님 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 다음 달에 <b>다시 보내기</b>로 바로 보낼 수 있어요.'}</p>
+    <p>${S.ver==='b'?'예약·납부 안내를 받은 손님이 [채널 추가]를 누르면<br>우리 채널 친구가 되고, 다음엔 광고도 보낼 수 있어요.':'조합원 휴대폰 번호만 있으면 돼요.<br>매달 보내는 안내는 다음 달에 <b>다시 보내기</b>로 바로 보낼 수 있어요.'}</p>
     </div>
    <div class="hr">${mt.slice(0,3).map(t=>`<div class="hb" onclick="S.tpl='${t.id}';S.cat='${mine}';S.step=1;render()">
-     <div class="who"><span class="avatar" style="width:22px;height:22px"></span>카카오 노동조합</div>
+     <div class="who"><span class="avatar" style="width:22px;height:22px"></span>카카오노조</div>
      <div class="bubble mini"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
      <div class="hbname">${t.when}${S.ver!=='b'&&t.rec?' · 매달':''}<br><b>${t.name}</b></div><div class="go">이걸로 보내기 ›</div></div>`).join('')}</div>
   </div>
@@ -837,7 +837,7 @@ P['at-gallery']=()=>{
  }
  return `<div class="wrap">${rail('at')}${subAt('at-send')}<main class="main">
  ${S.hasHistory&&S.ver!=='b'?`<div class="crumb"><a onclick="S.browse=false;render()">‹ 최근 보낸 알림</a></div>`:''}${bizBar()}<div class="h1">${S.ver!=='b'&&myIds().length&&S.gcat==='전체'?'어떤 알림을 보낼까요?':'무엇을 알려드릴까요?'}</div>
- <div class="desc">손님에게 꼭 전해야 하는 안내를 전화번호로 보내요. 채널 친구가 아니어도 받을 수 있어요. <u>알림톡 이용 가이드</u></div>
+ <div class="desc">조합원에게 꼭 전해야 하는 안내를 전화번호로 보내요. 채널 친구가 아니어도 받을 수 있어요. <u>알림톡 이용 가이드</u></div>
  <div style="margin-top:28px">${inner}</div>
  </main></div>`;
 };
@@ -869,7 +869,7 @@ function bizFormHTML(){
   body=`<h3 style="margin:0 0 16px">${docName} 정보를 입력해 주세요</h3>
   <div style="font-size:13px;font-weight:700;margin-bottom:6px">${d==='uid'?'고유번호':'사업자등록번호'}</div><input class="input" style="width:100%" placeholder="숫자 10자리" value="123-45-67890">
   <div style="font-size:13px;font-weight:700;margin:16px 0 6px">대표자명</div><input class="input" style="width:100%" value="김민지">
-  <div style="font-size:13px;font-weight:700;margin:16px 0 6px">${docName} 사본</div><div style="display:flex;align-items:center;gap:10px;border:1px dashed #ccc;border-radius:8px;padding:12px 14px;font-size:13px;color:#555"><span>📎 ${docName}_카카오 노동조합.pdf</span><a style="margin-left:auto;color:#3a6fd8;font-size:12px">다시 올리기</a></div>
+  <div style="font-size:13px;font-weight:700;margin:16px 0 6px">${docName} 사본</div><div style="display:flex;align-items:center;gap:10px;border:1px dashed #ccc;border-radius:8px;padding:12px 14px;font-size:13px;color:#555"><span>📎 ${docName}_카카오노조.pdf</span><a style="margin-left:auto;color:#3a6fd8;font-size:12px">다시 올리기</a></div>
   <div class="help" style="margin-top:8px">JPG·PNG·PDF, 10MB 이하. 번호와 서류 내용이 같아야 해요.</div>`;
   btns=`<button class="btn line" onclick="S.bizStep=1;render()">이전</button><button class="btn y" onclick="S.bizStep=3;render()">심사 신청하기</button>`;
  }else{
@@ -1038,7 +1038,7 @@ function friendBox(){
   </div>
   <div class="fb-msg">친구가 된 고객에게는 <b>메시지로 광고·이벤트</b>를 보낼 수 있어요. 다른 가게들은 이렇게 보내고 있어요.</div>
   <div class="adgrid">${ADEX.map((a,i)=>`<div class="adc"><div class="adtag">${a.tag}<span>${a.ctr}</span></div>
-    <div class="adb"><div class="adw2">(광고) 카카오 노동조합</div><div class="adbody">${a.body}</div><div class="adbtn">${a.btn}</div></div>
+    <div class="adb"><div class="adw2">(광고) 카카오노조</div><div class="adbody">${a.body}</div><div class="adbtn">${a.btn}</div></div>
     <a class="aduse" onclick="useAd(${i})">이 문구로 메시지 쓰기 ›</a></div>`).join('')}</div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px"><span class="help" style="margin:0">추천 문구는 비슷한 업종 채널에서 반응이 좋았던 메시지를 바탕으로 해요.</span><button class="btn y sm" onclick="S.msgGroup=null;go('msg-compose');render()">친구 ${total}명에게 메시지 보내기</button></div>
  </div>`;
@@ -1108,7 +1108,7 @@ function adHits(b){return ADW.filter(w=>b.includes(w))}
 function previewHTML(){
  const b=(S.c.body||'').replace(/[<>]/g,'');
  const body=b?b.replace(/#\{(.+?)\}/g,'<span class="v">#{$1}</span>'):'<span style="color:#aaa">내용을 입력하면 여기에 보여요</span>';
- return `<div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>${S.c.btn!=='none'?`<div class="bt">${S.c.btnName||'버튼 이름'}${S.c.btn==='link'?' ↗':''}</div>`:''}<div class="chadd"><span>카카오 노동조합 채널</span><b>+ 채널 추가</b></div></div>`;
+ return `<div class="bubble"><div class="hd">알림톡 도착</div><div class="bd">${body}</div>${S.c.btn!=='none'?`<div class="bt">${S.c.btnName||'버튼 이름'}${S.c.btn==='link'?' ↗':''}</div>`:''}<div class="chadd"><span>카카오노조 채널</span><b>+ 채널 추가</b></div></div>`;
 }
 function onBody(el){S.c.body=el.value;{const ac=document.getElementById('autocat');if(ac)ac.innerHTML=catHTML()}if(S.c.ai){S.c.ai=null;const b=document.getElementById('aibox');if(b)b.innerHTML=aiBoxHTML()}document.getElementById('cnt').textContent=el.value.length+'/1000자';document.getElementById('pv').innerHTML=previewHTML();drawWarn()}
 function drawWarn(){
@@ -1196,7 +1196,7 @@ P['at-new']=()=>{
  return `<div class="wrap">${rail('at')}${subAt('at-tpl')}<main class="main">${head}
  <div class="h1">알림톡 문구 작성</div><div class="desc">직접 쓰고 AI 조언을 받아 다듬은 뒤 검수를 신청하세요. 승인되면 바로 보낼 수 있어요.</div>${stepper}
  <div class="formwrap"><div class="form">${body}<div class="footbtn"><button class="btn line" onclick="S.step=0;go('at-send')">이전</button><button id="submitbtn" class="btn ${ok?'y':'dis'}" onclick="S.c.submitted=true;render()">검수 신청하기</button></div></div>
- <div><div class="phone"><div class="screen"><div class="top">카카오 노동조합</div><div class="msg"><span class="avatar"></span><div><div class="who">카카오 노동조합</div><div id="pv">${previewHTML()}</div></div></div></div></div><div class="phonecap">받는 사람 화면 미리보기</div></div></div>
+ <div><div class="phone"><div class="screen"><div class="top">카카오노조</div><div class="msg"><span class="avatar"></span><div><div class="who">카카오노조</div><div id="pv">${previewHTML()}</div></div></div></div></div><div class="phonecap">받는 사람 화면 미리보기</div></div></div>
  </main></div>`;
 };
 
@@ -1210,8 +1210,8 @@ P['msg-new']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-new')}<main clas
 </main></div>`;
 
 S.msg={kind:'ad',body:'',target:'all',group:null};
-function msgPreview(){const b=(S.msg.body||'내용').replace(/[<>]/g,'');return `<div class="mmsg"><div class="who">${S.msg.kind==='ad'?'(광고)':''}카카오 노동조합</div><div class="mb">${b}</div><div class="mf">${S.msg.kind==='ad'?'수신거부 | 홈 &gt; 채널차단':''}</div></div>`}
-function mphone(){return `<div><div class="phone"><div class="screen"><div class="top">카카오 노동조합<br><span style="font-weight:400;color:#666">010-2056-8892</span></div><div id="mpv">${msgPreview()}</div></div></div></div>`}
+function msgPreview(){const b=(S.msg.body||'내용').replace(/[<>]/g,'');return `<div class="mmsg"><div class="who">${S.msg.kind==='ad'?'(광고)':''}카카오노조</div><div class="mb">${b}</div><div class="mf">${S.msg.kind==='ad'?'수신거부 | 홈 &gt; 채널차단':''}</div></div>`}
+function mphone(){return `<div><div class="phone"><div class="screen"><div class="top">카카오노조<br><span style="font-weight:400;color:#666">010-2056-8892</span></div><div id="mpv">${msgPreview()}</div></div></div></div>`}
 const LISTS={'조합원명단_2610':{t:300,f:50,tpl:'조합비 납부 안내',d:'10.13'},'조합원명단_2609':{t:291,f:47,tpl:'조합비 납부 안내',d:'09.25'}};
 function listHero(n,mode){
  const L=LISTS[n]; if(!L) return '';
@@ -1347,7 +1347,7 @@ const DEEP={
  'at-done':()=>Object.assign(S,{agreed:true,hasHistory:false,tpl:'t1',cat:'노동조합',step:2,sent:true,failOpen:true,recvMode:'excel',uploaded:true,fromList:null,fileName:'조합원명단_2610.xlsx',fileCnt:300}),
  'at-biz':()=>{Object.assign(S,{biz:'none',waiting:false,bizNoticed:false,agreed:false,hasHistory:false,browse:false,step:0,tpl:null,sent:false});return 'at-send'},
  'at-ai-find':()=>{const q='이번 달 조합비 납부 안내 보내고 싶어';Object.assign(S,{agreed:true,aiq:q,aiRes:aiFind(q),tplTab:'mine'});return 'at-tpl'},
- 'at-ai-new':()=>{S.agreed=true;S.c={step:2,when:null,to:null,name:'한마음 체육대회 안내',body:'#{이름} 조합원님, 카카오 노동조합입니다.\n한마음 체육대회를 11월 15일에 엽니다.\n이번 주까지 신청하면 기념품 무료 증정!\n\n문의는 채널 채팅으로 남겨주세요.',btn:'none',btnName:'',linkMode:'send',submitted:false};S.c.ai=aiAnalyze(S.c.body);return 'at-new'},
+ 'at-ai-new':()=>{S.agreed=true;S.c={step:2,when:null,to:null,name:'한마음 체육대회 안내',body:'#{이름} 조합원님, 카카오노조입니다.\n한마음 체육대회를 11월 15일에 엽니다.\n이번 주까지 신청하면 기념품 무료 증정!\n\n문의는 채널 채팅으로 남겨주세요.',btn:'none',btnName:'',linkMode:'send',submitted:false};S.c.ai=aiAnalyze(S.c.body);return 'at-new'},
  'at-done1':()=>Object.assign(S,{myTpl:['t1'],sentIds:['t1'],justAdded:'t1',agreed:true,biz:'ok',hasHistory:false,tpl:'t1',cat:'노동조합',step:2,sent:true,failOpen:false,recvMode:'manual',rows:[{phone:'010-1234-5678','이름':'김민지'}],fileCnt:1,fileName:'직접 입력',fromList:'직접 입력'}),
  'at-quick':()=>Object.assign(S,{agreed:true,hasHistory:true,browse:false,step:0,sent:false,tpl:null}),
  'msg-compose-list':()=>{Object.assign(S,{saved:true,msgGroup:'조합원명단_2610'});return 'msg-compose'},
