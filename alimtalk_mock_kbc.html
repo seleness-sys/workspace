@@ -959,8 +959,8 @@ P['at-detail']=()=>{
  <div class="kpis"><div><span>보낸 사람</span><b>${d.n}</b></div><div><span>받음</span><b>${okN}</b></div><div class="${failN?'bad':''}"><span>받지 못함</span><b>${failN}</b></div><div><span>발송 후 친구 추가</span><b>+${d.fr}</b></div></div>
  <div class="tabs" style="margin:26px 0 12px"><span class="chip ${tab==='fail'?'on':''}" onclick="S.dTab='fail';render()">받지 못함 ${failN}</span><span class="chip ${tab==='ok'?'on':''}" onclick="S.dTab='ok';render()">받음 ${okN}</span></div>
  <div style="max-width:900px">${body}</div>
- <div class="mbanner" style="max-width:900px;margin-top:28px"><div class="l"><span class="ic">명단</span><div><b>이 명단 중 채널 친구 ${d.fc}명</b><small>${d.saved()?'친구그룹으로 저장돼 있어요. 친구에게 광고 메시지를 보낼 수 있어요.':'친구그룹으로 저장하면 친구에게만 광고 메시지를 보낼 수 있어요.'}</small></div></div>
-  ${d.saved()?`<button class="btn y sm" onclick="S.msgGroup='${d.file}';S.saved=true;go('msg-compose');render()">친구에게 광고 →</button>`:`<button class="btn y sm" onclick="S.saved=true;render()">친구그룹으로 저장</button>`}</div>
+ <div class="mbanner" style="max-width:900px;margin-top:28px"><div class="l"><span class="ic">명단</span><div><b>이 명단 중 채널 친구 ${d.fc}명</b><small>${d.saved()?'친구그룹이 만들어져 있어요. 친구에게 광고 메시지를 보낼 수 있어요.':'친구그룹을 만들면 친구에게만 광고 메시지를 보낼 수 있어요.'}</small></div></div>
+  ${d.saved()?`<button class="btn y sm" onclick="S.msgGroup='${d.file}';S.saved=true;go('msg-compose');render()">친구에게 광고 →</button>`:`<button class="btn y sm" onclick="S.grpModal={at:1,src:'at'};render()">친구그룹 만들기</button>`}</div>
  </main></div>`;
 };
 
@@ -1016,10 +1016,10 @@ P['at-done0']=()=>`<div class="wrap">${rail('at')}${subAt('at-send')}<main class
  ${S.fromList==='직접 입력'?'<div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:320px">':''}<div class="donebox"><div class="ok">✓</div><h3>${S.recur?'정기 발송을 등록했어요':(S.fromList==='직접 입력'?S.fileCnt:300)+'명에게 알림톡을 보냈어요'}</h3>${S.recur?`<p style="margin-bottom:6px">매월 25일 오전 10시 · ${findT(S.tpl||'t1').name} · ${S.fileCnt}명<br>첫 발송은 오늘 바로 나갔어요. 다음 발송 11월 25일</p>`:''}<p>${findT(S.tpl||'t1').name} · 방금 전<br>${S.fromList==='직접 입력'?`성공 ${S.fileCnt}`:`성공 ${296+(S.retried?2:0)} · <a style="color:#e0442c;font-weight:700;text-decoration:underline" onclick="S.failOpen=!S.failOpen;render()">실패 ${S.retried?2:4}건 ${S.failOpen?'접기':'보기'}</a>`}</p>
   <div style="display:flex;gap:8px;justify-content:center;margin-top:20px"><button class="btn line sm" onclick="openDetail('a')">발송 결과 보기</button><button class="btn line sm" onclick="S.sent=false;S.step=0;S.uploaded=false;S.rows=null;S.tpl=null;S.saved=false;S.again=false;S.browse=false;S.hasHistory=true;render()">새 알림톡 보내기</button></div></div>${S.failOpen?failPanel():''}
  ${S.fromList==='직접 입력'?doneManualExtra():''}
- ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 보낸 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 친구그룹으로 저장했어요</h4><p>메시지 &gt; 친구 그룹에 <b>학부모명단_2610</b>(친구 50명)으로 저장됐어요. 메시지 보내기에서 이 그룹을 고르면 친구 50명에게만 보내요.</p>
+ ${S.fromList==='직접 입력'?(S.ver==='b'?`<div class="bridge"><h4>받은 분이 [채널 추가]를 누르면 친구가 돼요</h4><p>친구가 된 손님에게는 이벤트·할인 소식을 메시지로 보낼 수 있어요. 친구가 늘면 보낸 알림톡에서 알려드릴게요.</p><div class="acts"><button class="btn line sm" onclick="go('at-list')">늘어난 친구 보기</button></div></div>`:''):S.saved?`<div class="bridge saved"><h4>✓ 친구그룹을 만들었어요</h4><p>메시지 &gt; 친구 그룹에 <b>학부모명단_2610</b>(친구 50명)으로 저장됐어요. 메시지 보내기에서 이 그룹을 고르면 친구 50명에게만 보내요.</p>
    <div class="acts"><button class="btn y sm" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">광고 메시지 보내기</button><button class="btn line sm" onclick="go('msg-file')">친구 그룹 보기</button></div></div>`
- :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>이 명단을 친구그룹으로 저장해 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
-   <div class="acts"><button class="btn y sm" onclick="S.saved=true;render()">친구그룹으로 저장</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
+ :`<div class="bridge"><h4>받는 분 중 <em>50명</em>은 이미 채널 친구예요</h4><p>받은 분 중 채널 친구를 친구그룹으로 만들어 두면, 나중에 이벤트·할인 같은 광고 메시지를<br>이 50명에게만 골라 보낼 수 있어요. 친구가 아닌 250명에게는 광고가 발송되지 않아요.</p>
+   <div class="acts"><button class="btn y sm" onclick="S.grpModal={at:1,src:'at'};render()">친구그룹 만들기</button><button class="btn line sm" onclick="this.closest('.bridge').remove()">다음에</button></div></div>`}
 </div></main></div>`;
 
 const ADEX=[
@@ -1264,15 +1264,32 @@ P['msg-target']=()=>{
 P['msg-list']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-list')}<main class="main"><div class="h1">메시지 목록</div><div class="infobox">현행 화면과 동일 (생략)</div></main></div>`;
 
 P['msg-file']=()=>`<div class="wrap">${rail('msg')}${subMsg('msg-file')}<main class="main">
- <div class="h1">친구 그룹</div>
- <div class="infobox" style="margin-top:28px"><b>친구 그룹, 이렇게 써요</b><br>· 메시지를 보낼 친구를 그룹으로 묶어 골라 보낼 수 있어요.<br>· <b style="font-size:13px">알림톡에서 저장한 명단</b>은 그중 채널 친구만 그룹으로 바로 만들어져요.<br>· 고객 파일로 조건을 넣어 그룹을 만들 수도 있어요.</div>
- <div class="filters"><span style="font-size:15px;font-weight:700">전체 <span style="color:#3ba7b5">${S.saved?3:2}</span>개</span><span style="margin-left:auto"></span><button class="btn line sm">신규 그룹 만들기</button></div>
- <table class="tb"><tr><th>그룹명</th><th>만든 방법</th><th>친구 수</th><th>만든 날</th><th></th></tr>
- ${S.saved?`<tr class="hl"><td><b>학부모명단_2610</b></td><td><span class="badge b-at">알림톡 명단</span></td><td><b>50</b>명</td><td>26.10.13</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2610';go('msg-compose')">메시지 보내기 →</a></td></tr>`:''}
- <tr><td>학부모명단_2609</td><td><span class="badge b-at">알림톡 명단</span></td><td>47명</td><td>26.09.25</td><td><a style="color:#3a6fd8" onclick="S.msgGroup='학부모명단_2609';go('msg-compose')">메시지 보내기 →</a></td></tr>
- <tr><td>VIP고객_8월</td><td><span class="badge b-gr">고객 파일</span></td><td>32명</td><td>26.08.04</td><td></td></tr>
+ <div style="display:flex;align-items:center"><div class="h1" style="margin:0">친구그룹 목록</div><span style="margin-left:auto"></span><button class="btn y" onclick="S.grpModal={};render()">+ 신규그룹 만들기</button></div>
+ <div style="margin:26px 0 10px;font-size:16px;font-weight:700">전체 그룹 <span style="color:#3ba7b5">${S.saved?3:2}</span>개</div>
+ <table class="tb"><tr><th style="width:36px"><input type="checkbox"></th><th>그룹명</th><th>친구수 / 등록수</th><th>업데이트일시<br>생성일시</th><th>상태</th></tr>
+ ${S.saved?`<tr class="hl"><td><input type="checkbox"></td><td><b>학부모명단_2610</b><div style="font-size:12px;color:#888;margin-top:2px">알림톡 「수강료 납부 안내」 10.13 수신자</div></td><td><b>50</b> / 300</td><td style="font-size:12px;color:#666">26.10.13 17:42<br>26.10.13 17:42</td><td>생성 완료</td></tr>`:''}
+ <tr><td><input type="checkbox"></td><td>학부모명단_2609<div style="font-size:12px;color:#888;margin-top:2px">알림톡 「수강료 납부 안내」 09.25 수신자</div></td><td>47 / 291</td><td style="font-size:12px;color:#666">26.09.25 09:05<br>26.09.25 09:05</td><td>생성 완료</td></tr>
+ <tr><td><input type="checkbox"></td><td>VIP고객_8월<div style="font-size:12px;color:#888;margin-top:2px">고객파일 · 8월 구매 고객</div></td><td>32 / 90</td><td style="font-size:12px;color:#666">26.08.04 11:20<br>26.08.04 11:02</td><td>생성 완료</td></tr>
  </table>
+ <div style="margin-top:14px"><button class="btn line sm">선택 삭제</button></div>
 </main></div>`;
+function grpModalHTML(){
+ const m=S.grpModal||{}, sel=m.src||'at', fromAt=!!m.at;
+ const r=(k,l,extra)=>`<div style="margin:10px 0"><label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer" onclick="S.grpModal.src='${k}';render()"><input type="radio" ${sel===k?'checked':''}> ${l}</label>${sel===k&&extra?`<div style="margin:8px 0 0 24px">${extra}</div>`:''}</div>`;
+ const atExtra=`<select class="input" style="width:340px"><option>${fromAt?'10.13 수강료 납부 안내 (300명)':'보낸 알림톡 선택'}</option></select><div style="font-size:13px;color:#666;margin-top:6px">이 알림톡을 받은 ${fromAt?'300':'0'}명 중 <b>채널 친구</b>를 친구그룹으로 등록합니다.</div>`;
+ return `<div class="ovl"><div class="cmodal" style="width:560px;padding:0;overflow:hidden">
+  <div style="display:flex;align-items:center;background:#f7f7f7;padding:18px 24px"><b style="font-size:17px">신규그룹 만들기</b><a style="margin-left:auto;font-size:20px;color:#999;cursor:pointer" onclick="S.grpModal=null;render()">✕</a></div>
+  <div style="padding:20px 24px 8px">
+   <div style="font-size:13px;font-weight:700;margin-bottom:6px">그룹명</div><input class="input" style="width:100%" value="${fromAt?'학부모명단_2610':''}" placeholder="그룹명을 입력해주세요.">
+   <div style="font-size:13px;font-weight:700;margin:14px 0 6px">그룹 설명</div><input class="input" style="width:100%" value="${fromAt?'알림톡 「수강료 납부 안내」 10.13 수신자':''}" placeholder="그룹 설명을 입력해주세요.">
+   <div style="font-size:13px;font-weight:700;margin:16px 0 2px">등록 수단</div>
+   ${r('file','고객파일')}${r('direct','전화번호 직접 입력')}${r('upload','전화번호 업로드')}${r('msg','메시지 수신자')}
+   ${r('at','알림톡 수신자 <span class="badge b-at" style="margin-left:4px">NEW</span>',atExtra)}
+   ${r('event','이벤트 참여자')}${r('later','나중에 하기')}
+  </div>
+  <div style="display:flex;justify-content:center;gap:8px;border-top:1px solid #eee;padding:16px 24px;margin-top:10px"><button class="btn line" onclick="S.grpModal=null;render()">취소</button><button class="btn y" onclick="if(S.grpModal.src==='at'||!S.grpModal.src){S.saved=true}S.grpModal=null;render()">그룹등록</button></div>
+ </div></div>`;
+}
 
 
 const MEMO={
@@ -1281,7 +1298,7 @@ const MEMO={
  quick:['발송 이력 있는 사장님은 예시 대신 최근 보낸 알림 노출','[다시 보내기] → 지난번 알림·명단 그대로 확인 화면으로 이동, 다시 입력 없이 [발송]만 누르면 끝'],
  step1:['처음 보내는 사장님은 템플릿을 고르는 순간(알림톡 만들기 직전) 명시적 동의 팝업, 4번 = AI 사용해도 심사 통과 보장 안 함 (26-10-27 회의)','처음 보내는 사장님은 템플릿을 고르는 순간 이용 안내 동의 팝업 (최초 1회, 끝까지 읽어야 체크 가능, 동의 일시·버전 저장) — lite 프로토타입 S2b 차용, 3개 항목 + 책임·제재 하단 고지','동의 3번 = 명단은 알림톡 발송·다시 보내기에만 이용, 친구그룹 저장은 사장님 선택 시만 → 다시 보내기용 보관 기간, 친구그룹 저장(광고 대상 활용) 허용 여부 법무 확인','버튼 링크는 보낼 때 입력 (공통 1개 또는 받는 분마다 다르게)','받는 사람 기본 = 직접 입력 (1~몇 명은 엑셀 없이 바로), 여러 명은 엑셀·명단','템플릿 먼저 → 받는 사람 순서 (템플릿이 입력 칸·엑셀 양식을 결정)','저장된 명단 불러오기 = 최근 알림톡 명단에서 선택 (친구그룹·고객 파일은 알림톡 대상으로 불러오지 않음)'],
  step2:['메시지 발송 설정과 같은 순서: 대상 → 시간 → 비용 → 캐시','비즈월렛 캐시 공용, 단가 미정','대체발송(문자) 없음'],
- done:['수신자 이름·개인별 채널 친구 여부는 화면에 표시하지 않음 (개인정보, 26-10-27 회의). 실패 목록은 마스킹 번호만','실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → 친구그룹으로 바로 저장 (사장님이 선택, 고객 파일 거치지 않음)','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
+ done:['수신자 이름·개인별 채널 친구 여부는 화면에 표시하지 않음 (개인정보, 26-10-27 회의). 실패 목록은 마스킹 번호만','실패 건 사유별 안내 + 일시 오류 재발송 + 명단 내려받기 (대체발송 미지원)','명단 중 채널 친구 → [친구그룹 만들기] → 신규그룹 만들기 팝업(등록 수단 = 알림톡 수신자, 자동 선택) → 그룹등록. 고객 파일 거치지 않음, 사장님이 직접 등록','저장 후 광고 메시지로 연결 = 알림톡 → 메시지 상향 구조'],
  list:['메뉴명 「보낸 알림톡」 = 발송 이력 (앞으로 보낼 문구는 템플릿 메뉴) — 「내 템플릿」과 이름 혼동 방지','광고 연결은 목록 위 한 줄 배너로만 (알림톡 보고 친구가 된 분 +N명 → 친구에게 메시지 보내기). 친구 수 카드·타 업종 광고 예시 박스는 과하다는 의견으로 삭제','현행 내 메시지 목록 형식 유지','발송 후 친구 추가·친구그룹 저장 여부·실패 보기 칸 추가'],
  detail:['발송 건별 결과: 받음 / 받지 못함 탭','실패 사유 종류·자동 재시도 여부는 결과 코드 확인 후 확정'],
  tpl:['역할 = 보낼 문구 준비 (찾아서 담기 + 새로 써서 검수 받기). 지금 보낼 걸 고르는 건 알림톡 보내기, 보낸 기록은 보낸 알림톡','[AI] 맨 위에서 원하는 템플릿을 자연어로 적으면 검수 완료 템플릿 추천(담기), 없으면 AI 초안으로 새 템플릿 작성','검수 완료 템플릿을 업종별로 둘러보고 "내 템플릿"에 담아두는 방식 (전체 목록 나열 X)','내 템플릿 = 가져온 것 + 직접 만든 것(검수 중 / 바로 사용 / 반려)','담아둔 템플릿만 발송 화면에 우선 노출하는 방안 검토'],
@@ -1290,7 +1307,7 @@ const MEMO={
  msgnew:['메시지 화면의 알림톡 보조 진입점 (정보성 안내 배너, 하위 메뉴 링크)'],
  compose:['현행 메시지 작성 화면 재현','메시지 종류 "정보성" 선택 시 알림톡 안내'],
  target:['현행 발송 설정 재현 (전체 15원 / 타겟 20원)','친구그룹 목록에 알림톡 명단(친구 N명) 바로 노출','알림톡 명단은 친구그룹으로 바로 저장 (현행 고객 파일 → 친구그룹 수동 생성 단계 생략)'],
- file:['친구 그룹 목록에 만든 방법 표시 (알림톡 명단 / 고객 파일)','친구만 담기는 그룹 → 친구가 아닌 번호는 남지 않음 (내부 저장 방식 기획 확인 필요)']
+ file:['현행 친구그룹 목록 형식 그대로 (친구수 / 등록수, 업데이트·생성일시, 상태)','현행 신규그룹 만들기 등록 수단에 "알림톡 수신자" 추가 — 기존 "메시지 수신자"(최근 1개월 메시지 수신자로 그룹 생성)와 같은 방식','26-10-15부터 친구그룹 타게팅은 마케팅 목적 개인정보 수집·이용 동의 + 맞춤형 광고 허용 둘 다 한 만 14세 이상만 발송 → 친구수보다 실제 발송 대상이 적을 수 있음']
 };
 function memoKey(r){
  if(r==='home')return'home';
@@ -1327,7 +1344,7 @@ const DEEP={
  'msg-file-saved':()=>{S.saved=true;return 'msg-file'},
  'at-consent':()=>{Object.assign(S,{agreed:false,hasHistory:false,browse:false,tpl:'t1',cat:'교육',step:1,sent:false,recvMode:'manual',uploaded:false});return 'at-send'}
 };
-function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){const c=document.getElementById('sc2'),nb=S.biz&&S.biz!=='ok';a.className=(S.hasHistory||nb)?'':'on';b.className=S.hasHistory&&!nb?'on':'';if(c)c.className=nb?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn();if(S.bizForm){document.getElementById('app').insertAdjacentHTML('beforeend',bizFormHTML())}else if(r==='at-send'&&S.biz&&S.biz!=='ok'&&!S.bizNoticed&&S.step>=1&&!S.sent){document.getElementById('app').insertAdjacentHTML('beforeend',bizNoticeHTML())}else if(needConsent(r)){document.getElementById('app').insertAdjacentHTML('beforeend',consentHTML());const t=document.getElementById('terms');if(t)termsScroll(t)}}
+function render(){let r=route();if(DEEP[r]){const to=DEEP[r]()||'at-send';history.replaceState(null,'','#'+(typeof to==='string'?to:'at-send'));r=(typeof to==='string'?to:'at-send');const a=document.getElementById('sc0'),b=document.getElementById('sc1');if(a&&b){const c=document.getElementById('sc2'),nb=S.biz&&S.biz!=='ok';a.className=(S.hasHistory||nb)?'':'on';b.className=S.hasHistory&&!nb?'on':'';if(c)c.className=nb?'on':''}}document.getElementById('app').innerHTML=(P[r]||P.home)();window.scrollTo(0,0);addMemo();if(r==='at-new')drawWarn();if(S.grpModal){document.getElementById('app').insertAdjacentHTML('beforeend',grpModalHTML())}else if(S.bizForm){document.getElementById('app').insertAdjacentHTML('beforeend',bizFormHTML())}else if(r==='at-send'&&S.biz&&S.biz!=='ok'&&!S.bizNoticed&&S.step>=1&&!S.sent){document.getElementById('app').insertAdjacentHTML('beforeend',bizNoticeHTML())}else if(needConsent(r)){document.getElementById('app').insertAdjacentHTML('beforeend',consentHTML());const t=document.getElementById('terms');if(t)termsScroll(t)}}
 render();syncVer();
 </script>
 </body></html>
