@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>알림톡 웹발송기 딜러사 안내</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+:root{--bg:#f5f5f5;--card:#fff;--tx:#191919;--sub:#666;--line:#e5e5e5;--tag:#fee500}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161616;--card:#222;--tx:#eee;--sub:#aaa;--line:#333}}
+:root[data-theme="dark"]{--bg:#161616;--card:#222;--tx:#eee;--sub:#aaa;--line:#333}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 16px 60px}
+.badge{display:inline-block;background:#ff5a2a;color:#fff;font-size:12px;font-weight:700;border-radius:12px;padding:3px 10px}
+h1{font-size:28px;margin:14px 0 8px}
+.lead{color:var(--sub);margin:0 0 30px;font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:22px}
+.num{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--tag);color:#191919;font-weight:700;font-size:13px;align-items:center;justify-content:center;margin-right:8px}
+h2{font-size:18px;margin:0 0 6px;display:flex;align-items:center}
+.where{color:var(--sub);font-size:14px;margin:0 0 12px}
+.copy{background:var(--bg);border-radius:8px;padding:12px 14px;font-size:14px;margin:0 0 14px}
+img{width:100%;border:1px solid var(--line);border-radius:10px;display:block}
+.foot{color:var(--sub);font-size:13px;margin-top:8px}
+</style></head><body><div class="wrap">
+<span class="badge">가상 화면 · 실제 서비스 아님</span>
+<h1>알림톡 웹발송기: 시스템 연동은 공식 딜러사로 안내</h1>
+<p class="lead">웹발송기는 엑셀·명단 업로드 방식. 쇼핑몰·예약 시스템과 연동한 자동 발송(API)이 필요한 사장님은 공식 딜러사로 안내하는 문구 예시입니다.</p>
+
+<div class="card">
+<h2><span class="num">1</span>받는 사람 › 엑셀·명단 업로드 하단</h2>
+<p class="where">명단을 올리다가 "매번 올려야 하나?"를 느끼는 시점에 노출</p>
+<div class="copy">매일 자동으로 보내야 하나요? 쇼핑몰·예약 시스템과 연동해 자동으로 보내려면 알림톡 공식 딜러사를 이용해 주세요. [공식 딜러사 보기 ›]</div>
+<img src="dealer_api/p1.png" alt="받는 사람 엑셀 업로드 영역 아래 공식 딜러사 안내 문구">
+</div>
+
+<div class="card">
+<h2><span class="num">2</span>알림톡 보내기 첫 화면 하단</h2>
+<p class="where">"이런 건 알림톡으로 보낼 수 없어요" 안내 아래, 웹발송기와 딜러사의 역할 구분</p>
+<div class="copy">대량·자동 발송이 필요하다면 — 공식 딜러사에서 시스템 연동(API)으로 보낼 수 있어요. [공식 딜러사 보기 →]</div>
+<img src="dealer_api/p2.png" alt="알림톡 보내기 첫 화면 하단 공식 딜러사 안내 박스">
+</div>
+
+<p class="foot">[공식 딜러사 보기]는 특정 딜러사가 아닌 카카오비즈니스 공식 딜러사 목록으로 연결하는 것을 전제로 합니다.</p>
+</div></body></html>
