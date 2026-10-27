@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>타이밍메시지 사업기획</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#191919;--sub:#666;--line:#e5e7eb;--y:#fee500}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:14.5px;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 20px 60px}
+header{border-bottom:3px solid var(--y);padding-bottom:14px;margin-bottom:20px}
+h1{font-size:26px;margin:0 0 4px}
+.meta{color:var(--sub);font-size:13px}
+.def{background:var(--card);border-left:5px solid var(--y);border-radius:10px;padding:14px 20px;margin-bottom:18px;font-size:16px;font-weight:700}
+section{background:var(--card);border-radius:12px;padding:20px 24px;margin-bottom:18px}
+h2{font-size:18px;margin:0 0 12px}
+h2 span{display:inline-block;background:var(--ink);color:#fff;border-radius:12px;font-size:12px;padding:2px 9px;margin-right:8px;vertical-align:2px}
+ul{margin:6px 0;padding-left:20px}
+li{margin:3px 0}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#fafafa;font-weight:600;white-space:nowrap}
+img{width:100%;border-radius:10px;border:1px solid var(--line);margin:4px 0 12px}
+.st{display:inline-block;border-radius:6px;padding:1px 7px;font-size:12px;font-weight:600}
+.run{background:#e8f5e9;color:#2e7d32}.ing{background:#e3f2fd;color:#1565c0}.plan{background:#fff3e0;color:#e65100}
+</style></head><body><div class="wrap">
+
+<header>
+<h1>타이밍메시지 사업기획 (초안)</h1>
+<div class="meta">2026-10-27 · 비즈전략스쿼드 셀린 · 덱 페이지 = 26.10 비즈니스 오픈톡</div>
+</header>
+
+<div class="def">카카오에 쌓이는 거래 신호로 "보낼 때"를 찾아 사장님에게 발송을 제안하는 SME 메시지 상품</div>
+
+<section>
+<h2><span>1</span>상품 구조</h2>
+<img src="timing_msg_concept.png" alt="타이밍메시지 개념도">
+<table>
+<tr><th>단계</th><th>상품</th><th>대상</th><th>메시지</th><th>역할</th></tr>
+<tr><td>입구</td><td>알림톡 플러스</td><td>거래했으나 비친구 고객</td><td>정보성 + 친구추가 유도</td><td>친구 전환</td></tr>
+<tr><td>매출</td><td>타이밍메시지</td><td>채널 친구</td><td>광고성 재방문·재구매 제안</td><td>채널메시지 매출</td></tr>
+<tr><td>행동</td><td>예약하기·카상매·AI 구매 버튼</td><td>메시지 수신자</td><td>—</td><td>거래 전환·측정</td></tr>
+</table>
+</section>
+
+<section>
+<h2><span>2</span>데이터 근거</h2>
+<table>
+<tr><th>서비스</th><th>덱</th><th>상태</th><th>알림톡 플러스</th><th>타이밍메시지</th></tr>
+<tr><td>예약하기</td><td>p14·16·26</td><td><span class="st run">운영</span></td><td>예약 알림 → 친구 유도</td><td>예약 주기 리마인드</td></tr>
+<tr><td>톡체크아웃</td><td>p16·21</td><td><span class="st run">운영</span></td><td>주문 알림톡 → 친구 유도</td><td>재구매 주기</td></tr>
+<tr><td>통합QR</td><td>p15·16·25·28</td><td><span class="st ing">진행</span></td><td>불필요 (스캔 시 친구)</td><td>재방문 유도 (QR 리텐션 메시지 POC 중)</td></tr>
+<tr><td>링크페이</td><td>p25·29</td><td><span class="st plan">예정 27.1Q</span></td><td>주문·배송 알림톡이 입구</td><td>재구매</td></tr>
+<tr><td>카상매 3.0</td><td>p27</td><td><span class="st ing">진행 12/28</span></td><td>—</td><td>[AI 구매] 버튼 = 행동 단계</td></tr>
+</table>
+<ul>
+<li>법적 근거: 동의가 아니라 거래관계 (알림톡 플러스 1차 검토 추진 조건 ① 거래완료 모수 충족)</li>
+<li>근거 아닌 것: 카상매 2.0 대화(문의는 거래관계 아님), 비즈패스·통합회원(사업자 데이터)</li>
+</ul>
+</section>
+
+</div></body></html>
