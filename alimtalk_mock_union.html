@@ -535,11 +535,14 @@ const ico=(k,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 26 26">${I[k]}</svg>
 const S={ver:'a',sendMode:null,recur:null,recvMode:'manual',rows:null,hasHistory:false,browse:false,again:false,fileName:'조합원명단_2610.xlsx',fileCnt:300,fromList:null,picker:null,uploaded:false,checkSave:true,cat:'노동조합',tpl:null,step:0,gcat:'전체',sent:false,saved:false,prefs:{}};
 const TPL={
  '노동조합':[
-  {id:'t1',rec:'매달',name:'조합비 납부 안내',when:'매달 조합비 납부일 전',to:'조합원',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'안녕하세요, #{이름} 조합원님.\n#{조합명}입니다.\n\n#{월}월 조합비 납부를 안내드립니다.\n· 금액: #{금액}원\n· 납부기한: #{기한}\n\n문의는 채널 채팅으로 남겨주세요.',btn:'납부 안내 보기'},
-  {id:'t2',name:'총회 소집 안내',when:'총회 2주 전',to:'조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n\n#{날짜} 정기총회를 소집합니다.\n· 시간: #{시간}\n· 장소: #{장소}\n\n안건은 아래 버튼에서 확인해 주세요.',btn:'안건 보기'},
-  {id:'tR1',rec:'매달',name:'조합 소식지 안내',when:'매달 소식지 발행 후',to:'조합원',cols:'이름 · 전화번호 · 소식지 링크',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n#{월}월 조합 소식지가 나왔어요.\n아래 버튼에서 확인해 주세요.',btn:'소식지 보기'},
-  {id:'t7',name:'찬반투표 참여 안내',when:'투표 기간 중',to:'조합원',cols:'이름 · 전화번호 · 마감시각',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n찬반투표가 진행 중입니다.\n· 마감: #{시각}\n아래 버튼에서 투표해 주세요.',btn:'투표하기'},
-  {id:'tU1',name:'교육·행사 참석 안내',when:'교육·행사 1주 전',to:'참석 대상 조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n#{날짜} #{행사명} 참석을 안내드립니다.\n· 시간: #{시간}\n· 장소: #{장소}',btn:'자세히 보기'},
+  {id:'t7',name:'투표 참여 안내',when:'투표 기간 중',to:'선거인 조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명} 선거관리위원회입니다.\n\n#{선거명} 투표가 진행 중입니다.\n· 투표 기간: #{투표기간}\n· 투표 방법: 아래 버튼에서 본인 확인 후 투표\n\n기간 내 꼭 참여해 주세요.',btn:'투표하기'},
+  {id:'tV1',name:'선거인 명부 확인 안내',when:'선거 공고 후',to:'선거인 조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명} 선거관리위원회입니다.\n\n#{선거명} 선거인 명부에 등록되었습니다.\n· 투표 기간: #{투표기간}\n\n명부 내용이 다르면 #{기한}까지 이의 신청해 주세요.',btn:'명부 확인'},
+  {id:'tR1',rec:'매달',name:'소식지 발행 안내',when:'매달 소식지 발행 후',to:'조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n\n#{월}월 소식지가 발행되었습니다.\n· 주요 소식: #{주요소식}\n\n아래 버튼에서 전체 내용을 확인해 주세요.',btn:'소식지 보기'},
+  {id:'tU1',name:'교육·행사 안내',when:'교육·행사 1주 전',to:'참석 대상 조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n\n#{행사명} 일정을 안내드립니다.\n· 일시: #{날짜} #{시간}\n· 장소: #{장소}\n\n참석 신청은 아래 버튼에서 해 주세요.',btn:'참석 신청'},
+  {id:'tK1',name:'조합원 경조사 안내',when:'경조사 소식을 받았을 때',to:'조합원',cols:'전화번호',st:'ok',set:true,body:'[부고] #{조합명}\n\n#{고인안내}\n· 빈소: #{빈소}\n· 발인: #{발인일시}\n\n삼가 고인의 명복을 빕니다.',btn:'빈소 위치'},
+  {id:'tS1',name:'설문 참여 안내',when:'설문 시작 시',to:'조합원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n\n#{설문주제} 설문에 참여를 부탁드립니다.\n· 기간: #{기간}\n· 소요 시간: 약 3분\n\n응답은 익명으로 처리됩니다.',btn:'설문 참여'},
+  {id:'t1',rec:'매달',name:'조합비 출금 안내',when:'매달 조합비 출금 후',to:'조합원',cols:'이름 · 전화번호 · 금액',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n\n#{월}월 조합비 #{금액}원이 출금되었습니다.\n\n출금 내역이 다르면 채널 채팅으로 문의해 주세요.',btn:''},
+  {id:'t2',name:'총회·대의원대회 안내',when:'총회 2주 전',to:'조합원·대의원',cols:'이름 · 전화번호',st:'ok',set:true,body:'#{이름} 조합원님, #{조합명}입니다.\n\n#{날짜} 정기총회를 소집합니다.\n· 시간: #{시간}\n· 장소: #{장소}\n\n안건은 아래 버튼에서 확인해 주세요.',btn:'안건 보기'},
   {id:'t3',name:'교섭 결과 공지',when:'교섭이 끝났을 때',to:'전체 조합원',cols:'이름 · 전화번호',st:'ing',set:false,body:'#{조합명} 교섭 결과 안내\n\n#{기간} 진행된 교섭 결과를 알려드립니다.',btn:''},
  ],
  '음식점':[
@@ -570,10 +573,10 @@ const TPL={
   {id:'t11',name:'주문 접수·배송 시작',when:'주문을 받았을 때',to:'주문 고객',cols:'이름 · 전화번호 · 상품 · 송장번호',st:'ok',set:true,body:'#{이름}님, 주문하신 #{상품} 배송을 시작했어요.\n송장번호: #{송장번호}',btn:'배송 조회'},
  ],
 };
-const SC_ORDER=['tU1','tR1','tR2','tR3','t1','t4','t5','t11','t2','t6','t7','t10','t9','t8','t12','t13','t14','t15','t3'];
-const POPULAR=['t1','t2','t7','tR1'];
+const SC_ORDER=['t7','tV1','tR1','tU1','tK1','tS1','tR2','tR3','t1','t4','t5','t11','t2','t6','t10','t9','t8','t12','t13','t14','t15','t3'];
+const POPULAR=['t7','tR1','tU1','t1'];
 const CAT_EMOJI={'단체·관리':'🏢','노동조합':'🤝','음식점':'🍽️','병원·의원':'🏥','뷰티':'💇','운동·레저':'🏋️','숙박':'🏨','소매·배송':'📦'};
-const VARS={'이름':'엑셀 B열 (이름)','조합명':'카카오노조','월':'10','금액':'엑셀 C열 (금액)','기한':'10월 25일','날짜':'10월 18일(토)','시간':'오후 2시','장소':'판교 아지트 3층 대회의실','가게명':'카카오노조','행사명':'신규 조합원 교육','병원명':'카카오노조','일시':'10월 20일 19:00','인원':'4','시각':'15:02','픽업시간':'12시 30분','만료일':'10월 31일','상품':'사과 5kg','송장번호':'6789-1234-5555','기간':'10월 3일~5일','객실':'201호'};
+const VARS={'이름':'엑셀 B열 (이름)','조합명':'카카오노조','월':'10','금액':'엑셀 C열 (금액)','기한':'10월 25일','날짜':'10월 18일(토)','시간':'오후 2시','장소':'판교 아지트 3층 대회의실','가게명':'카카오노조','행사명':'신규 조합원 교육','선거명':'제5기 임원 선거','투표기간':'11월 10일~12일','주요소식':'임금교섭 1차 결과','고인안내':'홍길동 조합원 부친상','빈소':'분당서울대병원 장례식장 3호실','발인일시':'11월 2일(월) 오전 8시','설문주제':'2027년 임금 요구안','병원명':'카카오노조','일시':'10월 20일 19:00','인원':'4','시각':'15:02','픽업시간':'12시 30분','만료일':'10월 31일','상품':'사과 5kg','송장번호':'6789-1234-5555','기간':'10월 3일~5일','객실':'201호'};
 const findT=id=>Object.values(TPL).flat().find(x=>x.id===id);
 const catOf=id=>Object.keys(TPL).find(c=>TPL[c].some(x=>x.id===id));
 const route=()=>location.hash.slice(1)||'home';
@@ -614,7 +617,7 @@ function phone(){
  const t=S.tpl?Object.values(TPL).flat().find(x=>x.id===S.tpl):null;
  let body='템플릿을 선택하면<br>미리보기가 표시돼요.';
  if(t){
-  body=t.body.replace(/#\{(.+?)\}/g,(m,k)=>{const v=VARS[k]||m;const mr=(S.recvMode==='manual'&&S.rows&&S.rows[0])?S.rows[0][k]:null;const sample=mr||{'이름':'김민지','금액':'280,000'}[k];return `<span class="v">${sample||(/엑셀/.test(v)?m:v)}</span>`});
+  body=t.body.replace(/#\{(.+?)\}/g,(m,k)=>{const v=VARS[k]||m;const mr=(S.recvMode==='manual'&&S.rows&&S.rows[0])?S.rows[0][k]:null;const sample=mr||{'이름':'김민지','금액':'15,000'}[k];return `<span class="v">${sample||(/엑셀/.test(v)?m:v)}</span>`});
  }
  return `<div><div class="phone"><div class="screen">
   <div class="top">카카오노조</div>
@@ -706,7 +709,7 @@ function manualHTML(ct){
  if(!S.rows) S.rows=[{phone:''}];
  const pv=(ct?perVars(ct):['이름']).concat(S.linkPer&&ct&&ct.btn?['링크']:[]);
  return `<table class="mtb"><tr><th>전화번호</th>${pv.map(k=>`<th>${k}</th>`).join('')}<th></th></tr>
-  ${S.rows.map((r,i)=>`<tr><td><input class="input" placeholder="010-0000-0000" value="${r.phone||''}" oninput="mRow(${i},'phone',this.value)"></td>${pv.map(k=>`<td><input class="input" placeholder="${{'이름':'김민지','금액':'280,000','일시':'10월 20일 19:00','인원':'4','날짜':'10월 18일','시간':'오후 2시','장소':'본관 3층','시각':'15:02','상품':'사과 5kg','송장번호':'','만료일':'10월 31일','픽업시간':'12시 30분','객실':'201호'}[k]||''}" value="${r[k]||''}" oninput="mRow(${i},'${k}',this.value)"></td>`).join('')}<td>${S.rows.length>1?`<a style="color:#aaa" onclick="S.rows.splice(${i},1);render()">✕</a>`:''}</td></tr>`).join('')}</table>
+  ${S.rows.map((r,i)=>`<tr><td><input class="input" placeholder="010-0000-0000" value="${r.phone||''}" oninput="mRow(${i},'phone',this.value)"></td>${pv.map(k=>`<td><input class="input" placeholder="${{'이름':'김민지','금액':'15,000','일시':'10월 20일 19:00','인원':'4','날짜':'10월 18일','시간':'오후 2시','장소':'본관 3층','시각':'15:02','상품':'사과 5kg','송장번호':'','만료일':'10월 31일','픽업시간':'12시 30분','객실':'201호'}[k]||''}" value="${r[k]||''}" oninput="mRow(${i},'${k}',this.value)"></td>`).join('')}<td>${S.rows.length>1?`<a style="color:#aaa" onclick="S.rows.splice(${i},1);render()">✕</a>`:''}</td></tr>`).join('')}</table>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px"><a style="color:#3a6fd8;font-weight:600" onclick="S.rows.push({phone:''});render()">+ 한 명 더</a><span>받는 사람 <b id="mcount">${manualN()}명</b></span></div>
   <div class="help">10명 이상이면 엑셀·명단이 편해요.${S.ver==='b'?'':` 최근에 보낸 분은 <a style="color:#3a6fd8" onclick="S.picker='recent';render()">저장된 명단</a>에서 고를 수 있어요.`}</div>`;
 }
@@ -744,7 +747,7 @@ function commonVarsHTML(ct){
 }
 
 /* ---------- AI 템플릿 찾기 · 초안 ---------- */
-const AIKW=[[['조합비','회비','납부'],['t1']],[['총회','소집','대의원','안건'],['t2']],[['투표','찬반','선거'],['t7']],[['소식지','소식','뉴스레터'],['tR1']],[['교육','행사','참석','설명회','워크숍'],['tU1']],[['교섭','임금','단체협약','결과'],['t3']],
+const AIKW=[[['조합비','회비','납부'],['t1']],[['총회','소집','대의원','안건'],['t2']],[['투표','찬반','선거','명부'],['t7','tV1']],[['부고','경조사','빈소','조문'],['tK1']],[['설문','조사','의견'],['tS1']],[['소식지','소식','뉴스레터'],['tR1']],[['교육','행사','참석','설명회','워크숍'],['tU1']],[['교섭','임금','단체협약','결과'],['t3']],
  [['관리비'],['tR2']],[['예약'],['t4','t5','t6','t14','t12']]];
 const DRAFTS=[[['휴무','휴관','사무실'],'#{이름} 조합원님, #{조합명}입니다.\n#{기간} 동안 조합 사무실이 휴무입니다.\n#{재개일}부터 정상 운영해요.\n\n문의는 채널 채팅으로 남겨주세요.'],
  [['상담','고충'],'#{이름} 조합원님, #{조합명}입니다.\n#{일시} 고충 상담 일정을 안내드려요.\n· 장소: #{장소}\n\n변경이 필요하면 채널 채팅으로 알려주세요.'],
@@ -802,7 +805,7 @@ P['at-quick']=()=>{
 
 
 P['at-gallery']=()=>{
- const prev=t=>t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지','금액':'280,000'}[k]||VARS[k]||m));
+ const prev=t=>t.body.split('\n').filter(Boolean).slice(0,3).join('<br>').replace(/#\{(.+?)\}/g,(m,k)=>({'이름':'김민지','금액':'15,000'}[k]||VARS[k]||m));
  const card=(t,rank)=>`<div class="sc ${t.st!=='ok'?'off':''}" onclick="${t.st==='ok'?`S.tpl='${t.id}';S.cat='${catOf(t.id)}';S.step=1;render()`:''}">
    ${rank?`<span class="rank">${rank}</span>`:''}<div class="scbub"><div class="hd">알림톡 도착</div><div class="bd">${prev(t)}</div></div>
    <div class="sctx"><div class="when">${t.when}${S.ver!=='b'&&t.rec?'<span class="recchip">'+t.rec+' 보내는 알림</span>':''}</div><b>${t.name}</b>${t.st==='ok'?'<span class="badge b-at">바로 사용</span>':'<span class="badge b-ing">검수 필요</span>'}<div class="to">${rank?catOf(t.id)+' · ':''}${t.to}에게</div></div></div>`;
