@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Krew 브리핑</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+*{box-sizing:border-box} a{color:inherit}
+/* Layout: 한 장짜리 사내 메모 — 좁은 본문 열, 상단 한 문장 요약 박스, 섹션별 개조식 목록, 줄 끝 근거 칩 */
+:root {
+  --bg: #f6f7f6;
+  --surface: #ffffff;
+  --fg: #1d2421;
+  --muted: #5d6863;
+  --line: #dde2df;
+  --accent: #1f6f5c;
+  --accent-soft: #e3f0ec;
+  --chip-judge: #f3ecdf;
+  --chip-judge-fg: #7a5a1e;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131816; --surface: #1b2220; --fg: #e4ebe8; --muted: #9aa7a1; --line: #2c3532;
+    --accent: #6cc6ac; --accent-soft: #1f302b; --chip-judge: #3a3020; --chip-judge-fg: #e3c27f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131816; --surface: #1b2220; --fg: #e4ebe8; --muted: #9aa7a1; --line: #2c3532;
+  --accent: #6cc6ac; --accent-soft: #1f302b; --chip-judge: #3a3020; --chip-judge-fg: #e3c27f;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  font-size: 15px; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+main { max-width: 720px; margin: 0 auto; display: grid; gap: 28px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+h1 { font-size: 28px; line-height: 1.3; margin: 0; font-weight: 700; text-wrap: balance; }
+.summary {
+  background: var(--accent-soft); border-left: 3px solid var(--accent);
+  padding: 16px 18px; border-radius: 4px; font-size: 16px; font-weight: 500;
+}
+.summary .label { display: block; font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: .06em; margin-bottom: 4px; }
+section { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px 22px; display: grid; gap: 10px; min-width: 0; }
+h2 { font-size: 18px; margin: 0; font-weight: 700; color: var(--accent); }
+ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+ul ul { margin-top: 6px; color: var(--fg); }
+li::marker { color: var(--muted); }
+a.src {
+  display: inline-block; font-size: 11.5px; font-weight: 600; line-height: 1.5;
+  padding: 0 7px; margin-left: 4px; border-radius: 999px; vertical-align: 1px;
+  background: var(--accent-soft); color: var(--accent); text-decoration: none; white-space: nowrap;
+}
+a.src:hover, a.src:focus-visible { text-decoration: underline; outline: 2px solid var(--accent); outline-offset: 1px; }
+.tag {
+  display: inline-block; font-size: 11.5px; font-weight: 600; line-height: 1.5;
+  padding: 0 7px; margin-left: 4px; border-radius: 999px; vertical-align: 1px;
+  background: var(--chip-judge); color: var(--chip-judge-fg); white-space: nowrap;
+}
+.note { font-size: 13px; color: var(--muted); display: grid; gap: 4px; }
+.note p { margin: 0; }
+@media (max-width: 480px) { h1 { font-size: 23px; } section { padding: 16px; } body { padding-block: 24px 48px; } }
+</style>
+</head>
+<body>
+
+<main>
+  <header>
+    <div class="eyebrow">AI KREW · 2026-11-06 기준</div>
+    <h1>AI Krew 요약과 카비센과의 관계</h1>
+  </header>
+
+  <section>
+    <h2>무엇인가</h2>
+    <ul>
+      <li>광고주가 쓰는 광고 운영 AI 비서<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283706930">위키</a></li>
+      <li>AI Krew는 모먼트 광고계정 기준으로 동작</li>
+      <li>"광고 시작하고 싶어", "성과 왜 떨어졌어?"처럼 말로 요청하면 상품·예산·타겟 추천, 등록 전 점검, 성과 설명, 다음 할 일 제안<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283706930">위키</a></li>
+      <li>광고 등록·예산 변경·메시지 발송처럼 실제로 바뀌는 작업은 광고주가 승인해야 실행<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283709338">위키</a></li>
+      <li>화면은 모먼트와 별도인 전용 웹 화면. 왼쪽에 광고계정·대화 목록, 가운데에 채팅, 오른쪽에 결과 정리<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283709238">위키</a></li>
+      <li>모먼트 화면 안에 작은 창으로 띄우는 방식은 이후에 진행<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283709238">위키</a></li>
+      <li>일정: 1차 베타 테스트 12/1~12/31(1개월) → 1월 중 2차 진행 여부 확인. 서비스명은 상표권 검토에 따라 변경 가능<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/429114125">위키</a>
+        <ul>
+          <li>12/14 비즈니스페어 소개는 검토 중(미확정)<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283712316">위키</a></li>
+        </ul>
+      </li>
+      <li>베타 대상: 대행사를 통해 모집한 광고계정 약 10개<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/429114125">위키</a>
+        <ul>
+          <li>모집 기준은 월 광고비 300만 원 미만 → 1,000만 원 미만으로 상향(10/20)<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/429114125">위키</a></li>
+          <li>최종 선정 11개<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/437797243">위키</a> — 전체 모먼트 광고계정 중 상위 10% 이내 규모, 일부는 상향된 기준도 넘음<span class="tag">8~10월 광고비 자체 조회</span></li>
+          <li>실제 사용자는 주로 대행사 마케터(한 명이 여러 계정을 담당하는 경우 포함)<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283710136">위키</a></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>어디까지 되나</h2>
+    <ul>
+      <li>디스플레이 광고: 핵심 범위. 비즈보드·디스플레이·동영상 광고 만들기, 설정 수정, 켜기/끄기, 성과 진단<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283709339">위키</a></li>
+      <li>메시지: 모먼트에서 보내는 메시지광고 포함
+        <ul>
+          <li>채널메시지는 만들기·테스트 발송·실제 발송·수정·발송 종료까지 AI가 실행(광고주 승인 후)<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283709341">위키</a></li>
+          <li>개인화 메시지·브랜드 메시지·브랜드픽 메시지는 추천만<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283709341">위키</a></li>
+          <li>"A채널 지난주 메시지 비교해줘" 같은 채널·메시지별 성과 질문에 답변<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/283708659">위키</a></li>
+          <li>메시지 등록 전 심사 반려 가능성 점검<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/436075467">위키</a></li>
+        </ul>
+      </li>
+      <li>쉬운광고: 현재 범위 밖
+        <ul>
+          <li>쉬운광고 안내 자료도 아직 AI에 넣지 않은 상태<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/422338966">위키</a></li>
+          <li>"앞으로 쉬운광고 등 카카오 광고 전반으로 넓힌다"는 방향만 나온 단계<a class="src" href="https://kakao.atlassian.net/wiki/spaces/addatainsight/pages/425267013">위키</a></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>카비센과의 관계</h2>
+    <ul>
+      <li>AI 비즈니스 매니저와 비슷하지만 다름</li>
+      <li>AI 비즈니스 매니저: 비즈니스 자산 전체를 다루는 통합 창구<a class="src" href="https://kakao.atlassian.net/wiki/spaces/kbpcore/pages/430965869">위키</a>
+        <ul>
+          <li>현재 지원 범위는 채널(소식·쿠폰·메시지), 매장(메뉴·영업시간·매장사진), 예약하기. 광고계정(모먼트) 기능은 아직 없음<a class="src" href="https://kakao.atlassian.net/wiki/spaces/kbpcore/pages/430049915">위키</a></li>
+          <li>사용자는 사장님. 실제 질문 예: "채팅 밑에 메뉴 뜨는 거 어떻게 해?", "관리자 추가 승인 어디서 해?". 광고 질문은 2.5% 수준<a class="src" href="https://kakao.atlassian.net/wiki/spaces/kbpcore/pages/429065959">위키</a></li>
+        </ul>
+      </li>
+      <li>AI Krew: 비즈니스 자산 중 광고계정을 전문으로 다루는 AI
+        <ul>
+          <li>위상은 AI 비즈니스 매니저와 같은 급은 아님<span class="tag">판단</span></li>
+          <li>사용자는 주로 광고를 운영하는 대행사 마케터. 베타 대상도 대행사를 통해 모집한 브랜드 광고계정 11개<a class="src" href="https://kakao.atlassian.net/wiki/spaces/aikrew/pages/437797243">위키</a></li>
+        </ul>
+      </li>
+      <li>AI Krew도 비즈니스폼·카카오페이 등 다른 비즈니스 자산까지 넓힐 계획이라, 범위가 더 겹칠 수 있음<a class="src" href="https://kakao.atlassian.net/wiki/spaces/addatainsight/pages/425267013">위키</a>
+        <ul>
+          <li>AI Krew를 AI 비즈니스 매니저에 붙이는 것도 검토 가능<span class="tag">판단</span></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <div class="note">
+    <p>위키 칩: 사내 위키 원문(사내 계정 로그인 필요). 판단 칩: 위키 근거를 종합한 정리 의견으로, 두 팀 간 연계 논의 문서는 확인되지 않음.</p>
+  </div>
+</main>
+</body>
+</html>
