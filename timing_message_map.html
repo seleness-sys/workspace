@@ -48,6 +48,7 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 .screens .hint{font-size:12px;color:var(--sub);margin-bottom:10px}
 .ph-row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
 .ph-col{width:300px}
+.sit-h{font-size:13px;font-weight:700;margin:18px 0 8px;padding-top:12px;border-top:1px solid #e5e7eb}.sit-h:first-child{border-top:0;margin-top:4px}.sit-h small{font-weight:400;color:#666;margin-left:6px}
 .ph-cap{font-size:13px;font-weight:700;margin-bottom:6px}
 .ph-cap span{display:inline-block;background:var(--ink);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:6px}
 .ph{width:300px;height:470px;border-radius:24px;border:7px solid #1f1f1f;overflow:hidden;display:flex;flex-direction:column;background:#b2c7da;font-size:12.5px;position:relative}
@@ -101,7 +102,7 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 <div class="flow" id="flow"></div>
 
 <div class="verdict mid" id="verdict"></div>
-<div class="screens"><h3>화면 예시</h3><div class="hint">고른 카드 중 축마다 첫 번째 것으로 그려요. 비어 있는 축은 기본값(매장 사장님, 예약하기, 메시지 AI 칩, 채널 친구)으로 채워요. 가상 매장 예시</div><div id="warn2"></div><div class="ph-row" id="phones"></div></div>
+<div class="screens"><h3>화면 예시</h3><div class="hint">상황을 여러 개 고르면 상황마다 한 줄씩 그려요. 다른 축은 고른 카드 중 첫 번째 것으로 그려요. 비어 있는 축은 기본값(매장 사장님, 예약하기, 메시지 AI 칩, 채널 친구)으로 채워요. 가상 매장 예시</div><div id="warn2"></div><div id="phones"></div></div>
 <div class="out">
 <div class="box"><h3>지금 고른 시나리오</h3><div class="sent" id="sent"></div></div>
 <div class="box"><h3>걸리는 것</h3><div id="issues"></div></div>
@@ -203,8 +204,8 @@ function check(){
  Object.entries(RULES).forEach(([id,r])=>{
   const it=byId[id]; if(!sel[it.ax].has(id)) return;
   Object.entries(r).forEach(([k,v])=>{
-   if(k==='any'){
-    const cur=[...sel[v.ax]]; if(!cur.length) return;
+   if(k==='any'||k==='src'){
+    const cur=[...sel[k==='src'?'src':v.ax]]; if(!cur.length) return;
     if(!cur.some(x=>v.ok.includes(x))){bad.add(id);msg.push(`'${it.n}' — ${v.why}`);}
    } else {
     [...sel[k]].forEach(x=>{ if(!v.ok.includes(x)){bad.add(id);bad.add(x);msg.push(`'${it.n}' × '${byId[x].n}' — ${v.why}`);} });
@@ -217,6 +218,11 @@ function check(){
   const it=byId[id];
   Object.entries(r).forEach(([k,v])=>{
    const ax=k==='any'?v.ax:k;
+   if(k==='src'){
+    if(sel.sig.has(id)) AX.find(a=>a.id==='src').items.forEach(o=>{ if(!sel.src.has(o.id) && ![...sel.sig].some(s=>RULES[s]&&RULES[s].src&&RULES[s].src.ok.includes(o.id))) nofit.add(o.id); });
+    else { const cur=[...sel.src]; if(cur.length && !cur.some(x=>v.ok.includes(x))) nofit.add(id); }
+    return;
+   }
    if(sel[it.ax].has(id)){ // 고른 카드가 다른 축을 제한
     AX.find(a=>a.id===ax).items.forEach(o=>{ if(!sel[ax].has(o.id) && !v.ok.includes(o.id) && k!=='any') nofit.add(o.id); });
    } else { // 다른 축 선택 때문에 이 카드가 안 맞음
@@ -267,12 +273,19 @@ function guest(rc,S,sv,btn){
  return {c:'',top:`‹ ${sv[0]}`,bd:`<div class="pf"><div class="av">${sv[1]}</div><div><div class="nm">${sv[0]}</div><div class="card"><div class="hd">채널메시지 <span class="tg ad">광고</span></div><div class="tx"><div style="font-size:10px;color:#888">(광고)</div><div class="tt">${S.t}</div>${S.m}<br><span style="font-size:10.5px;color:#888">수신거부: 채널 차단</span></div><div class="b y">${btn}</div></div></div></div>${nf?'<div class="note2">채널 친구가 아닌 거래 손님이 받는 경우 (법무 확인 전제)</div>':''}`};
 }
 function drawPhones(CK){
- const sg=first('sig','rep'),sl=first('sel','s_store'),tp=first('tp','t_chip'),rc=first('rcv','r_fr'),hw=first('how','h_ok'),rs=first('res',null);
- const S0=SIG[sg][sl]||SIG[sg].def||Object.values(SIG[sg])[0],sv=SEL[sl];const sr=[...sel.src][0];const S=sr?{...S0,chip:byId[sr].n}:S0;
- const btn=rs?RES[rs]:(sg==='int'?'쿠폰 보기':({s_store:'예약하기',s_pro:'예약하기',s_mall:'바로 주문하기',s_host:'바로 주문하기',s_oc:'링크페이로 구매',s_fc:'쿠폰 받기'}[sl]||'자세히 보기'));
- const o=owner(tp,S,sv,sl,rc==='r_oc',hw),g=guest(rc,S,sv,btn);
+ const sl=first('sel','s_store'),tp=first('tp','t_chip'),rc=first('rcv','r_fr'),hw=first('how','h_ok'),rs=first('res',null),sv=SEL[sl];
+ const sigs=sel.sig.size?[...sel.sig]:['rep'];
  const ph=(x,cap,n)=>`<div class="ph-col"><div class="ph-cap"><span>${n}</span>${cap}</div><div class="ph ${x.c}">${x.top?`<div class="top">${x.top}</div>`:''}<div class="bd">${x.bd}</div></div></div>`;
- document.getElementById('phones').innerHTML=ph(o,'사장님 화면 · '+byId[tp].n,'사장님')+ph(g,'손님 화면 · '+byId[rc].n,'손님');
+ document.getElementById('phones').innerHTML=sigs.map((sg,k)=>{
+  const S0=SIG[sg][sl]||SIG[sg].def||Object.values(SIG[sg])[0];
+  const okSrc=(RULES[sg]&&RULES[sg].src)?RULES[sg].src.ok:null;
+  const sr=okSrc?okSrc.find(x=>sel.src.has(x)):[...sel.src][0];
+  const S=sr?{...S0,chip:byId[sr].n}:S0;
+  const btn=rs?RES[rs]:(sg==='int'?'쿠폰 보기':({s_store:'예약하기',s_pro:'예약하기',s_mall:'바로 주문하기',s_host:'바로 주문하기',s_oc:'링크페이로 구매',s_fc:'쿠폰 받기'}[sl]||'자세히 보기'));
+  const o=owner(tp,S,sv,sl,rc==='r_oc',hw),g=guest(rc,S,sv,btn);
+  const head=sigs.length>1||sel.sig.size?`<div class="sit-h">상황 ${k+1}. ${byId[sg].n}<small>신호: ${S.chip}</small></div>`:'';
+  return head+`<div class="ph-row">${ph(o,'사장님 화면 · '+byId[tp].n,'사장님')+ph(g,'손님 화면 · '+byId[rc].n,'손님')}</div>`;
+ }).join('');
  document.getElementById('warn2').innerHTML=CK.msg.length?'<div class="warn2">말이 안 되는 조합이 있어요. 화면은 참고용으로만 보세요</div>':'';
 }
 const COMMON_LEGAL='거래·활동 데이터를 사장님 광고 대상 선정에 써도 되는지 (데이터 이용 범위)';
