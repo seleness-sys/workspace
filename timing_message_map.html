@@ -112,20 +112,11 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 // d: k=카카오 보유, p=제휴사·외부 보유, x=해당없음 / legal: 법무 쟁점 / now: 지금 있음
 const AX=[
 {id:'sig',t:'① 상황',q:'언제 보낼까',items:[
- {g:'손님 상황 · 카카오 거래',id:'bk',n:'예약하기 예약',d:'k',now:1,note:'예약 주기 초과'},
- {g:'손님 상황 · 카카오 거래',id:'co',n:'톡체크아웃 주문',d:'k',now:1,note:'재구매 주기'},
- {g:'손님 상황 · 카카오 거래',id:'qr',n:'통합QR 방문',d:'k',now:1,note:'N일 재방문 없음'},
- {g:'손님 상황 · 카카오 거래',id:'lp',n:'링크페이 구매',d:'k',now:0,note:'27.1Q, 원장 카카오'},
- {g:'손님 상황 · 카카오 거래',id:'ag',n:'에이전트 결제',d:'p',now:0,note:'원장은 제휴사 보유',issue:'에이전트 결제 기록은 카카오에 없음 (27년 월렛 이후)'},
- {g:'손님 상황 · 채널 활동',id:'cp',n:'쿠폰 다운 후 미사용',d:'k',now:1,note:'만료 임박'},
- {g:'손님 상황 · 채널 활동',id:'ck',n:'메시지 클릭 후 무반응',d:'k',now:1,note:'후속 메시지'},
- {g:'손님 상황 · 채널 활동',id:'fr',n:'친구 추가 후 N일',d:'k',now:1,note:'첫 방문 유도'},
- {g:'손님 상황 · 채널 활동',id:'ch',n:'채팅 문의 후 미거래',d:'k',now:1,note:'문의 손님 후속',legal:'채팅 내용을 광고 대상 선정에 쓰는 범위 확인'},
- {g:'손님 상황 · 채널 활동',id:'lo',n:'장기 미수신 친구',d:'k',now:1,note:'안부·재활성'},
- {g:'손님 상황 · 외부 거래',id:'im',n:'호스팅몰 주문 (아임웹)',d:'p',now:0,note:'가정',issue:'아임웹 개발 협조 필요'},
- {g:'손님 상황 · 외부 거래',id:'pos',n:'프랜차이즈·POS 판매 (CU, 페이히어)',d:'p',now:0,note:'가정',issue:'본사·POS사 데이터 연동 필요'},
- {g:'가게 상황',id:'sl',n:'빈 예약시간',d:'k',now:1,note:'예약하기 매장',issue:'예약하기에 빈 슬롯 데이터가 남는지 확인 필요'},
- {g:'가게 상황',id:'st',n:'마감 임박 재고',d:'p',now:0,note:'반찬·베이커리, 가정',issue:'POS·재고 솔루션 연동 필요, 또는 사장님이 직접 입력'},
+ {g:'손님 상황',id:'rep',n:'다시 올 때가 됨',d:'kp',now:1,note:'카카오: 예약하기·톡체크아웃·QR·링크페이 / 제휴: 에이전트 결제·아임웹·POS(가정)'},
+ {g:'손님 상황',id:'int',n:'관심은 보였는데 안 옴',d:'k',now:1,note:'쿠폰 받고 안 씀, 메시지 눌렀는데 안 옴, 문의만 하고 감',legal:'채팅 내용을 광고 대상 선정에 쓰는 범위 확인'},
+ {g:'손님 상황',id:'nw',n:'새로 친구가 됨',d:'k',now:1,note:'친구 추가 후 첫 방문 전'},
+ {g:'손님 상황',id:'lo',n:'오래 연락 없음',d:'k',now:1,note:'장기 미수신 친구'},
+ {g:'가게 상황',id:'slot',n:'빈 자리·남은 물건',d:'kp',now:1,note:'카카오: 예약하기 빈 시간 / 재고: POS 연동 또는 사장님 입력(가정)',issue:'예약하기 빈 슬롯 데이터 확인 필요, 재고는 솔루션사 연동 또는 사장님 직접 입력'},
  {g:'바깥 상황',id:'wx',n:'날씨·시즌',d:'x',now:1,note:'개인 데이터 아님'}]},
 {id:'sel',t:'② 판매자',q:'누가 보내나',items:[
  {id:'s_store',n:'매장 사장님',d:'x',now:1,note:'예약·QR·매장관리'},
@@ -161,27 +152,17 @@ const AX=[
 ];
 
 // 조합 규칙: 이 카드를 고르면 다른 축은 allowed 안에서만 말이 됨 / any: 해당 축에 이 중 하나는 있어야 함
-const SELL_BK=['s_store','s_pro'],TX=['bk','co','qr','lp','ag','im','pos'];
+const SELL_BK=['s_store','s_pro'],TX=['rep'];
 const RULES={
- bk:{sel:{ok:SELL_BK,why:'예약하기는 예약 받는 매장·1인 전문가만 씀'}},
- co:{sel:{ok:['s_mall','s_host','s_store'],why:'톡체크아웃은 자사몰·호스팅몰·매장 판매자가 씀'}},
- qr:{sel:{ok:['s_store','s_fc','s_pro'],why:'통합QR은 오프라인 매장 방문 기록'}},
- lp:{sel:{ok:['s_oc'],why:'링크페이는 오픈채팅 판매자용'}},
- ag:{sel:{ok:['s_host','s_fc'],why:'에이전트 결제는 제휴사·제휴 플랫폼 입점 판매자만'}},
- im:{sel:{ok:['s_host'],why:'아임웹 주문은 호스팅몰 입점몰 데이터'}},
- pos:{sel:{ok:['s_fc','s_store'],why:'POS 판매는 오프라인 매장 데이터'}},
- sl:{sel:{ok:SELL_BK,why:'빈 예약시간은 예약하기를 쓰는 매장·전문가만'}},
- st:{sel:{ok:['s_store','s_fc'],why:'재고 마감은 오프라인 매장 상황'}},
- cp:{rcv:{ok:['r_fr'],why:'쿠폰 반응은 채널 친구에게만 있는 데이터'}},
- ck:{rcv:{ok:['r_fr'],why:'메시지 클릭은 메시지를 받은 친구에게만 있음'}},
- fr:{rcv:{ok:['r_fr'],why:'친구 추가 신호는 친구 대상'}},
- ch:{rcv:{ok:['r_fr'],why:'채팅 문의 후속은 채널 친구 대상'}},
+ int:{rcv:{ok:['r_fr'],why:'쿠폰·클릭·채팅 반응은 채널 친구에게만 있는 데이터'}},
+ nw:{rcv:{ok:['r_fr'],why:'친구 추가 상황은 친구 대상'}},
  lo:{rcv:{ok:['r_fr'],why:'장기 미수신은 친구 대상'}},
- r_nf:{any:{ax:'sig',ok:TX,why:'비친구에게 보내려면 거래관계가 근거라 거래 신호가 필요'}},
+ slot:{sel:{ok:['s_store','s_pro','s_fc'],why:'빈 자리·남은 물건은 예약 받거나 매장이 있는 판매자'}},
+ r_nf:{any:{ax:'sig',ok:TX,why:'비친구에게 보내려면 거래관계가 근거라 거래한 손님 상황이 필요'}},
  r_oc:{sel:{ok:['s_fc','s_oc'],why:'오픈채팅 단골방은 점주·오픈채팅 판매자에게만 있음'}},
  t_hq:{sel:{ok:['s_host','s_fc'],why:'호스팅사·본사 관리자는 입점몰·점주만 씀'}},
- t_svc:{any:{ax:'sig',ok:['bk','co','qr','lp'],why:'서비스 관리 화면은 그 서비스 거래 신호가 있어야 의미 있음'}},
- t_noti:{any:{ax:'sig',ok:['bk','co','lp'],why:'예약·주문 알림은 예약하기·톡체크아웃·링크페이에서만 생김'}},
+ t_svc:{any:{ax:'sig',ok:['rep','slot'],why:'서비스 관리 화면은 그 서비스 거래·예약 데이터가 있어야 의미 있음'}},
+ t_noti:{any:{ax:'sig',ok:['rep'],why:'예약·주문 알림은 거래가 있어야 생김'}},
  h_tpl:{sel:{ok:['s_fc'],why:'본사 템플릿은 프랜차이즈용'}},
  o_bk:{sel:{ok:SELL_BK,why:'재예약은 예약하기를 쓰는 판매자만'}},
  o_co:{sel:{ok:['s_mall','s_host','s_store'],why:'톡체크아웃 주문은 톡체크아웃 가맹 판매자만'}},
@@ -220,21 +201,20 @@ function check(){
 
 // ===== 화면 예시 =====
 const SIG={
- bk:{who:'지난 커트 후 6주 지난 손님',n:23,why:'평소 방문 주기(5~6주)를 넘겼어요',chip:'예약 이력',t:'커트하신 지 6주 됐어요!',m:'이번 주 토요일 오후 자리 있어요. 재방문 고객 클리닉 무료'},
- co:{who:'구매 후 4주 지난 손님',n:40,why:'200g은 보통 3~4주면 다 드세요',chip:'톡체크아웃 주문',t:'원두 다 드셔갈 때죠?',m:'이번 주 재주문 시 배송비 무료예요'},
- qr:{who:'첫 방문 후 14일 안 오신 손님',n:31,why:'QR 방문 기록 기준',chip:'QR 방문',t:'다시 오시면 음료 업그레이드!',m:'이번 주까지 사이즈업 쿠폰 드려요'},
- lp:{who:'공구 구매 후 한 달 지난 손님',n:18,why:'지난 구매 주기 기준',chip:'링크페이 구매',t:'지난번 그 원두, 다시 열었어요',m:'이번 주 금요일까지 재구매 할인'},
- ag:{who:'AI 쇼핑 결제 후 4주 지난 손님',n:40,why:'소모품 재주문 시점',chip:'AI 쇼핑 결제',t:'예가체프 다 드셔갈 때죠?',m:'채팅방에서 바로 재주문하면 배송비 무료'},
- cp:{who:'쿠폰 받고 아직 안 쓴 손님',n:52,why:'쿠폰이 3일 뒤 만료돼요',chip:'쿠폰 미사용',t:'받으신 쿠폰, 이번 주까지예요',m:'아메리카노 1+1 쿠폰이 금요일에 만료돼요'},
- ck:{who:'지난 메시지에서 신메뉴를 누른 손님',n:27,why:'관심을 보였지만 방문 기록이 없어요',chip:'메시지 클릭',t:'관심 가지셨던 신메뉴, 이번 주 할인',m:'딸기라떼 출시 기념 20% 할인'},
- fr:{who:'친구 추가하고 7일 지난 손님',n:15,why:'첫 방문 전이에요',chip:'친구 추가',t:'친구 추가 감사해요!',m:'첫 방문 때 이 메시지 보여주시면 디저트 증정'},
- ch:{who:'문의만 하고 가신 손님',n:9,why:'채팅 문의 후 거래가 없어요',chip:'채팅 문의',t:'문의하신 상품 다시 안내드려요',m:'문의하신 패딩, M 사이즈 재입고됐어요'},
- lo:{who:'3개월간 소식을 못 받은 친구',n:120,why:'오래 연락이 없었어요',chip:'장기 미수신',t:'오랜만이에요!',m:'겨울 신메뉴 소식 전해드려요'},
- im:{who:'쇼핑몰에서 산 지 4주 지난 손님',n:35,why:'아임웹 주문 기준(가정)',chip:'쇼핑몰 주문',t:'재구매 시기예요',m:'지난번 구매하신 상품, 이번 주 재구매 할인'},
- pos:{who:'도시락 자주 사던 손님',n:44,why:'내일 신상 도시락 입고(가정)',chip:'판매 기록',t:'내일 신상 도시락 입고돼요',m:'오전 11시 입고, 선착순 할인'},
- sl:{who:'우리 채널 친구 전체',n:180,why:'오늘 오후 3시·4시 예약이 비었어요',chip:'빈 예약시간',t:'오늘 오후 자리 있어요',m:'오늘 3시·4시 커트 예약 가능, 당일 예약 10% 할인'},
- st:{who:'근처 단골 친구',n:64,why:'오늘 반찬 12팩이 남았어요(가정)',chip:'남은 재고',t:'오늘 반찬 마감 할인',m:'저녁 7시부터 남은 반찬 30% 할인'},
- wx:{who:'우리 채널 친구 전체',n:210,why:'내일 비 예보',chip:'날씨',t:'비 오는 날엔 배달 할인',m:'내일 비 오면 배달비 무료'}
+ rep:{
+  s_store:{who:'지난 커트 후 6주 지난 손님',n:23,why:'평소 방문 주기(5~6주)를 넘겼어요',chip:'예약하기 예약',t:'커트하신 지 6주 됐어요!',m:'이번 주 토요일 오후 자리 있어요. 재방문 고객 클리닉 무료'},
+  s_pro:{who:'PT 끝나고 3주 지난 회원',n:12,why:'예약 기록 기준',chip:'예약하기 예약',t:'다시 운동 시작해 볼까요?',m:'이번 달 재등록 시 1회 추가'},
+  s_mall:{who:'구매 후 4주 지난 손님',n:40,why:'200g은 보통 3~4주면 다 드세요',chip:'톡체크아웃 주문',t:'원두 다 드셔갈 때죠?',m:'이번 주 재주문 시 배송비 무료예요'},
+  s_host:{who:'쇼핑몰에서 산 지 4주 지난 손님',n:35,why:'아임웹 주문 기준(가정)',chip:'쇼핑몰 주문',t:'재구매 시기예요',m:'지난번 구매하신 상품, 이번 주 재구매 할인'},
+  s_fc:{who:'도시락 자주 사던 손님',n:44,why:'2주째 구매가 없어요(가정)',chip:'판매 기록',t:'요즘 안 보이셔서요',m:'이번 주 도시락 사면 음료 증정'},
+  s_oc:{who:'공구 구매 후 한 달 지난 손님',n:18,why:'지난 구매 주기 기준',chip:'링크페이 구매',t:'지난번 그 원두, 다시 열었어요',m:'이번 주 금요일까지 재구매 할인'}},
+ int:{def:{who:'쿠폰 받고 아직 안 쓴 손님',n:52,why:'쿠폰이 3일 뒤 만료돼요',chip:'쿠폰 미사용',t:'받으신 쿠폰, 이번 주까지예요',m:'아메리카노 1+1 쿠폰이 금요일에 만료돼요'}},
+ nw:{def:{who:'친구 추가하고 7일 지난 손님',n:15,why:'첫 방문 전이에요',chip:'친구 추가',t:'친구 추가 감사해요!',m:'첫 방문 때 이 메시지 보여주시면 디저트 증정'}},
+ lo:{def:{who:'3개월간 소식을 못 받은 친구',n:120,why:'오래 연락이 없었어요',chip:'장기 미수신',t:'오랜만이에요!',m:'겨울 신메뉴 소식 전해드려요'}},
+ slot:{
+  def:{who:'우리 채널 친구 전체',n:180,why:'오늘 오후 3시·4시 예약이 비었어요',chip:'빈 예약시간',t:'오늘 오후 자리 있어요',m:'오늘 3시·4시 예약 가능, 당일 예약 10% 할인'},
+  s_fc:{who:'근처 단골 친구',n:64,why:'오늘 도시락 8개가 남았어요(가정)',chip:'남은 재고',t:'오늘 도시락 마감 할인',m:'저녁 8시부터 남은 도시락 30% 할인'}},
+ wx:{def:{who:'우리 채널 친구 전체',n:210,why:'내일 비 예보',chip:'날씨',t:'비 오는 날엔 배달 할인',m:'내일 비 오면 배달비 무료'}}
 };
 const SEL={s_store:['라이언헤어 판교점','LH'],s_mall:['라이언원두','LW'],s_host:['라이언원두 (아임웹)','LW'],s_fc:['CU 판교역점','CU'],s_oc:['라이언 공구방','LG'],s_pro:['트레이너 라이언','TR']};
 const RES={o_bk:'예약하기',o_co:'바로 주문하기',o_lp:'링크페이로 구매',o_ag:'AI에게 바로 주문하기',o_qr:'쿠폰 받기',o_rep:'자세히 보기'};
@@ -259,9 +239,9 @@ function guest(rc,S,sv,btn){
  return {c:'',top:`‹ ${sv[0]}`,bd:`<div class="pf"><div class="av">${sv[1]}</div><div><div class="nm">${sv[0]}</div><div class="card"><div class="hd">채널메시지 <span class="tg ad">광고</span></div><div class="tx"><div style="font-size:10px;color:#888">(광고)</div><div class="tt">${S.t}</div>${S.m}<br><span style="font-size:10.5px;color:#888">수신거부: 채널 차단</span></div><div class="b y">${btn}</div></div></div></div>${nf?'<div class="note2">채널 친구가 아닌 거래 손님이 받는 경우 (법무 확인 전제)</div>':''}`};
 }
 function drawPhones(CK){
- const sg=first('sig','bk'),sl=first('sel','s_store'),tp=first('tp','t_chip'),rc=first('rcv','r_fr'),hw=first('how','h_ok'),rs=first('res',null);
- const S=SIG[sg],sv=SEL[sl];
- const btn=rs?RES[rs]:({bk:'예약하기',co:'바로 주문하기',lp:'링크페이로 구매',ag:'AI에게 바로 주문하기',qr:'쿠폰 받기',cp:'쿠폰 보기'}[sg]||'자세히 보기');
+ const sg=first('sig','rep'),sl=first('sel','s_store'),tp=first('tp','t_chip'),rc=first('rcv','r_fr'),hw=first('how','h_ok'),rs=first('res',null);
+ const S=SIG[sg][sl]||SIG[sg].def||Object.values(SIG[sg])[0],sv=SEL[sl];
+ const btn=rs?RES[rs]:(sg==='int'?'쿠폰 보기':({s_store:'예약하기',s_pro:'예약하기',s_mall:'바로 주문하기',s_host:'바로 주문하기',s_oc:'링크페이로 구매',s_fc:'쿠폰 받기'}[sl]||'자세히 보기'));
  const o=owner(tp,S,sv,sl,rc==='r_oc',hw),g=guest(rc,S,sv,btn);
  const ph=(x,cap,n)=>`<div class="ph-col"><div class="ph-cap"><span>${n}</span>${cap}</div><div class="ph ${x.c}">${x.top?`<div class="top">${x.top}</div>`:''}<div class="bd">${x.bd}</div></div></div>`;
  document.getElementById('phones').innerHTML=ph(o,'사장님 화면 · '+byId[tp].n,'사장님')+ph(g,'손님 화면 · '+byId[rc].n,'손님');
@@ -269,12 +249,12 @@ function drawPhones(CK){
 }
 const COMMON_LEGAL='거래·활동 데이터를 사장님 광고 대상 선정에 써도 되는지 (데이터 이용 범위)';
 const PRE={
- slot:{sig:['sl'],sel:['s_store'],rcv:['r_fr'],tp:['t_chip'],how:['h_ok'],res:['o_bk']},
- salon:{sig:['bk'],sel:['s_store'],rcv:['r_fr'],tp:['t_chip'],how:['h_ok'],res:['o_bk','o_rep']},
- imweb:{sig:['co','im'],sel:['s_host'],rcv:['r_fr'],tp:['t_hq','t_chip'],how:['h_ok'],res:['o_co']},
- cu:{sig:['pos','wx'],sel:['s_fc'],rcv:['r_fr','r_oc'],tp:['t_hq','t_push'],how:['h_tpl'],res:['o_ag','o_qr']},
- linkpay:{sig:['lp'],sel:['s_oc'],rcv:['r_fr','r_nf'],tp:['t_svc','t_noti'],how:['h_ok'],res:['o_lp']},
- coupon:{sig:['cp'],sel:['s_store'],rcv:['r_fr'],tp:['t_home','t_off'],how:['h_auto'],res:['o_qr']}
+ slot:{sig:['slot'],sel:['s_store'],rcv:['r_fr'],tp:['t_chip'],how:['h_ok'],res:['o_bk']},
+ salon:{sig:['rep'],sel:['s_store'],rcv:['r_fr'],tp:['t_chip'],how:['h_ok'],res:['o_bk','o_rep']},
+ imweb:{sig:['rep'],sel:['s_host'],rcv:['r_fr'],tp:['t_hq','t_chip'],how:['h_ok'],res:['o_co']},
+ cu:{sig:['rep','slot','wx'],sel:['s_fc'],rcv:['r_fr','r_oc'],tp:['t_hq','t_push'],how:['h_tpl'],res:['o_ag','o_qr']},
+ linkpay:{sig:['rep'],sel:['s_oc'],rcv:['r_fr','r_nf'],tp:['t_svc','t_noti'],how:['h_ok'],res:['o_lp']},
+ coupon:{sig:['int'],sel:['s_store'],rcv:['r_fr'],tp:['t_home','t_off'],how:['h_auto'],res:['o_qr']}
 };
 let sel={},filt={kakao:0,now:0};
 AX.forEach(a=>sel[a.id]=new Set());
@@ -295,7 +275,7 @@ function render(){
    if(i.g && i.g!==g){g=i.g;const h=document.createElement('div');h.className='grp';h.textContent=g;c.appendChild(h);}
    const b=document.createElement('button');
    b.className='chip'+(sel[a.id].has(i.id)?' sel':'')+(passes(i)?'':' dim')+(CK.bad.has(i.id)?' bad':'')+(!sel[a.id].has(i.id)&&CK.nofit.has(i.id)?' nofit':'');
-   const DL=(a.id==='sig'||a.id==='res')&&i.d!=='x'?`<span class="dl ${i.d}">${i.d==='k'?'카카오 데이터':'제휴사 데이터'}</span>`:'';
+   const DL=(a.id==='sig'||a.id==='res')&&i.d!=='x'?(i.d==='kp'?'<span class="dl k">카카오 데이터</span><span class="dl p">제휴사 데이터</span>':`<span class="dl ${i.d}">${i.d==='k'?'카카오 데이터':'제휴사 데이터'}</span>`):'';
    b.innerHTML=`${i.n}<small>${DL}${i.note||''}${i.legal?' <span class="w">· 법무</span>':''}${i.now?'':' · 아직 없음'}</small>`;
    b.onclick=()=>{sel[a.id].has(i.id)?sel[a.id].delete(i.id):sel[a.id].add(i.id);render();};
    c.appendChild(b);
