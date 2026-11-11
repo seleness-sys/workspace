@@ -94,7 +94,6 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 <span class="sep"></span>
 <b>좁히기</b>
 <button class="btn" data-filter="kakao">카카오 데이터만</button>
-<button class="btn" data-filter="nolegal">법무 쟁점 없는 것만</button>
 <button class="btn" data-filter="now">지금 있는 것만</button>
 <div class="legend">상황·결과 카드의 데이터 위치: <span class="dl k">카카오 데이터</span><span class="dl p">제휴사 데이터</span></div>
 </div>
@@ -277,12 +276,11 @@ const PRE={
  linkpay:{sig:['lp'],sel:['s_oc'],rcv:['r_fr','r_nf'],tp:['t_svc','t_noti'],how:['h_ok'],res:['o_lp']},
  coupon:{sig:['cp'],sel:['s_store'],rcv:['r_fr'],tp:['t_home','t_off'],how:['h_auto'],res:['o_qr']}
 };
-let sel={},filt={kakao:0,nolegal:0,now:0};
+let sel={},filt={kakao:0,now:0};
 AX.forEach(a=>sel[a.id]=new Set());
 const byId={};AX.forEach(a=>a.items.forEach(i=>{i.ax=a.id;byId[i.id]=i}));
 function passes(i){
  if(filt.kakao && i.d==='p') return false;
- if(filt.nolegal && i.legal) return false;
  if(filt.now && !i.now) return false;
  return true;
 }
@@ -329,7 +327,7 @@ document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{
  const p=PRE[b.dataset.preset];AX.forEach(a=>sel[a.id]=new Set(p[a.id]||[]));
  document.querySelectorAll('[data-preset]').forEach(x=>x.classList.toggle('on',x===b));render();});
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filt[b.dataset.filter]^=1;render();});
-document.getElementById('reset').onclick=()=>{AX.forEach(a=>sel[a.id]=new Set());filt={kakao:0,nolegal:0,now:0};document.querySelectorAll('[data-preset]').forEach(x=>x.classList.remove('on'));render();};
+document.getElementById('reset').onclick=()=>{AX.forEach(a=>sel[a.id]=new Set());filt={kakao:0,now:0};document.querySelectorAll('[data-preset]').forEach(x=>x.classList.remove('on'));render();};
 render();
 </script>
 </body></html>
