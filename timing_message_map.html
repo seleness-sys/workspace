@@ -48,6 +48,7 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 .screens .hint{font-size:12px;color:var(--sub);margin-bottom:10px}
 .ph-row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
 .ph-col{width:300px}
+.chip.more{border-style:dashed;color:#666;background:transparent}
 .sit-h{font-size:13px;font-weight:700;margin:18px 0 8px;padding-top:12px;border-top:1px solid #e5e7eb}.sit-h:first-child{border-top:0;margin-top:4px}.sit-h small{font-weight:400;color:#666;margin-left:6px}
 .ph-cap{font-size:13px;font-weight:700;margin-bottom:6px}
 .ph-cap span{display:inline-block;background:var(--ink);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:6px}
@@ -113,26 +114,14 @@ ul{margin:4px 0;padding-left:18px}li{margin:2px 0}
 // d: k=카카오 보유, p=제휴사·외부 보유, x=해당없음 / legal: 법무 쟁점 / now: 지금 있음
 const AX=[
 {id:'sig',t:'① 상황',q:'언제 보낼까',items:[
- {g:'손님 상황',id:'rep',n:'다시 올 때가 됨',d:'x',now:1,note:'주기를 넘긴 손님'},
- {g:'손님 상황',id:'int',n:'관심은 보였는데 안 옴',d:'x',now:1,note:'쿠폰 받고 안 씀, 눌렀는데 안 옴'},
- {g:'손님 상황',id:'nw',n:'새로 친구가 됨',d:'x',now:1,note:'친구 추가 후 첫 방문 전'},
- {g:'손님 상황',id:'lo',n:'오래 연락 없음',d:'x',now:1,note:'장기 미수신 친구'},
- {g:'손님 상황',id:'first',n:'첫 구매·첫 방문 직후',d:'x',now:1,note:'두 번째 방문 유도'},
- {g:'손님 상황',id:'drop',n:'결제하다 멈춤',d:'x',now:1,note:'주문 시작 후 미결제',issue:'톡체크아웃에 미결제 주문 데이터가 남는지 확인 필요'},
- {g:'손님 상황',id:'cancel',n:'예약 취소·노쇼',d:'x',now:1,note:'다시 예약 잡기'},
- {g:'손님 상황',id:'pass',n:'이용권·회차권 소진 임박',d:'x',now:1,note:'PT 2회 남음',issue:'예약하기에 회차권 정보가 있는지 확인 필요'},
- {g:'손님 상황',id:'hour',n:'늘 오던 시간 직전',d:'x',now:1,note:'점심 손님에게 11시'},
- {g:'손님 상황',id:'bday',n:'생일·기념일',d:'x',now:0,note:'가정, 개인정보 쟁점'},
- {g:'손님 상황',id:'near',n:'근처에 있음',d:'x',now:0,note:'위치기반은 다른 조직 담당, 참고'},
- {g:'가게 상황',id:'slot',n:'빈 자리·남은 물건',d:'x',now:1,note:'빈 예약시간, 마감 임박 재고'},
- {g:'가게 상황',id:'newin',n:'신메뉴·새 상품 입고',d:'x',now:1,note:'새로 나온 것 알리기'},
- {g:'가게 상황',id:'event',n:'행사 시작·마감 임박',d:'x',now:1,note:'세일 마지막 날'},
- {g:'가게 상황',id:'slow',n:'손님이 평소보다 적은 날',d:'x',now:1,note:'오늘 방문·예약이 줄었음'},
- {g:'가게 상황',id:'closed',n:'임시휴무·영업시간 변경',d:'x',now:1,note:'정보성이라 채널메시지보다 알림 영역'},
- {g:'바깥 상황',id:'wx',n:'날씨·시즌',d:'x',now:1,note:'개인 데이터 아님'},
- {g:'바깥 상황',id:'holi',n:'연휴·공휴일 전후',d:'x',now:1,note:'달력'},
- {g:'바깥 상황',id:'local',n:'동네 행사·축제·경기',d:'x',now:1,note:'지역 일정'},
- {g:'바깥 상황',id:'payday',n:'월급날·월초',d:'x',now:1,note:'달력'}]},
+ {g:'손님 상황',id:'rep',n:'다시 올 때가 됨',d:'x',now:1,note:'주기 초과, 이용권 소진 임박, 늘 오던 시간 …'},
+ {g:'손님 상황',id:'int',n:'관심은 보였는데 안 옴',d:'x',now:1,note:'쿠폰 안 씀, 결제하다 멈춤, 예약 취소 …'},
+ {g:'손님 상황',id:'nw',n:'새로 친구가 됨',d:'x',now:1,note:'친구 추가 후 첫 방문 전, 첫 구매 직후 …'},
+ {g:'손님 상황',id:'lo',n:'오래 연락 없음',d:'x',now:1,note:'장기 미수신 친구 …'},
+ {g:'가게 상황',id:'slot',n:'빈 자리·남은 물건',d:'x',now:1,note:'빈 예약시간, 마감 임박 재고, 손님 적은 날 …'},
+ {g:'가게 상황',id:'newin',n:'가게 새 소식',d:'x',now:1,note:'신메뉴 입고, 행사 마감 임박 …'},
+ {g:'바깥 상황',id:'wx',n:'날씨·달력',d:'x',now:1,note:'날씨, 연휴, 동네 행사, 월급날 …'},
+ {g:'',id:'more',n:'… 그 밖의 상황',d:'x',now:1,more:1,note:'생일, 근처에 있음 등 전체 20개는 위키 3번'}]},
 {id:'src',t:'② 신호',q:'어디서 알아채나',items:[
  {g:'카카오 거래',id:'bk',n:'예약하기 예약',d:'k',now:1,note:'예약 주기 초과'},
  {g:'카카오 거래',id:'sl',n:'예약하기 빈 시간',d:'k',now:1,note:'오늘·내일 빈 슬롯',issue:'예약하기에 빈 슬롯 데이터가 남는지 확인 필요'},
@@ -187,26 +176,13 @@ const AX=[
 // 조합 규칙: 이 카드를 고르면 다른 축은 allowed 안에서만 말이 됨 / any: 해당 축에 이 중 하나는 있어야 함
 const SELL_BK=['s_store','s_pro'],TX=['bk','co','qr','lp','ag','im','pos'];
 const RULES={
- rep:{src:{ok:TX,why:'이 상황을 알아챌 신호가 없어요. 거래 기록(예약·주문·방문·결제) 중 하나가 필요해요'}},
- int:{src:{ok:['cp','ck','ch'],why:'이 상황을 알아챌 신호가 없어요. 쿠폰·메시지 클릭·채팅 기록 중 하나가 필요해요'},rcv:{ok:['r_fr'],why:'쿠폰·클릭·채팅 반응은 채널 친구에게만 있는 데이터'}},
- nw:{src:{ok:['fr'],why:'이 상황을 알아챌 신호가 없어요. 친구 추가 기록이 필요해요'},rcv:{ok:['r_fr'],why:'친구 추가 상황은 친구 대상'}},
+ rep:{src:{ok:[...TX,'own'],why:'이 상황을 알아챌 신호가 없어요. 거래 기록(예약·주문·방문·결제) 중 하나가 필요해요'}},
+ int:{src:{ok:['cp','ck','ch','co','bk'],why:'이 상황을 알아챌 신호가 없어요. 쿠폰·클릭·채팅·주문·예약 기록 중 하나가 필요해요'},rcv:{ok:['r_fr'],why:'쿠폰·클릭·채팅 반응은 채널 친구에게만 있는 데이터'}},
+ nw:{src:{ok:['fr',...TX],why:'이 상황을 알아챌 신호가 없어요. 친구 추가나 거래 기록이 필요해요'},rcv:{ok:['r_fr'],why:'친구 추가 상황은 친구 대상'}},
  lo:{src:{ok:['ms'],why:'이 상황을 알아챌 신호가 없어요. 메시지 수신 기록이 필요해요'},rcv:{ok:['r_fr'],why:'장기 미수신은 친구 대상'}},
- slot:{src:{ok:['sl','st','pos','own'],why:'이 상황을 알아챌 신호가 없어요. 예약하기 빈 시간·재고·사장님 입력 중 하나가 필요해요'},sel:{ok:['s_store','s_pro','s_fc'],why:'빈 자리·남은 물건은 예약 받거나 매장이 있는 판매자'}},
+ slot:{src:{ok:['sl','st','pos','own','qr','bk'],why:'이 상황을 알아챌 신호가 없어요. 예약·방문·재고 기록이나 사장님 입력이 필요해요'},sel:{ok:['s_store','s_pro','s_fc'],why:'빈 자리·남은 물건은 예약 받거나 매장이 있는 판매자'}},
+ newin:{src:{ok:['own','pos','st','cp'],why:'이 상황을 알아챌 신호가 없어요. 사장님 입력이나 POS·재고·쿠폰 데이터가 필요해요'}},
  wx:{src:{ok:['wxd','own'],why:'이 상황을 알아챌 신호가 없어요. 날씨 공개 데이터나 사장님 입력이 필요해요'}},
- first:{src:{ok:TX,why:'이 상황을 알아챌 신호가 없어요. 거래 기록 중 하나가 필요해요'}},
- drop:{src:{ok:['co'],why:'이 상황을 알아챌 신호가 없어요. 톡체크아웃 주문 기록이 필요해요'}},
- cancel:{src:{ok:['bk'],why:'이 상황을 알아챌 신호가 없어요. 예약하기 기록이 필요해요'},sel:{ok:SELL_BK,why:'예약 취소는 예약하기를 쓰는 판매자만'}},
- pass:{src:{ok:['bk','own'],why:'이 상황을 알아챌 신호가 없어요. 예약하기 기록이나 사장님 입력이 필요해요'},sel:{ok:SELL_BK,why:'이용권은 예약 받는 매장·전문가'}},
- hour:{src:{ok:['bk','co','qr','pos'],why:'이 상황을 알아챌 신호가 없어요. 시각이 남는 거래 기록이 필요해요'}},
- bday:{src:{ok:['own'],why:'이 상황을 알아챌 신호가 없어요. 사장님이 받은 정보가 필요해요(가정)'}},
- near:{src:{ok:['loc'],why:'이 상황을 알아챌 신호가 없어요. 위치 정보가 필요해요'}},
- newin:{src:{ok:['own','pos','st'],why:'이 상황을 알아챌 신호가 없어요. 사장님 입력이나 POS·재고 데이터가 필요해요'}},
- event:{src:{ok:['own','cp'],why:'이 상황을 알아챌 신호가 없어요. 사장님 입력이나 쿠폰 기록이 필요해요'}},
- slow:{src:{ok:['qr','bk','pos'],why:'이 상황을 알아챌 신호가 없어요. 방문·예약·판매 기록이 필요해요'},sel:{ok:['s_store','s_pro','s_fc'],why:'손님 수는 매장이 있는 판매자 기준'}},
- closed:{src:{ok:['own'],why:'이 상황을 알아챌 신호가 없어요. 사장님 입력이 필요해요'}},
- holi:{src:{ok:['wxd','own'],why:'이 상황을 알아챌 신호가 없어요. 공개 데이터(달력)가 필요해요'}},
- local:{src:{ok:['wxd','own'],why:'이 상황을 알아챌 신호가 없어요. 공개 데이터나 사장님 입력이 필요해요'}},
- payday:{src:{ok:['wxd'],why:'이 상황을 알아챌 신호가 없어요. 공개 데이터(달력)가 필요해요'}},
  bk:{sel:{ok:SELL_BK,why:'예약하기는 예약 받는 매장·1인 전문가만 씀'}},
  sl:{sel:{ok:SELL_BK,why:'예약하기는 예약 받는 매장·1인 전문가만 씀'}},
  co:{sel:{ok:['s_mall','s_host','s_store'],why:'톡체크아웃은 자사몰·호스팅몰·매장 판매자가 씀'}},
@@ -361,7 +337,8 @@ function render(){
    b.className='chip'+(sel[a.id].has(i.id)?' sel':'')+(passes(i)?'':' dim')+(CK.bad.has(i.id)?' bad':'')+(!sel[a.id].has(i.id)&&CK.nofit.has(i.id)?' nofit':'');
    const DL=(a.id==='src'||a.id==='res')&&i.d!=='x'?(i.d==='kp'?'<span class="dl k">카카오 데이터</span><span class="dl p">제휴사 데이터</span>':`<span class="dl ${i.d}">${i.d==='k'?'카카오 데이터':'제휴사 데이터'}</span>`):'';
    b.innerHTML=`${i.n}<small>${DL}${i.note||''}${i.legal?' <span class="w">· 법무</span>':''}${i.now?'':' · 아직 없음'}</small>`;
-   b.onclick=()=>{sel[a.id].has(i.id)?sel[a.id].delete(i.id):sel[a.id].add(i.id);render();};
+   b.onclick=i.more?()=>window.open('https://kakao.atlassian.net/wiki/spaces/~selene.ss/pages/449120263','_blank'):()=>{sel[a.id].has(i.id)?sel[a.id].delete(i.id):sel[a.id].add(i.id);render();};
+   if(i.more) b.className='chip more';
    c.appendChild(b);
   });
   f.appendChild(c);
