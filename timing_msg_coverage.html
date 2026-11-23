@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>타이밍메시지 커버 구도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 레이아웃: 단일 컬럼, 1 공통 틀 → 2 과제 × 네 축 → 3 12구분 커버 → 4 구도
+   번호 규칙: 섹션 1~4 / 축 (1)~(4) / 과제 1)~5) (회의록 번호) / 합의 ①~④ (회의록 번호) / 빈칸 A~C */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --fg:#1d232b; --muted:#5d6672; --line:#dde1e6;
+  --accent:#2f5fd0; --accent-soft:#e3eafb; --part:#9db4ea; --warn:#b8621b; --warn-soft:#fbeee2;
+  --sans:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14171c; --surface:#1c2027; --fg:#e4e7ec; --muted:#9aa3ae; --line:#2e343d;
+  --accent:#7ea2f2; --accent-soft:#233154; --part:#41598f; --warn:#e5a065; --warn-soft:#3a2a1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14171c; --surface:#1c2027; --fg:#e4e7ec; --muted:#9aa3ae; --line:#2e343d;
+  --accent:#7ea2f2; --accent-soft:#233154; --part:#41598f; --warn:#e5a065; --warn-soft:#3a2a1c; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+header{display:flex;flex-direction:column;gap:8px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+h1{font-size:28px;line-height:1.3;margin:0;font-weight:600;text-wrap:balance}
+h2{font-size:20px;margin:0;font-weight:600;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--mono);color:var(--accent);font-size:15px}
+h3{font-size:16px;margin:6px 0 0;font-weight:600}
+section{display:flex;flex-direction:column;gap:14px}
+p{margin:0;max-width:72ch}
+a{color:var(--accent)}
+ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;max-width:80ch}
+.axes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.axes>div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.axes .k{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.axes .t{font-weight:600}
+.axes .d{font-size:13.5px;color:var(--muted)}
+.axes .gap{border-color:var(--warn);background:var(--warn-soft)}
+.axes .gap .k{color:var(--warn)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:12.5px;white-space:nowrap;background:color-mix(in srgb,var(--surface) 60%,var(--bg))}
+td.r,th.r{text-align:right;white-space:nowrap}
+td.c,th.c{text-align:center}
+td.nw{white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tr.total td{border-top:2px solid var(--line);font-weight:500}
+tr.grp td{border-top:2px solid var(--line)}
+tr.mvp td{background:var(--accent-soft)}
+.f{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--accent);vertical-align:-1px}
+.h{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);box-sizing:border-box;vertical-align:-1px}
+.cell{font-size:12.5px;color:var(--muted);display:block;margin-top:2px;min-width:120px}
+.tag{display:inline-block;font-size:11.5px;padding:0 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
+.pct{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.pct i{display:block;height:8px;border-radius:2px;background:var(--part);flex:0 0 auto}
+.pct.lo i{background:var(--warn)}
+.note{font-size:13.5px;color:var(--muted)}
+.box{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.box.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.box p{max-width:none}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.grid3>*{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.card .k{font-size:12.5px;color:var(--muted)}
+.card .v{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">기준: 11/19 메시지사업 기획 스쿼드 간 현황 공유 · 카비센 채널 167.5만 · 26-10</div>
+  <h1>타이밍메시지 커버 구도</h1>
+  <p class="note">회의록의 과제 1)~5)를 같은 틀(타겟·소재·시점 + 실행)에 놓고, 광고주 12구분에서 어디까지 닿는지 확인. 회의록: <a href="https://kakao.agit.in/g/300103496/wall/477194249#comment_panel_477194711">아지트 2027 카비센 메시지</a></p>
+</header>
+
+<section>
+  <h2><span class="n">1</span>공통 틀</h2>
+  <div class="axes">
+    <div><span class="k">(1) 타겟</span><span class="t">누구에게</span><span class="d">손님 단위 신호가 있으면 대상 산출, 없으면 친구 전체·설정 가능한 타겟</span></div>
+    <div><span class="k">(2) 소재</span><span class="t">무엇을</span><span class="d">채널 안 쿠폰·소식·이전 메시지·시즌</span></div>
+    <div><span class="k">(3) 시점</span><span class="t">언제</span><span class="d">사장님 발송 리듬, 콘텐츠 일정, 시즌, 손님 행동</span></div>
+    <div class="gap"><span class="k">(4) 실행</span><span class="t">사장님이 보내게</span><span class="d">사장님에게 닿아서 발송까지 잇는 것. 합의 ④ 모바일 간편 발송과 연결</span></div>
+  </div>
+  <div class="box">
+    <p>합의 ①: 각 조직 틀은 동일(시점·소재·타겟). 지니 = 사장님 발송 리듬, 전략스쿼드 = 손님 행동(모수 확장)</p>
+    <p>합의 ②: 내년 과제는 매출 기여도 중심. 발송 시 매출 증대 추정치와 근거 필요</p>
+    <p>합의 ③: 1단계(MVP) = 사장님 발송 패턴(시점) + 채널 내 콘텐츠(쿠폰·소식). 손님 행동·외부 데이터는 출시 후 단계적으로 추가. 현재 메시지는 건별 트리거가 아닌 동보 구조</p>
+    <p>합의 ④: 안 보내는 이유는 비용이 아니라 언제·누구에게·어떤 소재로 보낼지 모르기 때문. 실사업자는 밤늦게 모바일로 활동</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">2</span>과제 1)~5) × 네 축</h2>
+  <div class="legend"><span><span class="f"></span> 주로 맡음</span><span><span class="h"></span> 일부</span><span><span class="tag">확인</span> 자료 열람</span></div>
+  <div class="tbl"><table>
+    <tr><th>과제 (담당)</th><th class="c">(1) 타겟</th><th class="c">(2) 소재</th><th class="c">(3) 시점</th><th class="c">(4) 실행</th><th>근거 자료</th></tr>
+    <tr><td class="nw">1) 발송시점 패턴 검증·기준<br>(지니)</td><td class="c"></td><td class="c"></td><td class="c"><span class="f"></span><span class="cell">사장님 과거 발송 리듬</span></td><td class="c"></td><td><span class="tag">확인</span><span class="cell">OX 5차 검증. 3개월 패턴은 레인 안 보정값, 날짜를 말할 수 있는 시점 패턴은 2.7%만</span></td></tr>
+    <tr><td class="nw">2) 파트너 케어 운영 대시보드<br>(지니)</td><td class="c"></td><td class="c"><span class="h"></span><span class="cell">업종별 운영팁</span></td><td class="c"><span class="f"></span><span class="cell">정착 지원·재활성화·리듬 회복 등 트랙 7개</span></td><td class="c"><span class="f"></span><span class="cell">파트너센터 공식 채널로 사장님에게 케어 메시지</span></td><td><span class="tag">확인</span><span class="cell">대시보드 11/23 판단: 오늘 발송 가능 14,210. 9월 대조군 비교(발송 후 1주일, 매출 발생 여부): 리듬 이탈 복귀 B +5.5%p만 우연 아님(우연 확률 2.6%). 같은 대상 A -0.8%p, 리듬상 즉시 개입 +1.6~2.0%p는 우연과 구분 안 됨. 상시 대조군은 검토안에서 논의 중</span></td></tr>
+    <tr><td class="nw">3) 보낼 때를 알려주는 메시지<br>(문)</td><td class="c"><span class="h"></span><span class="cell">추천친구(반응할 친구부터), 반응 친구 후속 25원</span></td><td class="c"><span class="f"></span><span class="cell">AI 초안(1차 엔진), 작년 메시지·쿠폰·소식 재활용</span></td><td class="c"><span class="f"></span><span class="cell">알림 15가지: 쿠폰·소식 직후, 임시저장, 친구 100·1,000명, 작년 이맘때, 업종 성수기 2주 전, 멈춘 채널 재접속, 3일 뒤 결과</span></td><td class="c"><span class="f"></span><span class="cell">파트너센터 공식채널 메시지(마스터가 공식채널 친구인 채널 55.7만, 33%), 대시보드 카드, 앱 푸시, 켠 파트너 자동 발송</span></td><td><span class="tag">확인</span><span class="cell">덱 v12. 상반기 9가지 시험 → 10% 미발송 대조로 30일 메시지 매출 비교 → 27.9월 출시, 유료 상품 6가지</span></td></tr>
+    <tr><td class="nw">4) 발송시점 제안 메시지<br>(메이)</td><td class="c"><span class="h"></span><span class="cell">혜택 조건에 맞는 설정 가능한 타겟·예상 수</span></td><td class="c"><span class="f"></span><span class="cell">쿠폰·소식·이전 메시지·채널 정보/시즌. 없으면 제안 안 함</span></td><td class="c"><span class="f"></span><span class="cell">콘텐츠 시작·마감·유효기간 + 발송 이력</span></td><td class="c"><span class="h"></span><span class="cell">홈·대시보드 발송안 → 확인·수정 → 발송</span></td><td><span class="tag">확인</span><span class="cell">위키 2027. 발송 시점 제안</span></td></tr>
+    <tr><td class="nw">5) 타이밍메시지<br>(셀린)</td><td class="c"><span class="f"></span><span class="cell">손님 행동·거래 신호</span></td><td class="c"><span class="h"></span><span class="cell">초안</span></td><td class="c"><span class="f"></span><span class="cell">손님 행동, 바깥 신호</span></td><td class="c"><span class="h"></span><span class="cell">승인 발송. 닿는 방법 미정</span></td><td><span class="tag">확인</span><span class="cell">합의 ③상 MVP 범위 밖, 단계 확장 쪽</span></td></tr>
+  </table></div>
+  <ul>
+    <li>(1) 타겟: 손님 거래 신호는 과제 5)만. 과제 3)은 메시지 반응(추천친구·반응 친구), 과제 4)는 설정 가능한 타겟 추천 수준</li>
+    <li>(2) 소재: 과제 3)·4)가 주도. 과제 5)는 소재를 만들지 않음</li>
+    <li>(3) 시점: 다섯 과제 모두. 신호만 다름: 사장님 리듬(1·2) / 채널 활동·업종 달력·작년 이맘때(3) / 콘텐츠 일정(4) / 손님 행동(5)</li>
+    <li>(4) 실행: 파트너센터에 안 들어오는 사장님에게 닿는 길은 공식채널 메시지 하나. 과제 2)는 케어 메시지, 과제 3)은 업종 제안을 보냄(10월 관리 활동 없는 41.8만 채널 포함). 단, 공식채널을 친구 추가한 마스터(33%)에게만 닿음</li>
+  </ul>
+  <div class="box"><p>과제 3)이 시점·소재·실행 축을 거의 다 덮음. 타이밍메시지(과제 5)의 고유 영역은 (1) 손님 거래 신호로 좁혀짐</p></div>
+
+  <h3>과제 2) 파트너 케어 트랙과 광고주 구분 (대시보드 11/23 판단, 5회차)</h3>
+  <div class="tbl"><table>
+    <tr><th>트랙</th><th>대상 (대시보드 설명)</th><th class="r">오늘 발송 가능</th><th>대응하는 광고주 구분</th></tr>
+    <tr><td class="nw">정착 지원</td><td>초기 실행·정착 단계</td><td class="r">5,060</td><td>2 가끔 · 판정 보류 (새로 시작)</td></tr>
+    <tr><td class="nw">재활성화</td><td>장기 공백 후 재접촉</td><td class="r">4,041</td><td>4 멈춤 · 24개월 내</td></tr>
+    <tr><td class="nw">리듬 회복</td><td>반복 발송 후 최근 공백</td><td class="r">3,589</td><td>3 쉬는 중 · 정기였음, 2 가끔</td></tr>
+    <tr><td class="nw">주간 리듬 점검</td><td>주간·고강도 반복 발송의 최근 공백</td><td class="r">1,320</td><td>1 정기</td></tr>
+    <tr><td class="nw">다음 달 준비</td><td>월말·다음 달 준비 신호</td><td class="r">164</td><td>1 정기</td></tr>
+    <tr><td class="nw">가벼운 리듬 점검</td><td>약한 반복·공백 신호</td><td class="r">29</td><td>2 가끔</td></tr>
+    <tr><td class="nw">특정 시점 알림</td><td>특정 시점 반복 신호</td><td class="r">7</td><td>시즌형 (전체 1,277채널·연 0.5억)</td></tr>
+    <tr class="total"><td>합계</td><td></td><td class="r">14,210</td><td></td></tr>
+  </table></div>
+  <ul class="note">
+    <li>대응 구분은 트랙 설명 기준으로 대응시킨 것. 지니 측 레인 정의와 대조 필요</li>
+    <li>모든 트랙이 발송 이력이 있는 채널 대상 → 한 번도 안 보낸 5·6 구분은 트랙 없음</li>
+    <li>대시보드는 격리 시험 데이터 표기 (실제 발송용 아님)</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">3</span>광고주 12구분별 커버</h2>
+  <p class="note">정기 경계 80% 기준 (정기 20,921채널·650억). 구분 정의는 카비센 광고주 구분 기준 문서 참고.</p>
+    <h3>네 축 기준을 이렇게 잡은 이유</h3>
+  <div class="tbl"><table>
+    <tr><th>축</th><th>하는 일</th><th>채널에서 본 기준</th><th>이유</th></tr>
+    <tr><td class="nw">(1) 타겟</td><td>대상 고르기</td><td>손님 거래 신호</td><td>손님 거래 기록이 있어야 "커트 6주 지난 손님 40명"처럼 대상을 골라 줄 수 있음</td></tr>
+    <tr><td class="nw">(2) 소재</td><td>초안 만들기</td><td>채널 콘텐츠 (소식·쿠폰)</td><td>과제 3)·4) 모두 소식·쿠폰·지난 메시지로 초안을 만듦. 재료가 없으면 제안 안 함</td></tr>
+    <tr><td class="nw">(3) 시점</td><td>시점 알리기</td><td>발송 리듬</td><td>쉬는 달·멈춘 기간을 보려면 발송 이력이 있어야 함</td></tr>
+    <tr><td class="nw">(4) 실행</td><td>사장님에게 닿기</td><td>파트너센터 접속</td><td>알림·초안·발송이 파트너센터 안에서 일어남. 공식채널 친구 여부는 데이터가 없어 접속으로 대신함</td></tr>
+  </table></div>
+<div class="tbl"><table>
+    <tr><th>구분</th><th>하위</th><th class="r">채널</th><th class="r">매출(억)</th><th class="r">(1) 손님 거래 신호</th><th class="r">(2) 채널 콘텐츠</th><th class="r">(3) 발송 리듬</th><th class="r">(4) 파트너센터 접속</th></tr>
+    <tr class="grp"><td>1 정기</td><td>매달</td><td class="r">17,047</td><td class="r">601</td><td class="r"><div class="pct"><i style="width:8px"></i>15%</div></td><td class="r"><div class="pct"><i style="width:41px"></i>82%</div></td><td class="r">있음</td><td class="r"><div class="pct"><i style="width:47px"></i>95%</div></td></tr>
+    <tr><td></td><td>거의 매달</td><td class="r">3,874</td><td class="r">49</td><td class="r"><div class="pct"><i style="width:9px"></i>18%</div></td><td class="r"><div class="pct"><i style="width:40px"></i>81%</div></td><td class="r">있음</td><td class="r"><div class="pct"><i style="width:47px"></i>93%</div></td></tr>
+    <tr class="grp"><td>2 가끔</td><td>80% 미만</td><td class="r">17,344</td><td class="r">101</td><td class="r"><div class="pct"><i style="width:10px"></i>20%</div></td><td class="r"><div class="pct"><i style="width:38px"></i>76%</div></td><td class="r">있음</td><td class="r"><div class="pct"><i style="width:43px"></i>86%</div></td></tr>
+    <tr><td></td><td>판정 보류</td><td class="r">4,626</td><td class="r">2</td><td class="r"><div class="pct"><i style="width:10px"></i>19%</div></td><td class="r"><div class="pct"><i style="width:36px"></i>71%</div></td><td class="r">1~2개월뿐</td><td class="r"><div class="pct"><i style="width:43px"></i>86%</div></td></tr>
+    <tr class="grp"><td>3 쉬는 중</td><td>정기였음</td><td class="r">1,843</td><td class="r">21</td><td class="r"><div class="pct"><i style="width:9px"></i>18%</div></td><td class="r"><div class="pct"><i style="width:38px"></i>76%</div></td><td class="r">있음</td><td class="r"><div class="pct"><i style="width:46px"></i>92%</div></td></tr>
+    <tr><td></td><td>가끔·한 번이었음</td><td class="r">13,482</td><td class="r">18</td><td class="r"><div class="pct"><i style="width:10px"></i>20%</div></td><td class="r"><div class="pct"><i style="width:34px"></i>68%</div></td><td class="r">있음</td><td class="r"><div class="pct"><i style="width:41px"></i>83%</div></td></tr>
+    <tr class="grp"><td>4 멈춤</td><td>24개월 내</td><td class="r">40,426</td><td class="r">16</td><td class="r"><div class="pct"><i style="width:9px"></i>17%</div></td><td class="r"><div class="pct lo"><i style="width:21px"></i>42%</div></td><td class="r">있음</td><td class="r"><div class="pct lo"><i style="width:28px"></i>55%</div></td></tr>
+    <tr><td></td><td>그 전</td><td class="r">102,065</td><td class="r">0</td><td class="r"><div class="pct"><i style="width:5px"></i>9%</div></td><td class="r"><div class="pct lo"><i style="width:5px"></i>9%</div></td><td class="r">없음</td><td class="r"><div class="pct lo"><i style="width:9px"></i>18%</div></td></tr>
+    <tr class="grp"><td>5 안 보냄·친구 있음</td><td>의사 신호 있음</td><td class="r">47,099</td><td class="r">0</td><td class="r"><div class="pct"><i style="width:10px"></i>20%</div></td><td class="r"><div class="pct lo"><i style="width:19px"></i>39%</div></td><td class="r">없음</td><td class="r"><div class="pct lo"><i style="width:25px"></i>49%</div></td></tr>
+    <tr><td></td><td>의사 신호 없음</td><td class="r">281,564</td><td class="r">0</td><td class="r"><div class="pct"><i style="width:5px"></i>9%</div></td><td class="r"><div class="pct lo"><i style="width:10px"></i>20%</div></td><td class="r">없음</td><td class="r"><div class="pct lo"><i style="width:16px"></i>31%</div></td></tr>
+    <tr class="grp"><td>6 안 보냄·친구 없음</td><td>의사 신호 있음</td><td class="r">74,370</td><td class="r">0</td><td class="r"><div class="pct"><i style="width:6px"></i>12%</div></td><td class="r"><div class="pct lo"><i style="width:13px"></i>25%</div></td><td class="r">없음</td><td class="r"><div class="pct lo"><i style="width:17px"></i>34%</div></td></tr>
+    <tr><td></td><td>의사 신호 없음</td><td class="r">1,071,093</td><td class="r">0</td><td class="r"><div class="pct"><i style="width:3px"></i>5%</div></td><td class="r"><div class="pct lo"><i style="width:4px"></i>7%</div></td><td class="r">없음</td><td class="r"><div class="pct lo"><i style="width:9px"></i>18%</div></td></tr>
+    <tr class="total"><td>합계</td><td></td><td class="r">1,674,833</td><td class="r">808</td><td class="r">7%</td><td class="r">14%</td><td class="r">9.9만 있음</td><td class="r">25%</td></tr>
+  </table></div>
+  <ul class="note">
+    <li>(1) 손님 거래 신호: 예약하기·톡체크아웃·톡스토어 중 하나라도 연결 (26-10). 실제 거래 발생 여부 미반영, 통합QR 미포함</li>
+    <li>(2) 채널 콘텐츠: 25-11~26-10 중 소식 작성 또는 쿠폰 발행이 1회 이상 있었던 채널. 현재 유효한 쿠폰·소식인지는 미반영</li>
+    <li>(3) 발송 리듬: 24-11~26-10 발송 이력으로 리듬을 볼 수 있는지. 판정 보류는 보낸 기간 1~2개월이라 리듬 판단이 어려움</li>
+    <li>(4) 파트너센터 접속: 25-11~26-10 중 채널 관리 화면 1회 이상 접속. 공식 채널 친구 여부는 데이터 미확보</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">4</span>구도</h2>
+  <div class="tbl"><table>
+    <tr><th>범위</th><th class="r">채널</th><th class="r">매출(억)</th><th>읽히는 것</th></tr>
+    <tr class="mvp"><td>MVP가 닿는 곳: (2) 콘텐츠 있음 + (3) 발송 리듬 있음</td><td class="r">60,851</td><td class="r">653 (81%)</td><td>정기·가끔·쉬는 중 대부분. 1단계로 매출 기반은 거의 덮임</td></tr>
+    <tr><td>(3) 발송 리듬은 있는데 (2) 콘텐츠 없음</td><td class="r">37,791</td><td class="r">155</td><td>과제 4)는 "없으면 제안 안 함". 과제 2) 리듬 알림만 닿음. 멈춤·24개월 내가 대부분</td></tr>
+    <tr><td>판정 보류 (새로 시작·다시 시작)</td><td class="r">4,626</td><td class="r">2</td><td>과제 2) 정착 지원 트랙(5,060)이 다음 단계 안내. 소재·타겟 제안(과제 4·5)은 아직 약함</td></tr>
+    <tr><td>안 보냄·친구 있음 중 (2) 콘텐츠 있음</td><td class="r">73,352</td><td class="r">0</td><td>과제 4)가 이론상 닿지만 접속 31~49%. 리듬 신호 없음</td></tr>
+    <tr><td>(1) 손님 거래 신호 채널</td><td class="r">120,371</td><td class="r"></td><td>과제 5)만 닿음. 그중 보낸 이력 1.8만(매출 197억). MVP 범위 밖</td></tr>
+    <tr><td>(4) 정기 중 사장님 직접 운영</td><td class="r">16,122</td><td class="r">306</td><td>사장님 대상 제안이 직접 닿는 정기 매출은 47%. 나머지 344억은 대행사·본사 담당자가 발송</td></tr>
+  </table></div>
+  <div class="tbl"><table>
+    <tr><th>정기 650억의 발송 주체</th><th class="r">정기 채널</th><th class="r">매출(억)</th><th class="r">비중</th></tr>
+    <tr><td>사장님 직접 (순수 OLS)</td><td class="r">16,122</td><td class="r">306</td><td class="r">47%</td></tr>
+    <tr><td>공식대행사</td><td class="r">2,138</td><td class="r">233</td><td class="r">36%</td></tr>
+    <tr><td>비공식대행 (추정)</td><td class="r">2,196</td><td class="r">83</td><td class="r">13%</td></tr>
+    <tr><td>프랜차이즈·본사 담당자 (추정)</td><td class="r">465</td><td class="r">27</td><td class="r">4%</td></tr>
+    <tr class="total"><td>합계</td><td class="r">20,921</td><td class="r">650</td><td class="r">100%</td></tr>
+  </table></div>
+  <p class="note">비공식대행·본사 담당자 추정: OLS 채널의 관리자 계정이 대표자가 서로 다른 사업자 3명 이상의 채널을 관리하면 후보. 그 계정 채널 이름이 서로 비슷하거나(유사도 0.6+) 친구 50만+·인하우스면 본사 담당자, 아니면 비공식대행 (26-08 대행 분석 위키 로직).</p>
+  <div class="box warn">
+    <p>빈칸 A. 한 번도 안 보낸 채널(친구 30명 이상 32.9만): 과제 3)이 웰컴·친구 100명 돌파·임시저장 이어 쓰기·자주 오는데 안 보낸 채널 알림과 공식채널 메시지로 겨냥(27.9월 출시 계획). 남는 빈칸 = 공식채널 친구가 아닌 마스터(약 67%)</p>
+    <p>빈칸 B. 리듬은 있는데 콘텐츠 없는 3.8만: 과제 3) 작년 이맘때·업종 성수기 2주 전·멈춘 채널 재접속 알림이 초안까지 채움 → 설계상 대부분 메워짐</p>
+    <p>빈칸 C. 손님 단위 거래 신호: 과제 5)만 맡음. 연결 채널 12.0만, 그중 보낸 이력 1.8만(매출 197억). 합의 ③상 MVP 이후 단계, 지금 메시지는 손님별이 아닌 동보 구조, 거래 기록을 광고 대상 선정에 쓰는 것은 법무 검토 전</p>
+    <p>빈칸 D. 받는 사람이 사장님이 아닌 정기 매출 344억(53%): 모든 과제가 사장님 대상 제안이라, 대행사·본사 담당자에게 닿는 경로가 없음</p>
+    <p>빈칸 E. 매출 순증 측정(합의 ②): 처음부터 안 보내는 대조군을 확정한 곳은 과제 3)뿐(10%, 30일 메시지 매출). 과제 2)는 9월에 대조군 비교를 했지만 상시 대조군은 논의 중. 대조군 없이는 날짜만 앞당긴 발송과 늘어난 매출을 구분할 수 없음</p>
+  </div>
+  <div class="box"><p>매출이 늘 수 있는 곳 (카비센 광고주 구분 기준 5항)</p>
+    <ul>
+      <li>지금 보내는 채널의 빠지는 달 채우기와 쉬다가 멈추는 것 막기. 정기 채널의 쉰 달을 모두 채워도 연 15.7억(정기 매출의 2.4%), 쉬다 멈춘 정기였던 채널 1,843곳·21억</li>
+      <li>가끔 보내는 채널이 가진 소식·쿠폰을 메시지로 잇기. 1년에 1~3달 보낸 3.4만 곳 중 다음 해 6달 이상으로 늘어난 곳 8%(2,752곳, 28.5억)</li>
+      <li>안 보낸 채널은 수는 많지만 처음 보낸 달 매출 약 3만 원, 이어 보내는 곳 5곳 중 1곳. 시즌 알림 대상(시즌형 1,277곳·0.5억)도 작음</li>
+    </ul></div>
+</section>
+
+<section>
+  <h2><span class="n">5</span>다음에 볼 것: 왜 계속 안 보내나</h2>
+  <div class="box"><p>지금 분석은 네 축의 재료가 있는지만 확인. 멈추는 이유를 축별로 확인해, 이유마다 타이밍메시지가 무엇을 짚어 줄지 연결할 예정</p></div>
+  <div class="tbl"><table>
+    <tr><th>축</th><th>멈추는 이유 가설</th><th>볼 데이터</th><th>데이터</th><th>타이밍메시지가 짚어 줄 것</th></tr>
+    <tr><td class="nw">타겟</td><td>보낼 사람이 없거나 줄어듦</td><td>친구 수 추이, 발송 후 차단·친구 삭제</td><td class="nw">확인 필요</td><td>거래·방문한 손님 중 친구인 사람, 새로 친구 된 손님</td></tr>
+    <tr><td class="nw">타겟·성과</td><td>보내도 반응이 없어 그만둠</td><td>멈추기 직전 메시지 열람·클릭률 추이</td><td class="nw">있음</td><td>반응할 손님부터 고르기, 보낸 뒤 결과(방문·주문) 보여주기</td></tr>
+    <tr><td class="nw">소재</td><td>보낼 거리가 떨어짐</td><td>소식·쿠폰 작성 중단, 같은 문구 반복, 임시저장만 하고 미발송</td><td class="nw">있음</td><td>가진 소식·쿠폰, 반응 좋았던 지난 메시지로 초안</td></tr>
+    <tr><td class="nw">시점</td><td>비수기에 쉬었다가 안 돌아옴</td><td>업종별 공백 달, 시즌형</td><td class="nw">있음</td><td>업종 성수기 전·작년 이맘때 다시 보낼 때</td></tr>
+    <tr><td class="nw">실행·비용</td><td>무상 캐시가 끝나서</td><td>무상 캐시 소진 시점과 멈춘 시점이 겹치는지</td><td class="nw">있음</td><td>지난 발송 결과 대비 비용, 반응할 손님만 골라 적게 보내는 안</td></tr>
+    <tr><td class="nw">실행</td><td>대행사 계약이 끝나서</td><td>대행사 집행 종료 뒤 직접 발송으로 넘어가는지</td><td class="nw">있음</td><td>직접 보내는 방법, 대행사가 쓰던 소재 재사용 초안</td></tr>
+    <tr><td class="nw">실행</td><td>관심 자체가 끊김</td><td>파트너센터 접속 중단이 멈춤보다 먼저인지</td><td class="nw">있음</td><td>파트너센터 밖(공식채널 메시지)에서 손님 신호로 연락</td></tr>
+    <tr><td class="nw">사업</td><td>가게가 문을 닫음</td><td>사업자 상태, 채널 정지</td><td class="nw">확인 필요</td><td>알림 대상에서 제외</td></tr>
+  </table></div>
+  <ul>
+    <li>대상: 24개월 안에 3달 넘게 보내다가 6개월 이상 멈춘 채널. 비교군: 같은 기간 계속 보낸 정기·가끔 채널. 비교 시점: 멈추기 직전 3개월</li>
+    <li>한계: 데이터로는 멈추기 직전에 함께 일어난 일까지만 확인. 진짜 이유는 사장님 인터뷰로 확인 필요</li>
+  </ul>
+</section>
+
+<p class="note">출처: 회의록(아지트 477194711), 위키 2027. 발송 시점 제안(446169994), 파트너 케어 운영 현황판 데이터 연동 요청(299274243), 9월 파트너케어 프로그램 메시지 성과 비교(299274518), 파트너센터 공식 채널 친구 확대안(419568194), 타이밍메시지(449120263), 파트너 케어 운영 대시보드(dev, 11/23). 파트너 케어/리텐션 프로그램 검토안(299271536), 문 덱 v12(github pages). 데이터: sql/seg_adv09_segment_v4.py, sql/seg_adv07_signal_overlap.py, sql/seg_adv11_unofficial.py.</p>
+</div>
+
+</html>
